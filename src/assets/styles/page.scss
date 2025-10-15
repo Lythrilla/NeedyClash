@@ -1,0 +1,53 @@
+/* 现代化页面布局 */
+.base-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  > header {
+    flex: 0 0 60px;
+    width: 100%;
+    margin: 0;
+    padding: 0 28px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+  }
+
+  .base-container {
+    height: 100%;
+    overflow: hidden;
+
+    > section {
+      position: relative;
+      flex: 1 1 100%;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      padding: 24px 0;
+      box-sizing: border-box;
+      scrollbar-gutter: stable;
+      
+      .base-content {
+        width: calc(100% - 28px * 2);
+        margin: 0 auto;
+        max-width: 1400px; /* 最大宽度限制 */
+      }
+    }
+
+    &.no-padding {
+      > section {
+        padding: 0;
+        overflow: visible;
+        .base-content {
+          width: 100%;
+          max-width: none;
+        }
+      }
+    }
+  }
+}

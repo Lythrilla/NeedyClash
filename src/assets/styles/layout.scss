@@ -1,0 +1,159 @@
+.layout {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: row; /* 改为横向布局 */
+  overflow: hidden;
+
+  .layout-content {
+    /* 现代化布局容器 */
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+
+    &__left {
+      /* 紧凑响应式侧边栏 */
+      flex: 0 0 200px;
+      display: flex;
+      height: 100%;
+      padding: 16px 12px;
+      flex-direction: column;
+      gap: 8px; /* 减小间距 */
+      box-sizing: border-box;
+      background: transparent;
+      border-right: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+
+      .the-logo {
+        /* 紧凑Logo区域 */
+        position: relative;
+        flex: 0 0 auto;
+        display: flex;
+        height: auto;
+        padding: 4px;
+        margin-bottom: 0; /* 去掉底部边距 */
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+
+        .logo-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+
+        img,
+        svg {
+          width: 24px;
+          height: 24px;
+          pointer-events: none;
+        }
+
+        .logo-text {
+          font-size: 14px;
+          font-weight: 700;
+          letter-spacing: -0.2px;
+        }
+
+
+      }
+
+      .the-menu {
+        /* 可滚动菜单列表 */
+        flex: 1 1 auto; /* 允许弹性增长和滚动 */
+        overflow-y: auto; /* 启用垂直滚动 */
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+        
+        /* 优化滚动条样式 */
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: var(--scroller-color);
+          border-radius: 2px;
+        }
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+      }
+
+      .the-traffic {
+        /* 紧凑流量显示 */
+        flex: 0 0 auto;
+        padding: 8px 0;
+        margin-top: auto;
+        border-top: 1px solid var(--border-color);
+
+        > div {
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+
+    &__right {
+      /* 主内容区域 */
+      position: relative;
+      flex: 1 1 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+
+      .the-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: auto;
+      }
+    }
+  }
+}
+
+.linux,
+.windows,
+.unknown {
+  &.layout {
+    .the_titlebar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px;
+      box-sizing: border-box;
+      height: 36px;
+      border-bottom: 1px solid var(--divider-color);
+    }
+
+    .layout-content__right .the-content {
+      top: 5px;
+    }
+  }
+}
+
+.macos {
+  &.layout {
+    .the_titlebar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      padding: 10px;
+      box-sizing: border-box;
+      height: 36px;
+      border-bottom: 1px solid var(--divider-color);
+    }
+
+    .layout-content__left {
+      padding-top: 5px;
+    }
+
+    .layout-content__right .the-content {
+      top: 5px;
+    }
+  }
+}
