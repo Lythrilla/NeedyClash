@@ -40,7 +40,7 @@ const ScrollBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-// 默认测试列表，移到组件外部避免重复创建
+// Default test list, moved outside component to avoid recreation
 const DEFAULT_TEST_LIST = [
   {
     uid: nanoid(),
@@ -74,12 +74,12 @@ export const TestCard = () => {
   const { verge, mutateVerge, patchVerge } = useVerge();
   const viewerRef = useRef<TestViewerRef>(null);
 
-  // 使用useMemo优化测试列表，避免每次渲染重新计算
+  // Memoize test list to avoid unnecessary recalculations
   const testList = useMemo(() => {
     return verge?.test_list ?? DEFAULT_TEST_LIST;
   }, [verge?.test_list]);
 
-  // 使用useCallback优化函数引用，避免不必要的重新渲染
+  // Memoize callback to prevent unnecessary re-renders
   const onTestListItemChange = useCallback(
     (uid: string, patch?: Partial<IVergeTestItem>) => {
       if (!patch) {
@@ -135,7 +135,7 @@ export const TestCard = () => {
     [testList, verge, mutateVerge, patchVerge],
   );
 
-  // 仅在verge首次加载时初始化测试列表
+  // Initialize test list only when verge data is first loaded
   useEffect(() => {
     if (verge && !verge.test_list) {
       patchVerge({ test_list: DEFAULT_TEST_LIST });

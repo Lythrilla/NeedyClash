@@ -39,8 +39,67 @@ export const useCustomTheme = () => {
   const { theme_mode, theme_setting } = verge ?? {};
   const mode = useThemeMode();
   const setMode = useSetThemeMode();
-  const userBackgroundImage = theme_setting?.background_image || "";
-  const hasUserBackground = !!userBackgroundImage;
+  
+  // 背景设置
+  const backgroundType = theme_setting?.background_type || "none";
+  const backgroundColor = theme_setting?.background_color || "#000000";
+  const backgroundImage = theme_setting?.background_image || "";
+  const backgroundVideo = theme_setting?.background_video || "";
+  const backgroundOpacity = theme_setting?.background_opacity ?? 1;
+  const backgroundBlur = theme_setting?.background_blur ?? 0;
+  const backgroundBrightness = theme_setting?.background_brightness ?? 100;
+  const backgroundBlendMode = theme_setting?.background_blend_mode || "normal";
+  const backgroundSize = theme_setting?.background_size || "cover";
+  const backgroundPosition = theme_setting?.background_position || "center";
+  const backgroundRepeat = theme_setting?.background_repeat || "no-repeat";
+  const backgroundScale = theme_setting?.background_scale ?? 1.0;
+  
+  const hasCustomBackground = backgroundType !== "none";
+  
+  // 布局元素样式设置
+  const sidebarBgColor = theme_setting?.sidebar_background_color;
+  const sidebarOpacity = theme_setting?.sidebar_opacity ?? 1;
+  const sidebarBlur = theme_setting?.sidebar_blur ?? 0;
+  const headerBgColor = theme_setting?.header_background_color;
+  const headerOpacity = theme_setting?.header_opacity ?? 1;
+  const headerBlur = theme_setting?.header_blur ?? 0;
+  
+  // 设置页面样式
+  const settingsBlur = theme_setting?.settings_background_blur ?? false;
+  const settingsOpacity = theme_setting?.settings_background_opacity ?? 0.95;
+  
+  // 组件微调样式设置
+  const componentStyles = theme_setting?.component_styles || {};
+  const globalStyle = componentStyles.global || {};
+  
+  // 获取组件样式或使用全局默认值
+  const getComponentStyle = (key: string) => {
+    const compStyle = (componentStyles as any)[key] || {};
+    if (compStyle.enabled === false) return null;
+    
+    return {
+      backgroundColor: compStyle.background_color || globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)"),
+      blur: compStyle.blur ?? globalStyle.blur ?? 25,
+      opacity: compStyle.opacity ?? globalStyle.opacity ?? 0.7,
+    };
+  };
+
+  // 调试日志
+  useEffect(() => {
+    if (backgroundType !== "none") {
+      console.log("[Background Debug] Type:", backgroundType);
+      console.log("[Background Debug] Image URL:", backgroundImage);
+      console.log("[Background Debug] Video URL:", backgroundVideo);
+      console.log("[Background Debug] Color:", backgroundColor);
+      console.log("[Background Debug] Settings:", {
+        opacity: backgroundOpacity,
+        blur: backgroundBlur,
+        brightness: backgroundBrightness,
+        size: backgroundSize,
+        position: backgroundPosition,
+      });
+    }
+  }, [backgroundType, backgroundImage, backgroundVideo, backgroundColor, backgroundOpacity, backgroundBlur, backgroundBrightness, backgroundSize, backgroundPosition]);
 
   useEffect(() => {
     if (theme_mode === "light" || theme_mode === "dark") {
@@ -178,8 +237,13 @@ export const useCustomTheme = () => {
               secondary: setting.secondary_text || dt.secondary_text,
             },
             background: {
-              paper: dt.background_color,
+              paper: mode === "light" ? "#FFFFFF" : "#3232326b",
               default: dt.background_color,
+            },
+            divider: mode === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)",
+            action: {
+              hover: mode === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
+              selected: mode === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)",
             },
           },
           shadows: Array(25).fill("none") as Shadows,
@@ -187,6 +251,329 @@ export const useCustomTheme = () => {
             fontFamily: setting.font_family
               ? `${setting.font_family}, ${dt.font_family}`
               : dt.font_family,
+          },
+          components: {
+            MuiPaper: {
+              styleOverrides: {
+                root: {
+                  backgroundImage: 'none',
+                  backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
+                },
+              },
+            },
+            MuiPopover: {
+              styleOverrides: {
+                paper: {
+                  border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                  borderRadius: "8px",
+                  boxShadow: mode === "light" 
+                    ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                    : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
+                },
+              },
+            },
+            MuiMenu: {
+              styleOverrides: {
+                paper: {
+                  backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
+                  border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                  borderRadius: "8px",
+                },
+                list: {
+                  padding: "4px",
+                },
+              },
+            },
+            MuiMenuItem: {
+              styleOverrides: {
+                root: {
+                  borderRadius: "6px",
+                  margin: "2px 4px",
+                  padding: "8px 12px",
+                  fontSize: "14px",
+                  transition: "all 0.2s ease",
+                  minHeight: "auto",
+                  "&:hover": {
+                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.08)",
+                  },
+                  "&.Mui-selected": {
+                    backgroundColor: mode === "light" 
+                      ? alpha(setting.primary_color || dt.primary_color, 0.1)
+                      : alpha(setting.primary_color || dt.primary_color, 0.16),
+                    color: setting.primary_color || dt.primary_color,
+                    fontWeight: 500,
+                    "&:hover": {
+                      backgroundColor: mode === "light" 
+                        ? alpha(setting.primary_color || dt.primary_color, 0.15)
+                        : alpha(setting.primary_color || dt.primary_color, 0.22),
+                    },
+                  },
+                  "&.Mui-focusVisible": {
+                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.08)",
+                  },
+                },
+              },
+            },
+            MuiSelect: {
+              defaultProps: {
+                MenuProps: {
+                  PaperProps: {
+                    sx: {
+                      backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
+                      border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                      boxShadow: mode === "light" 
+                        ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                        : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
+                      mt: 0.5,
+                      borderRadius: "8px",
+                      "& .MuiList-root": {
+                        padding: "4px",
+                      },
+                    },
+                  },
+                },
+              },
+              styleOverrides: {
+                select: {
+                  backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                  borderRadius: "8px",
+                  "&:focus": {
+                    backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                    borderRadius: "8px",
+                  },
+                },
+                icon: {
+                  color: mode === "light" ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            MuiNativeSelect: {
+              styleOverrides: {
+                select: {
+                  backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                  borderRadius: "8px",
+                  padding: "5.5px 32px 5.5px 12px",
+                  fontSize: "13px",
+                  color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)",
+                  "&:focus": {
+                    backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                    borderRadius: "8px",
+                  },
+                },
+                icon: {
+                  color: mode === "light" ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.7)",
+                },
+              },
+            },
+            MuiFormControl: {
+              styleOverrides: {
+                root: {
+                  "& .MuiInputLabel-root": {
+                    color: mode === "light" ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.7)",
+                    fontSize: "14px",
+                    "&.Mui-focused": {
+                      color: setting.primary_color || dt.primary_color,
+                    },
+                  },
+                },
+              },
+            },
+            MuiInputLabel: {
+              styleOverrides: {
+                root: {
+                  color: mode === "light" ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.7)",
+                  fontSize: "14px",
+                  "&.Mui-focused": {
+                    color: setting.primary_color || dt.primary_color,
+                  },
+                  "&.Mui-error": {
+                    color: setting.error_color || dt.error_color,
+                  },
+                },
+                shrink: {
+                  color: mode === "light" ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.7)",
+                  "&.Mui-focused": {
+                    color: setting.primary_color || dt.primary_color,
+                  },
+                },
+              },
+            },
+            MuiTextField: {
+              styleOverrides: {
+                root: {
+                  "& .MuiInputBase-root": {
+                    backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                  },
+                },
+              },
+            },
+            MuiOutlinedInput: {
+              styleOverrides: {
+                root: {
+                  backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                  borderRadius: "8px",
+                  transition: "all 0.2s ease",
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: mode === "light" ? "#CBD5E1" : "rgba(255, 255, 255, 0.2)",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: setting.primary_color || dt.primary_color,
+                    borderWidth: "2px",
+                  },
+                  "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+                    borderColor: setting.error_color || dt.error_color,
+                  },
+                },
+                notchedOutline: {
+                  borderColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
+                  borderRadius: "8px",
+                  transition: "all 0.2s ease",
+                },
+                input: {
+                  color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)",
+                },
+              },
+            },
+            MuiButton: {
+              styleOverrides: {
+                root: {
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  fontWeight: 500,
+                },
+                outlined: {
+                  borderColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
+                  "&:hover": {
+                    borderColor: setting.primary_color || dt.primary_color,
+                    backgroundColor: mode === "light" 
+                      ? alpha(setting.primary_color || dt.primary_color, 0.04)
+                      : alpha(setting.primary_color || dt.primary_color, 0.08),
+                  },
+                },
+                contained: {
+                  boxShadow: "none",
+                  "&:hover": {
+                    boxShadow: "none",
+                  },
+                },
+              },
+            },
+            MuiIconButton: {
+              styleOverrides: {
+                root: {
+                  borderRadius: "8px",
+                  "&:hover": {
+                    backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
+                  },
+                },
+              },
+            },
+            MuiCard: {
+              styleOverrides: {
+                root: {
+                  backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
+                  border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                  borderRadius: "12px",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    borderColor: setting.primary_color || dt.primary_color,
+                    backgroundColor: mode === "light" ? "#F8FAFC" : "#3C3C3C",
+                  },
+                },
+              },
+            },
+            MuiDialog: {
+              styleOverrides: {
+                paper: {
+                  backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
+                  border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                  borderRadius: "12px",
+                },
+              },
+            },
+            MuiTooltip: {
+              defaultProps: {
+                arrow: true,
+                placement: "top",
+                PopperProps: {
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [0, -8],
+                      },
+                    },
+                  ],
+                },
+              },
+              styleOverrides: {
+                tooltip: {
+                  backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(50, 50, 50, 0.95)",
+                  fontSize: "12px",
+                  borderRadius: "6px",
+                  padding: "6px 12px",
+                },
+                arrow: {
+                  color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(50, 50, 50, 0.95)",
+                },
+              },
+            },
+            MuiListItem: {
+              styleOverrides: {
+                root: {
+                  borderRadius: 0,
+                  "&:hover": {
+                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.05)",
+                  },
+                },
+              },
+            },
+            MuiListItemButton: {
+              styleOverrides: {
+                root: {
+                  borderRadius: 0,
+                  "&:hover": {
+                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.05)",
+                  },
+                },
+              },
+            },
+            MuiChip: {
+              styleOverrides: {
+                root: {
+                  borderRadius: "16px",
+                },
+              },
+            },
+            MuiSwitch: {
+              styleOverrides: {
+                root: {
+                  width: 42,
+                  height: 26,
+                  padding: 0,
+                },
+                switchBase: {
+                  padding: 1,
+                  "&.Mui-checked": {
+                    transform: "translateX(16px)",
+                    color: "#fff",
+                    "& + .MuiSwitch-track": {
+                      backgroundColor: setting.primary_color || dt.primary_color,
+                      opacity: 1,
+                    },
+                  },
+                },
+                thumb: {
+                  width: 24,
+                  height: 24,
+                },
+                track: {
+                  borderRadius: "13px",
+                  backgroundColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.2)",
+                  opacity: 1,
+                },
+              },
+            },
           },
         },
         getLanguagePackMap(i18n.language),
@@ -217,14 +604,25 @@ export const useCustomTheme = () => {
 
     const rootEle = document.documentElement;
     if (rootEle) {
+      // 优化暗色模式配色方案 - 温暖灰色系
       const backgroundColor =
-        mode === "light" ? "#ECECEC" : dt.background_color;
-      const selectColor = mode === "light" ? "#f5f5f5" : "#3E3E3E";
-      const scrollColor = mode === "light" ? "#90939980" : "#555555";
+        mode === "light" ? "#F8FAFC" : dt.background_color;
+      const selectColor = mode === "light" ? "#F1F5F9" : "#3232326b";
+      const scrollColor = mode === "light" ? "#CBD5E1" : "#5A5A5A";
       const dividerColor =
-        mode === "light" ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.06)";
+        mode === "light" ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)";
+      const cardBackground = 
+        mode === "light" ? "#FFFFFF" : "#3232326b";
+      const cardHoverBackground = 
+        mode === "light" ? "#F8FAFC" : "#3C3C3C";
+      const borderColor = 
+        mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)";
+      
       rootEle.style.setProperty("--divider-color", dividerColor);
+      rootEle.style.setProperty("--border-color", borderColor);
       rootEle.style.setProperty("--background-color", backgroundColor);
+      rootEle.style.setProperty("--card-background", cardBackground);
+      rootEle.style.setProperty("--card-hover-background", cardHoverBackground);
       rootEle.style.setProperty("--selection-color", selectColor);
       rootEle.style.setProperty("--scroller-color", scrollColor);
       rootEle.style.setProperty(
@@ -233,34 +631,38 @@ export const useCustomTheme = () => {
       );
       rootEle.style.setProperty(
         "--background-color-alpha",
-        alpha(muiTheme.palette.primary.main, 0.1),
+        alpha(muiTheme.palette.primary.main, mode === "light" ? 0.08 : 0.12),
       );
       rootEle.style.setProperty(
         "--window-border-color",
-        mode === "light" ? "#cccccc" : "#1E1E1E",
+        mode === "light" ? "#E2E8F0" : "#404040",
       );
       rootEle.style.setProperty(
         "--scrollbar-bg",
-        mode === "light" ? "#f1f1f1" : "#2E303D",
+        mode === "light" ? "#F1F5F9" : "transparent",
       );
       rootEle.style.setProperty(
         "--scrollbar-thumb",
-        mode === "light" ? "#c1c1c1" : "#555555",
+        mode === "light" ? "#CBD5E1" : "#475569",
+      );
+      // 自定义背景CSS变量
+      rootEle.style.setProperty("--bg-type", backgroundType);
+      rootEle.style.setProperty("--bg-custom-color", backgroundColor);
+      rootEle.style.setProperty(
+        "--bg-image",
+        backgroundType === "image" && backgroundImage ? `url('${backgroundImage}')` : "none"
       );
       rootEle.style.setProperty(
-        "--user-background-image",
-        hasUserBackground ? `url('${userBackgroundImage}')` : "none",
+        "--bg-video-url",
+        backgroundType === "video" && backgroundVideo ? backgroundVideo : ""
       );
-      rootEle.style.setProperty(
-        "--background-blend-mode",
-        setting.background_blend_mode || "normal",
-      );
-      rootEle.style.setProperty(
-        "--background-opacity",
-        setting.background_opacity !== undefined
-          ? String(setting.background_opacity)
-          : "1",
-      );
+      rootEle.style.setProperty("--bg-opacity", String(backgroundOpacity));
+      rootEle.style.setProperty("--bg-blur", `${backgroundBlur}px`);
+      rootEle.style.setProperty("--bg-brightness", `${backgroundBrightness}%`);
+      rootEle.style.setProperty("--bg-blend-mode", backgroundBlendMode);
+      rootEle.style.setProperty("--bg-size", backgroundSize);
+      rootEle.style.setProperty("--bg-position", backgroundPosition);
+      rootEle.style.setProperty("--bg-repeat", backgroundRepeat);
     }
 
     let styleElement = document.querySelector("style#verge-theme");
@@ -272,7 +674,7 @@ export const useCustomTheme = () => {
 
     if (styleElement) {
       const globalStyles = `
-        /* 修复滚动条样式 */
+        /* 优化滚动条样式 */
         ::-webkit-scrollbar {
           width: 8px;
           height: 8px;
@@ -281,42 +683,630 @@ export const useCustomTheme = () => {
         ::-webkit-scrollbar-thumb {
           background-color: var(--scrollbar-thumb);
           border-radius: 4px;
+          transition: background-color 0.2s ease;
         }
         ::-webkit-scrollbar-thumb:hover {
-          background-color: ${mode === "light" ? "#a1a1a1" : "#666666"};
+          background-color: ${mode === "light" ? "#94A3B8" : "#6A6A6A"};
         }
 
-        /* 背景图处理 */
+        /* 背景处理 */
         body {
-          background-color: var(--background-color);
-          ${
-            hasUserBackground
-              ? `
-            background-image: var(--user-background-image);
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-blend-mode: var(--background-blend-mode);
-            opacity: var(--background-opacity);
-          `
-              : ""
+          position: relative;
+          ${backgroundType === "none" ? `background-color: var(--background-color);` : "background-color: transparent;"}
+        }
+
+        /* 对话框样式优化 - 始终应用 */
+        .MuiDialog-paper {
+          ${backgroundType !== "none" 
+            ? `background-color: ${mode === "light" ? "rgba(255, 255, 255, 0.85)" : "rgba(40, 40, 40, 0.85)"} !important;
+               backdrop-filter: blur(25px) saturate(180%);
+               -webkit-backdrop-filter: blur(25px) saturate(180%);`
+            : `background-color: ${mode === "light" ? "#ffffff" : "#282828"} !important;`
           }
         }
 
-        /* 修复可能的白色边框 */
-        .MuiPaper-root {
-          border-color: var(--window-border-color) !important;
+        /* 侧边栏自定义样式 - 使用伪元素实现背景效果，不影响内容 */
+        ${
+          sidebarBgColor || sidebarOpacity !== 1 || sidebarBlur > 0
+            ? `
+        .layout-content__left {
+          position: relative !important;
+          isolation: isolate !important;
+          background-color: transparent !important;
+        }
+        
+        .layout-content__left::before {
+          content: "" !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          ${
+            sidebarBgColor 
+              ? `background-color: ${sidebarBgColor} !important;
+                 opacity: ${sidebarOpacity} !important;`
+              : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${sidebarOpacity})` : `rgba(255, 255, 255, ${sidebarOpacity})`} !important;`
+          }
+          ${sidebarBlur > 0 ? `backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;` : ""}
+          z-index: 0 !important;
+          pointer-events: none !important;
+        }
+        
+        .layout-content__left > * {
+          position: relative !important;
+          z-index: 1 !important;
+        }
+        `
+            : ""
         }
 
-        /* 确保模态框和对话框也使用暗色主题 */
-        .MuiDialog-paper {
-          background-color: ${mode === "light" ? "#ffffff" : "#2E303D"} !important;
+        /* Header自定义样式 - 使用伪元素实现背景效果，不影响内容 */
+        ${
+          headerBgColor || headerOpacity !== 1 || headerBlur > 0
+            ? `
+        .base-page > header {
+          position: relative !important;
+          isolation: isolate !important;
+          background-color: transparent !important;
+        }
+        
+        .base-page > header::before {
+          content: "" !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          ${
+            headerBgColor 
+              ? `background-color: ${headerBgColor} !important;
+                 opacity: ${headerOpacity} !important;`
+              : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${headerOpacity})` : `rgba(255, 255, 255, ${headerOpacity})`} !important;`
+          }
+          ${headerBlur > 0 ? `backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;` : ""}
+          z-index: 0 !important;
+          pointer-events: none !important;
+        }
+        
+        .base-page > header > * {
+          position: relative !important;
+          z-index: 1 !important;
+        }
+        `
+            : ""
         }
 
-        /* 移除可能的白色点或线条 */
+        /* 设置页面背景模糊 - 只影响设置区域的背景层，不影响内部组件 */
+        ${
+          settingsBlur
+            ? `
+        .settings-section::before {
+          content: "" !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          background-color: ${theme.palette.mode === "dark" 
+            ? `rgba(26, 26, 26, ${settingsOpacity})` 
+            : `rgba(255, 255, 255, ${settingsOpacity})`} !important;
+          backdrop-filter: blur(20px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+          border-radius: 8px !important;
+          z-index: -1 !important;
+          pointer-events: none !important;
+        }
+        
+        .settings-section {
+          position: relative !important;
+          isolation: isolate !important;
+        }
+        `
+            : ""
+        }
+
+        /* 流量分析页面透明模糊背景 - 当有自定义背景时启用 */
+        ${
+          hasCustomBackground
+            ? `
+        .analytics-section::before {
+          content: "" !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          background-color: ${mode === "dark" 
+            ? "rgba(50, 50, 50, 0.7)" 
+            : "rgba(255, 255, 255, 0.7)"} !important;
+          backdrop-filter: blur(25px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
+          border-radius: 8px !important;
+          z-index: -1 !important;
+          pointer-events: none !important;
+        }
+        
+        .analytics-section {
+          position: relative !important;
+          isolation: isolate !important;
+          background-color: transparent !important;
+        }
+        `
+            : ""
+        }
+
+        ${
+          backgroundType === "color" && backgroundColor
+            ? `
+        /* 纯色背景层 */
+        body::before {
+          content: "" !important;
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          background-color: ${backgroundColor} !important;
+          opacity: ${backgroundOpacity} !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+          filter: blur(${backgroundBlur}px) brightness(${backgroundBrightness}%) !important;
+        }
+
+        /* 确保所有内容在背景之上，但不影响 MUI Portal */
+        body > div:not(.MuiModal-root):not(.MuiPopover-root):not(.MuiPopper-root):not([role="presentation"]):not([role="tooltip"]) {
+          position: relative !important;
+          z-index: 1 !important;
+        }
+        
+        /* 确保 MUI 弹出层在最上层 */
+        .MuiModal-root,
+        .MuiPopover-root,
+        .MuiPopper-root,
+        [role="presentation"],
+        [role="tooltip"] {
+          z-index: 1300 !important;
+          position: fixed !important;
+        }
+        `
+            : ""
+        }
+
+        ${
+          backgroundType === "image" && backgroundImage
+            ? (() => {
+                console.log("[CSS Injection] Applying image background:", backgroundImage);
+                console.log("[CSS Injection] Image scale:", backgroundScale.toFixed(2), "Blur:", backgroundBlur + "px", "Opacity:", backgroundOpacity, "Brightness:", backgroundBrightness + "%");
+                return `
+        /* 图片背景层 - 动态缩放防止模糊白边，实时响应所有参数变化 */
+        body::before {
+          content: "" !important;
+          position: fixed !important;
+          top: 50% !important;
+          left: 50% !important;
+          width: ${(backgroundScale * 100).toFixed(2)}% !important;
+          height: ${(backgroundScale * 100).toFixed(2)}% !important;
+          transform: translate(-50%, -50%) !important;
+          background-image: url("${backgroundImage}") !important;
+          background-size: ${backgroundSize} !important;
+          background-position: center !important;
+          background-repeat: ${backgroundRepeat} !important;
+          opacity: ${backgroundOpacity} !important;
+          filter: blur(${backgroundBlur}px) brightness(${backgroundBrightness}%) !important;
+          z-index: 0 !important;
+          pointer-events: none !important;
+          transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease, filter 0.3s ease !important;
+        }
+
+        /* 确保所有内容在背景之上，但不影响 MUI Portal */
+        body > div:not(.MuiModal-root):not(.MuiPopover-root):not(.MuiPopper-root):not([role="presentation"]):not([role="tooltip"]) {
+          position: relative !important;
+          z-index: 1 !important;
+        }
+        
+        /* 确保 MUI 弹出层在最上层 */
+        .MuiModal-root,
+        .MuiPopover-root,
+        .MuiPopper-root,
+        [role="presentation"],
+        [role="tooltip"] {
+          z-index: 1300 !important;
+          position: fixed !important;
+        }
+        `;
+              })()
+            : ""
+        }
+
+        ${
+          backgroundType === "video" && backgroundVideo
+            ? (() => {
+                console.log("[CSS Injection] Applying video background:", backgroundVideo);
+                console.log("[CSS Injection] Video scale:", backgroundScale.toFixed(2), "Blur:", backgroundBlur + "px", "Opacity:", backgroundOpacity, "Brightness:", backgroundBrightness + "%");
+                return `
+        #background-video-container {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          z-index: 0 !important;
+          overflow: hidden !important;
+          pointer-events: none !important;
+        }
+
+        #background-video {
+          position: absolute !important;
+          top: 50% !important;
+          left: 50% !important;
+          min-width: 100% !important;
+          min-height: 100% !important;
+          width: auto !important;
+          height: auto !important;
+          transform: translate(-50%, -50%) scale(${backgroundScale.toFixed(2)}) !important;
+          opacity: ${backgroundOpacity} !important;
+          filter: blur(${backgroundBlur}px) brightness(${backgroundBrightness}%) !important;
+          transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease !important;
+        }
+
+        /* 确保内容在背景之上，但不影响 MUI Portal */
+        body > div:not(#background-video-container):not(.MuiModal-root):not(.MuiPopover-root):not(.MuiPopper-root):not([role="presentation"]):not([role="tooltip"]) {
+          position: relative !important;
+          z-index: 1 !important;
+        }
+        
+        /* 确保 MUI 弹出层在最上层 */
+        .MuiModal-root,
+        .MuiPopover-root,
+        .MuiPopper-root,
+        [role="presentation"],
+        [role="tooltip"] {
+          z-index: 1300 !important;
+          position: fixed !important;
+        }
+        `;
+              })()
+            : ""
+        }
+
+        /* Tab 组件优化 */
+        .MuiTab-root {
+          text-transform: none;
+          font-weight: 500;
+          min-height: 48px;
+          transition: all 0.2s ease;
+        }
+
+        .MuiTabs-indicator {
+          height: 3px;
+          border-radius: 3px 3px 0 0;
+        }
+
+        /* Divider 优化 */
+        .MuiDivider-root {
+          border-color: ${mode === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)"};
+        }
+
+        /* 原生 option 标签优化 */
+        option {
+          background-color: ${mode === "light" ? "#FFFFFF" : "#3232326b"};
+          color: ${mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)"};
+          padding: 8px 12px;
+        }
+
+        option:hover,
+        option:focus {
+          background-color: ${mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.08)"};
+        }
+
+        /* Select 下拉菜单背景优化 */
+        select,
+        .MuiNativeSelect-select,
+        .MuiSelect-select {
+          background-color: ${mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)"} !important;
+          color: ${mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)"} !important;
+          border-radius: 8px !important;
+        }
+
+        /* MUI Select 组件优化 */
+        .MuiSelect-select,
+        .MuiNativeSelect-select {
+          transition: all 0.2s ease !important;
+        }
+
+        /* Select 边框优化 */
+        .MuiOutlinedInput-root:has(.MuiSelect-select),
+        .MuiOutlinedInput-root:has(.MuiNativeSelect-select) {
+          background-color: ${mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)"} !important;
+        }
+
+        .MuiOutlinedInput-root:has(.MuiSelect-select) .MuiOutlinedInput-notchedOutline,
+        .MuiOutlinedInput-root:has(.MuiNativeSelect-select) .MuiOutlinedInput-notchedOutline {
+          border-color: ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)"} !important;
+        }
+
+        .MuiOutlinedInput-root:has(.MuiSelect-select):hover .MuiOutlinedInput-notchedOutline,
+        .MuiOutlinedInput-root:has(.MuiNativeSelect-select):hover .MuiOutlinedInput-notchedOutline {
+          border-color: ${mode === "light" ? "#CBD5E1" : "rgba(255, 255, 255, 0.2)"} !important;
+        }
+
+        .MuiOutlinedInput-root:has(.MuiSelect-select).Mui-focused .MuiOutlinedInput-notchedOutline,
+        .MuiOutlinedInput-root:has(.MuiNativeSelect-select).Mui-focused .MuiOutlinedInput-notchedOutline {
+          border-color: ${setting.primary_color || dt.primary_color} !important;
+          border-width: 2px !important;
+        }
+
+        /* TextField 标签优化 */
+        .MuiInputLabel-root.Mui-focused {
+          color: ${setting.primary_color || dt.primary_color};
+        }
+
+        /* 数据网格优化 */
+        .MuiDataGrid-root {
+          border-color: ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"};
+        }
+
+        .MuiDataGrid-cell:focus,
+        .MuiDataGrid-cell:focus-within {
+          outline: 2px solid ${alpha(setting.primary_color || dt.primary_color, 0.3)};
+          outline-offset: -1px;
+        }
+
+        .MuiDataGrid-columnHeader:focus,
+        .MuiDataGrid-columnHeader:focus-within {
+          outline: 2px solid ${alpha(setting.primary_color || dt.primary_color, 0.3)};
+          outline-offset: -1px;
+        }
+
+        /* 移除焦点轮廓 */
         * {
           outline: none !important;
         }
+
+        /* 优化选择器 */
+        ::selection {
+          background-color: ${mode === "light" ? alpha(muiTheme.palette.primary.main, 0.2) : alpha(muiTheme.palette.primary.main, 0.3)};
+          color: ${mode === "light" ? muiTheme.palette.text.primary : "#FFFFFF"};
+        }
+
+        /* 组件微调样式 */
+        ${(() => {
+          const styles: string[] = [];
+          
+          // Select 下拉框
+          const selectStyle = getComponentStyle("select");
+          if (selectStyle && hasCustomBackground) {
+            styles.push(`
+              .custom-select::before,
+              .MuiPaper-root.MuiMenu-paper::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${selectStyle.backgroundColor} !important;
+                backdrop-filter: blur(${selectStyle.blur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${selectStyle.blur}px) saturate(180%) !important;
+                border-radius: 8px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${selectStyle.opacity} !important;
+              }
+              
+              .custom-select,
+              .MuiPaper-root.MuiMenu-paper {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          // Profile 卡片
+          const profileCardStyle = getComponentStyle("profile_card");
+          if (profileCardStyle && hasCustomBackground) {
+            styles.push(`
+              .custom-profile-card::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${profileCardStyle.backgroundColor} !important;
+                backdrop-filter: blur(${profileCardStyle.blur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${profileCardStyle.blur}px) saturate(180%) !important;
+                border-radius: 8px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${profileCardStyle.opacity} !important;
+              }
+              
+              .custom-profile-card {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          // Proxy 卡片
+          const proxyCardStyle = getComponentStyle("proxy_card");
+          if (proxyCardStyle && hasCustomBackground) {
+            styles.push(`
+              .custom-proxy-card::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${proxyCardStyle.backgroundColor} !important;
+                backdrop-filter: blur(${proxyCardStyle.blur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${proxyCardStyle.blur}px) saturate(180%) !important;
+                border-radius: 8px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${proxyCardStyle.opacity} !important;
+              }
+              
+              .custom-proxy-card {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          // TextField 编辑框
+          const textfieldStyle = getComponentStyle("textfield");
+          if (textfieldStyle && hasCustomBackground) {
+            styles.push(`
+              .custom-textfield .MuiOutlinedInput-root::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${textfieldStyle.backgroundColor} !important;
+                backdrop-filter: blur(${textfieldStyle.blur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${textfieldStyle.blur}px) saturate(180%) !important;
+                border-radius: 8px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${textfieldStyle.opacity} !important;
+              }
+              
+              .custom-textfield .MuiOutlinedInput-root {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          // Analytics 图表
+          const analyticsChartStyle = getComponentStyle("analytics_chart");
+          if (analyticsChartStyle && hasCustomBackground) {
+            styles.push(`
+              .custom-analytics-chart::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${analyticsChartStyle.backgroundColor} !important;
+                backdrop-filter: blur(${analyticsChartStyle.blur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${analyticsChartStyle.blur}px) saturate(180%) !important;
+                border-radius: 8px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${analyticsChartStyle.opacity} !important;
+              }
+              
+              .custom-analytics-chart {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          // Analytics 头部
+          const analyticsHeaderStyle = getComponentStyle("analytics_header");
+          if (analyticsHeaderStyle && hasCustomBackground) {
+            styles.push(`
+              .custom-analytics-header::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${analyticsHeaderStyle.backgroundColor} !important;
+                backdrop-filter: blur(${analyticsHeaderStyle.blur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${analyticsHeaderStyle.blur}px) saturate(180%) !important;
+                border-radius: 8px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${analyticsHeaderStyle.opacity} !important;
+              }
+              
+              .custom-analytics-header {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          // Dialog 弹窗
+          const dialogStyle = getComponentStyle("dialog");
+          if (dialogStyle && hasCustomBackground) {
+            styles.push(`
+              .custom-dialog .MuiPaper-root::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${dialogStyle.backgroundColor} !important;
+                backdrop-filter: blur(${dialogStyle.blur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${dialogStyle.blur}px) saturate(180%) !important;
+                border-radius: 8px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${dialogStyle.opacity} !important;
+              }
+              
+              .custom-dialog .MuiPaper-root {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          // 导航栏图标 hover 透明模糊效果（排除代理节点卡片）
+          if (hasCustomBackground && globalStyle) {
+            const navBgColor = globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)");
+            const navBlur = globalStyle.blur ?? 25;
+            const navOpacity = globalStyle.opacity ?? 0.7;
+            
+            styles.push(`
+              .MuiListItemButton-root:not(.custom-proxy-card):hover::before {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                background-color: ${navBgColor} !important;
+                backdrop-filter: blur(${navBlur}px) saturate(180%) !important;
+                -webkit-backdrop-filter: blur(${navBlur}px) saturate(180%) !important;
+                border-radius: 6px !important;
+                z-index: -1 !important;
+                pointer-events: none !important;
+                opacity: ${navOpacity} !important;
+              }
+              
+              .MuiListItemButton-root:not(.custom-proxy-card):hover {
+                position: relative !important;
+                isolation: isolate !important;
+                background-color: transparent !important;
+              }
+            `);
+          }
+          
+          return styles.join('\n');
+        })()}
       `;
 
       styleElement.innerHTML = (setting.css_injection || "") + globalStyles;
@@ -339,8 +1329,27 @@ export const useCustomTheme = () => {
     mode,
     theme_setting,
     i18n.language,
-    userBackgroundImage,
-    hasUserBackground,
+    backgroundType,
+    backgroundColor,
+    backgroundImage,
+    backgroundVideo,
+    backgroundOpacity,
+    backgroundBlur,
+    backgroundBrightness,
+    backgroundBlendMode,
+    backgroundSize,
+    backgroundPosition,
+    backgroundRepeat,
+    backgroundScale,
+    sidebarBgColor,
+    sidebarOpacity,
+    sidebarBlur,
+    headerBgColor,
+    headerOpacity,
+    headerBlur,
+    settingsBlur,
+    settingsOpacity,
+    componentStyles,
   ]);
 
   return { theme };

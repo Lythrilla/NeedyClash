@@ -215,6 +215,22 @@ pub struct IVerge {
 
     /// 启用外部控制器
     pub enable_external_controller: Option<bool>,
+
+    /// 收藏的节点列表
+    pub favorite_proxies: Option<Vec<String>>,
+
+    /// 流量配额提醒设置
+    pub traffic_quota_reminder: Option<ITrafficQuotaReminder>,
+}
+
+#[derive(Default, Debug, Clone, Deserialize, Serialize)]
+pub struct ITrafficQuotaReminder {
+    /// 是否启用流量提醒
+    pub enabled: Option<bool>,
+    /// 提醒阈值（百分比）
+    pub threshold: Option<u8>,
+    /// 最后一次提醒时间戳
+    pub last_reminder: Option<u64>,
 }
 
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
@@ -239,6 +255,30 @@ pub struct IVergeTheme {
 
     pub font_family: Option<String>,
     pub css_injection: Option<String>,
+    
+    // 窗口背景设置
+    pub background_type: Option<String>, // "color" | "image" | "video" | "none"
+    pub background_color: Option<String>, // 纯色背景
+    pub background_image: Option<String>, // 图片URL
+    pub background_video: Option<String>, // 视频URL
+    pub background_opacity: Option<f32>, // 背景不透明度 0.0-1.0
+    pub background_blur: Option<f32>, // 背景模糊度 0-100
+    pub background_brightness: Option<f32>, // 背景亮度 0-200
+    pub background_blend_mode: Option<String>, // CSS混合模式
+    pub background_size: Option<String>, // cover | contain | auto
+    pub background_position: Option<String>, // center | top | bottom | left | right
+    pub background_repeat: Option<String>, // no-repeat | repeat | repeat-x | repeat-y
+    pub background_scale: Option<f32>, // 背景缩放 1.0-1.5
+    
+    // 侧边栏样式设置
+    pub sidebar_background_color: Option<String>, // 侧边栏背景色
+    pub sidebar_opacity: Option<f32>, // 侧边栏不透明度 0.0-1.0
+    pub sidebar_blur: Option<f32>, // 侧边栏模糊度 0-50
+    
+    // Header样式设置
+    pub header_background_color: Option<String>, // Header背景色
+    pub header_opacity: Option<f32>, // Header不透明度 0.0-1.0
+    pub header_blur: Option<f32>, // Header模糊度 0-50
 }
 
 impl IVerge {
@@ -503,6 +543,8 @@ impl IVerge {
         patch!(enable_dns_settings);
         patch!(home_cards);
         patch!(enable_external_controller);
+        patch!(favorite_proxies);
+        patch!(traffic_quota_reminder);
     }
 
     /// 在初始化前尝试拿到单例端口的值
@@ -602,6 +644,8 @@ pub struct IVergeResponse {
     pub home_cards: Option<serde_json::Value>,
     pub enable_hover_jump_navigator: Option<bool>,
     pub enable_external_controller: Option<bool>,
+    pub favorite_proxies: Option<Vec<String>>,
+    pub traffic_quota_reminder: Option<ITrafficQuotaReminder>,
 }
 
 impl From<IVerge> for IVergeResponse {
@@ -677,6 +721,8 @@ impl From<IVerge> for IVergeResponse {
             home_cards: verge.home_cards,
             enable_hover_jump_navigator: verge.enable_hover_jump_navigator,
             enable_external_controller: verge.enable_external_controller,
+            favorite_proxies: verge.favorite_proxies,
+            traffic_quota_reminder: verge.traffic_quota_reminder,
         }
     }
 }

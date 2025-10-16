@@ -201,7 +201,7 @@ export const LayoutViewer = forwardRef<DialogRef>((props, ref) => {
             onChange={(value) => onChangeData({ menu_icon: value })}
             onGuard={(value) => patchVerge({ menu_icon: value })}
           >
-            <Select size="small" sx={{ width: 140, "> div": { py: "7.5px" } }}>
+            <Select className="custom-select" size="small" sx={{ width: 140, "> div": { py: "7.5px" } }}>
               <MenuItem value="monochrome">{t("Monochrome")}</MenuItem>
               <MenuItem value="colorful">{t("Colorful")}</MenuItem>
               <MenuItem value="disable">{t("Disable")}</MenuItem>
@@ -220,6 +220,7 @@ export const LayoutViewer = forwardRef<DialogRef>((props, ref) => {
               onGuard={(e) => patchVerge({ tray_icon: e })}
             >
               <Select
+                className="custom-select"
                 size="small"
                 sx={{ width: 140, "> div": { py: "7.5px" } }}
               >

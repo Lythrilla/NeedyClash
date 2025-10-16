@@ -2,6 +2,8 @@ import { Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import React, { ReactNode } from "react";
 
+import { useVerge } from "@/hooks/use-verge";
+
 import { BaseErrorBoundary } from "./base-error-boundary";
 
 interface Props {
@@ -15,8 +17,11 @@ interface Props {
 export const BasePage: React.FC<Props> = (props) => {
   const { title, header, contentStyle, full, children } = props;
   const theme = useTheme();
+  const { verge } = useVerge();
 
   const isDark = theme.palette.mode === "dark";
+  const backgroundType = verge?.theme_setting?.background_type || "none";
+  const hasCustomBackground = backgroundType !== "none";
 
   return (
     <BaseErrorBoundary>
@@ -38,11 +43,17 @@ export const BasePage: React.FC<Props> = (props) => {
 
         <div
           className={full ? "base-container no-padding" : "base-container"}
-          style={{ backgroundColor: isDark ? "#0F172A" : "#F8FAFC" }}
+          style={{ 
+            backgroundColor: hasCustomBackground 
+              ? "transparent" 
+              : (isDark ? "#282828" : "#F8FAFC")
+          }}
         >
           <section
             style={{
-              backgroundColor: isDark ? "#0F172A" : "#F8FAFC",
+              backgroundColor: hasCustomBackground 
+                ? "transparent" 
+                : (isDark ? "#282828" : "#F8FAFC"),
             }}
           >
             <div className="base-content" style={contentStyle}>

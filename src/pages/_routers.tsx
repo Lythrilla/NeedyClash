@@ -7,6 +7,8 @@ import FilterListSharpIcon from "@mui/icons-material/FilterListSharp";
 import TerminalSharpIcon from "@mui/icons-material/TerminalSharp";
 import VpnKeySharpIcon from "@mui/icons-material/VpnKeySharp";
 import TuneSharpIcon from "@mui/icons-material/TuneSharp";
+import ArticleSharpIcon from "@mui/icons-material/ArticleSharp";
+import BarChartSharpIcon from "@mui/icons-material/BarChartSharp";
 
 import ConnectionsSvg from "@/assets/image/itemicon/connections.svg?react";
 import HomeSvg from "@/assets/image/itemicon/home.svg?react";
@@ -25,6 +27,7 @@ import ProfilesPage from "./profiles";
 import ProxiesPage from "./proxies";
 import RulesPage from "./rules";
 import SettingsPage from "./settings";
+import TrafficAnalyticsPage from "./traffic-analytics";
 import UnlockPage from "./unlock";
 
 export const routers = [
@@ -43,7 +46,7 @@ export const routers = [
   {
     label: "Label-Profiles",
     path: "/profile",
-    icon: [<DataObjectSharpIcon key="mui" />, <ProfilesSvg key="svg" />],
+    icon: [<ArticleSharpIcon key="mui" />, <ProfilesSvg key="svg" />],
     element: <ProfilesPage />,
   },
   {
@@ -51,6 +54,12 @@ export const routers = [
     path: "/connections",
     icon: [<NetworkCheckSharpIcon key="mui" />, <ConnectionsSvg key="svg" />],
     element: <ConnectionsPage />,
+  },
+  {
+    label: "Label-Analytics",
+    path: "/analytics",
+    icon: [<BarChartSharpIcon key="mui" />, <ConnectionsSvg key="svg" />],
+    element: <TrafficAnalyticsPage />,
   },
   {
     label: "Label-Rules",

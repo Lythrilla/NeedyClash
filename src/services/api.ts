@@ -55,11 +55,15 @@ interface IpInfo {
   timezone: string;
 }
 
+// IP检测服务响应数据结构 - 使用灵活的类型定义以支持不同API
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ServiceResponse = Record<string, any>;
+
 // IP检测服务配置
 interface ServiceConfig {
   url: string;
-  mapping: (data: any) => IpInfo;
-  timeout?: number; // 保留timeout字段（如有需要）
+  mapping: (data: ServiceResponse) => IpInfo;
+  timeout?: number; 
 }
 
 // 可用的IP检测服务列表及字段映射
@@ -130,15 +134,18 @@ const IP_CHECK_SERVICES: ServiceConfig[] = [
   },
 ];
 
-// 随机性服务列表洗牌函数
-function shuffleServices() {
-  // 过滤无效服务并确保每个元素符合ServiceConfig接口
+/**
+ * Shuffle IP check services using Fisher-Yates algorithm
+ * Simplified version with single shuffle pass for better performance
+ */
+function shuffleServices(): ServiceConfig[] {
+  // Filter invalid services and ensure type safety
   const validServices = IP_CHECK_SERVICES.filter(
     (service): service is ServiceConfig =>
       service !== null &&
       service !== undefined &&
       typeof service.url === "string" &&
-      typeof service.mapping === "function", // 添加对mapping属性的检查
+      typeof service.mapping === "function",
   );
 
   if (validServices.length === 0) {
@@ -146,45 +153,22 @@ function shuffleServices() {
     return [];
   }
 
-  // 使用单一Fisher-Yates洗牌算法，增强随机性
+  // Fisher-Yates shuffle algorithm - single pass is sufficient
   const shuffled = [...validServices];
   const length = shuffled.length;
 
-  // 使用多个种子进行多次洗牌
-  const seeds = [Math.random(), Date.now() / 1000, performance.now() / 1000];
-
-  for (const seed of seeds) {
-    const prng = createPrng(seed);
-
-    // Fisher-Yates洗牌算法
-    for (let i = length - 1; i > 0; i--) {
-      const j = Math.floor(prng() * (i + 1));
-
-      // 使用临时变量进行交换，避免解构赋值可能的问题
-      const temp = shuffled[i];
-      shuffled[i] = shuffled[j];
-      shuffled[j] = temp;
-    }
+  for (let i = length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    
+    // Swap elements
+    const temp = shuffled[i];
+    shuffled[i] = shuffled[j];
+    shuffled[j] = temp;
   }
 
   return shuffled;
 }
 
-// 创建一个简单的随机数生成器
-function createPrng(seed: number): () => number {
-  // 使用xorshift32算法
-  let state = seed >>> 0;
-
-  // 如果种子为0，设置一个默认值
-  if (state === 0) state = 123456789;
-
-  return function () {
-    state ^= state << 13;
-    state ^= state >>> 17;
-    state ^= state << 5;
-    return (state >>> 0) / 4294967296;
-  };
-}
 
 // 获取当前IP和地理位置信息
 export const getIpInfo = async (): Promise<IpInfo> => {

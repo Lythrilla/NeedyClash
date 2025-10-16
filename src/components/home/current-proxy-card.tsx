@@ -13,6 +13,7 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
+  Chip,
   IconButton,
   MenuItem,
   Select,
@@ -20,6 +21,7 @@ import {
   Tooltip,
   Typography,
   alpha,
+  useTheme,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import React from "react";
@@ -131,7 +133,7 @@ export const CurrentProxyCard = () => {
       group: string;
       proxy: string;
     };
-    displayProxy: any;
+    displayProxy: IProxyItem | null;
   };
 
   const [state, setState] = useState<ProxyState>({
@@ -515,7 +517,7 @@ export const CurrentProxyCard = () => {
     localStorage.setItem(STORAGE_KEY_SORT_TYPE, newSortType.toString());
   }, [sortType]);
 
-  // 延迟测试
+  // Latency test handler
   const handleCheckDelay = useLockFn(async () => {
     const groupName = state.selection.group;
     if (!groupName || isDirectMode) return;
@@ -531,11 +533,11 @@ export const CurrentProxyCard = () => {
     if (isGlobalMode && proxies?.global) {
       // 全局模式
       const allProxies = proxies.global.all
-        .filter((p: any) => {
+        .filter((p: string | { name: string }) => {
           const name = typeof p === "string" ? p : p.name;
           return name !== "DIRECT" && name !== "REJECT";
         })
-        .map((p: any) => (typeof p === "string" ? p : p.name));
+        .map((p: string | { name: string }) => (typeof p === "string" ? p : p.name));
 
       allProxies.forEach((name: string) => {
         const proxy = state.proxyData.records[name];
@@ -564,7 +566,7 @@ export const CurrentProxyCard = () => {
       `[CurrentProxyCard] 找到代理数量: ${proxyNames.length}, 提供者数量: ${providers.size}`,
     );
 
-    // 测试提供者的节点
+    // Test provider proxies
     if (providers.size > 0) {
       console.log(`[CurrentProxyCard] 开始测试提供者节点`);
       await Promise.allSettled(
@@ -572,7 +574,7 @@ export const CurrentProxyCard = () => {
       );
     }
 
-    // 测试非提供者的节点
+    // Test non-provider proxies
     if (proxyNames.length > 0) {
       const url = delayManager.getUrl(groupName);
       console.log(`[CurrentProxyCard] 测试URL: ${url}, 超时: ${timeout}ms`);
@@ -638,11 +640,11 @@ export const CurrentProxyCard = () => {
     }
     if (isGlobalMode && proxies?.global) {
       const options = proxies.global.all
-        .filter((p: any) => {
+        .filter((p: string | { name: string }) => {
           const name = typeof p === "string" ? p : p.name;
           return name !== "DIRECT" && name !== "REJECT";
         })
-        .map((p: any) => ({
+        .map((p: string | { name: string }) => ({
           name: typeof p === "string" ? p : p.name,
         }));
 

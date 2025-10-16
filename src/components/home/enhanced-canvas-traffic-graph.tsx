@@ -87,8 +87,7 @@ const displayDataReducer = (
 ): ITrafficDataPoint[] => payload;
 
 /**
- * 稳定版Canvas流量图表组件
- * 修复闪烁问题，添加时间轴显示
+ * Canvas流量图表
  */
 export const EnhancedCanvasTrafficGraph = memo(
   function EnhancedCanvasTrafficGraph({
@@ -97,7 +96,7 @@ export const EnhancedCanvasTrafficGraph = memo(
     const theme = useTheme();
     const { t } = useTranslation();
 
-    // 使用增强版全局流量数据管理
+    // Global traffic data management with enhanced monitoring
     const { dataPoints, getDataForTimeRange, samplerStats } =
       useTrafficGraphDataEnhanced();
 

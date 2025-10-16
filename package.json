@@ -72,10 +72,11 @@
     "react-monaco-editor": "0.59.0",
     "react-router-dom": "7.9.4",
     "react-virtuoso": "^4.14.1",
+    "recharts": "^3.2.1",
     "swr": "^2.3.6",
+    "tauri-plugin-mihomo-api": "git+https://github.com/clash-verge-rev/tauri-plugin-mihomo",
     "types-pac": "^1.0.3",
-    "zustand": "^5.0.8",
-    "tauri-plugin-mihomo-api": "git+https://github.com/clash-verge-rev/tauri-plugin-mihomo"
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@actions/github": "^6.0.1",

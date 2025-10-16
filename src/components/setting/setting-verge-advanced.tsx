@@ -155,7 +155,7 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
           />
         }
       >
-        <Typography sx={{ py: "7px", pr: 1 }}>v{version}</Typography>
+        <Typography sx={{ py: "5.5px", pr: 1, fontSize: "13px" }}>v{version}</Typography>
       </SettingItem>
     </SettingList>
   );

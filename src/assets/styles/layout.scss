@@ -2,99 +2,113 @@
   width: 100%;
   height: 100vh;
   display: flex;
-  flex-direction: column; /* 纵向布局，为标题栏预留 */
+  flex-direction: row; /* 横向布局：侧边栏 + 右侧区域 */
   overflow: hidden;
+  position: relative; 
 
-  .layout-content {
-    /* 现代化布局容器 */
+  /* 侧边栏 - 固定定位从顶部开始 */
+  .layout-content__left {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 180px;
+    height: 100vh;
     display: flex;
-    flex-direction: row; /* 横向布局：侧边栏 + 主内容 */
-    flex: 1;
+    padding: 16px 35px;
+    flex-direction: column;
+    gap: 8px;
+    box-sizing: border-box;
+    background: transparent;
+    border-right: 1px solid var(--border-color);
     overflow: hidden;
+    transition: border-color 0.2s ease;
+    z-index: 100; /* 确保在其他内容之上 */
 
-    &__left {
-      /* 极简响应式侧边栏 */
-      flex: 0 0 180px;
-      display: flex;
-      height: 100%;
-      padding: 12px 8px;
-      flex-direction: column;
-      gap: 6px;
-      box-sizing: border-box;
-      background: transparent;
-      border-right: 1px solid var(--border-color);
+    .the-logo {
+      /* 现代Logo区域 */
       position: relative;
-      overflow: hidden;
+      flex: 0 0 auto;
+      display: flex;
+      height: auto;
+      padding: 8px;
+      margin-bottom: 8px;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
 
-      .the-logo {
-        /* 极简Logo区域 */
-        position: relative;
-        flex: 0 0 auto;
+      &:hover {
+        background-color: var(--background-color-alpha);
+      }
+
+      .logo-wrapper {
         display: flex;
-        height: auto;
-        padding: 2px;
-        margin-bottom: 0;
-        flex-direction: column;
         align-items: center;
-        gap: 4px;
-
-        .logo-wrapper {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-        }
-
-        img,
-        svg {
-          width: 24px;
-          height: 24px;
-          pointer-events: none;
-          opacity: 0.8;
-        }
-
-        .logo-text {
-          font-size: 12px;
-          font-weight: 400;
-          letter-spacing: 0;
-          opacity: 0.6;
-        }
+        justify-content: center;
+        gap: 8px;
       }
 
-      .the-menu {
-        /* 可滚动菜单列表 */
-        flex: 1 1 auto; /* 允许弹性增长和滚动 */
-        overflow-y: auto; /* 启用垂直滚动 */
-        overflow-x: hidden;
-        margin: 0;
-        padding: 0;
-        
-        /* 优化滚动条样式 */
-        &::-webkit-scrollbar {
-          width: 4px;
-        }
-        &::-webkit-scrollbar-thumb {
-          background: var(--scroller-color);
-          border-radius: 2px;
-        }
-        &::-webkit-scrollbar-track {
-          background: transparent;
-        }
+      img,
+      svg {
+        width: 28px;
+        height: 28px;
+        pointer-events: none;
+        opacity: 0.9;
+        transition: opacity 0.2s ease;
       }
 
-      .the-traffic {
-        /* 紧凑流量显示 */
-        flex: 0 0 auto;
-        padding: 8px 0;
-        margin-top: auto;
-        border-top: 1px solid var(--border-color);
-
-        > div {
-          margin: 0;
-          padding: 0;
-        }
+      .logo-text {
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        opacity: 0.7;
       }
     }
+
+    .the-menu {
+      /* 可滚动菜单列表 */
+      flex: 1 1 auto; /* 允许弹性增长和滚动 */
+      overflow-y: auto; /* 启用垂直滚动 */
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      
+      /* 隐藏滚动条但保持滚动功能 */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      
+      &::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+      }
+    }
+
+    .the-traffic {
+      /* 现代流量显示 */
+      flex: 0 0 auto;
+      padding: 12px 8px;
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: transparent;
+      }
+
+      > div {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+
+  .layout-content {
+    /* 右侧区域：标题栏 + 主内容 */
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
 
     &__right {
       /* 主内容区域 */
@@ -147,10 +161,6 @@
       box-sizing: border-box;
       height: 36px;
       border-bottom: 1px solid var(--divider-color);
-    }
-
-    .layout-content__left {
-      padding-top: 5px;
     }
 
     .layout-content__right .the-content {

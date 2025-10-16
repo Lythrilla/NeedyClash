@@ -54,14 +54,9 @@ const SettingPage = () => {
                 size="small"
                 onClick={toGithubDoc}
                 sx={{
-                  width: 32,
-                  height: 32,
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    bgcolor: "primary.main",
-                    color: "primary.contrastText",
-                    transform: "scale(1.05)",
-                  },
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
                 }}
               >
                 <HelpOutlineRounded sx={{ fontSize: 18 }} />
@@ -72,14 +67,9 @@ const SettingPage = () => {
                 size="small"
                 onClick={toTelegramChannel}
                 sx={{
-                  width: 32,
-                  height: 32,
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    bgcolor: "info.main",
-                    color: "info.contrastText",
-                    transform: "scale(1.05)",
-                  },
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
                 }}
               >
                 <Telegram sx={{ fontSize: 18 }} />
@@ -90,14 +80,9 @@ const SettingPage = () => {
                 size="small"
                 onClick={toGithubRepo}
                 sx={{
-                  width: 32,
-                  height: 32,
-                  transition: "all 0.2s",
-                  "&:hover": {
-                    bgcolor: "text.primary",
-                    color: "background.paper",
-                    transform: "scale(1.05)",
-                  },
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
                 }}
               >
                 <GitHub sx={{ fontSize: 18 }} />
@@ -141,19 +126,26 @@ const SettingPage = () => {
             }}
           >
             <Box
+              className="settings-section"
               sx={{
+                borderBottom: (theme) =>
+                  `1px solid ${
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(0, 0, 0, 0.04)"
+                  }`,
                 pr: { xs: 1.5, sm: 2 },
-                pt: { xs: 2, sm: 2.5 },
-                pb: { xs: 2, sm: 2.5 },
+                pb: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingSystem onError={onError} />
             </Box>
 
             <Box
+              className="settings-section"
               sx={{
                 pr: { xs: 1.5, sm: 2 },
-                pb: { xs: 2, sm: 2.5 },
+                pt: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingClash onError={onError} />
@@ -169,19 +161,26 @@ const SettingPage = () => {
             }}
           >
             <Box
+              className="settings-section"
               sx={{
-                pl: { xs: 1.5, sm: 2, md: 3 },
-                pt: { xs: 2, sm: 2.5 },
-                pb: { xs: 2, sm: 2.5 },
+                borderBottom: (theme) =>
+                  `1px solid ${
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(0, 0, 0, 0.04)"
+                  }`,
+                pl: { xs: 1.5, sm: 2 },
+                pb: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingVergeBasic onError={onError} />
             </Box>
 
             <Box
+              className="settings-section"
               sx={{
-                pl: { xs: 1.5, sm: 2, md: 3 },
-                pb: { xs: 2, sm: 2.5 },
+                pl: { xs: 1.5, sm: 2 },
+                pt: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingVergeAdvanced onError={onError} />

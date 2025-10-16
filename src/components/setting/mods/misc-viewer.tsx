@@ -90,7 +90,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           <ListItemText primary={t("App Log Level")} />
           <Select
             size="small"
-            sx={{ width: 100, "> div": { py: "7.5px" } }}
+            sx={{ width: 100, "> div": { py: "5.5px", fontSize: "13px" } }}
             value={values.appLogLevel}
             onChange={(e) =>
               setValues((v) => ({
@@ -220,7 +220,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           <ListItemText primary={t("Proxy Layout Columns")} />
           <Select
             size="small"
-            sx={{ width: 160, "> div": { py: "7.5px" } }}
+            sx={{ width: 160, "> div": { py: "5.5px", fontSize: "13px" } }}
             value={values.proxyLayoutColumn}
             onChange={(e) =>
               setValues((v) => ({
@@ -244,7 +244,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           <ListItemText primary={t("Auto Log Clean")} />
           <Select
             size="small"
-            sx={{ width: 160, "> div": { py: "7.5px" } }}
+            sx={{ width: 160, "> div": { py: "5.5px", fontSize: "13px" } }}
             value={values.autoLogClean}
             onChange={(e) =>
               setValues((v) => ({

@@ -33,6 +33,7 @@ pub async fn get_profiles() -> CmdResult<IProfiles> {
         IProfiles {
             current: latest.current.clone(),
             items: latest.items.clone(),
+            groups: latest.groups.clone(),
         }
     })
     .await;
@@ -54,6 +55,7 @@ pub async fn get_profiles() -> CmdResult<IProfiles> {
         IProfiles {
             current: data.current.clone(),
             items: data.items.clone(),
+            groups: data.groups.clone(),
         }
     })
     .await;
@@ -477,6 +479,7 @@ pub async fn patch_profiles_config(profiles: IProfiles) -> CmdResult<bool> {
                 let restore_profiles = IProfiles {
                     current: Some(prev_profile),
                     items: None,
+                    groups: None,
                 };
                 // 静默恢复，不触发验证
                 wrap_err!({
@@ -538,6 +541,7 @@ pub async fn patch_profiles_config(profiles: IProfiles) -> CmdResult<bool> {
                 let restore_profiles = IProfiles {
                     current: Some(prev_profile),
                     items: None,
+                    groups: None,
                 };
                 wrap_err!({
                     Config::profiles()
@@ -563,6 +567,7 @@ pub async fn patch_profiles_config_by_profile_index(profile_index: String) -> Cm
     let profiles = IProfiles {
         current: Some(profile_index),
         items: None,
+        groups: None,
     };
     patch_profiles_config(profiles).await
 }

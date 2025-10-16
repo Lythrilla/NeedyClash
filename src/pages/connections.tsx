@@ -152,20 +152,15 @@ const ConnectionsPage = () => {
           >
             TRAFFIC
           </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              alignItems: "center",
-              fontSize: "12px",
-              color: "text.secondary",
-            }}
-          >
-            <Box>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center", fontSize: "12px" }}>
+            <Box sx={{ color: "success.main", fontWeight: 600 }}>
               ↓ {parseTraffic(displayData.downloadTotal)}
             </Box>
-            <Box>
+            <Box sx={{ color: "info.main", fontWeight: 600 }}>
               ↑ {parseTraffic(displayData.uploadTotal)}
+            </Box>
+            <Box sx={{ color: "text.secondary", fontWeight: 600 }}>
+              Σ {parseTraffic((displayData.downloadTotal || 0) + (displayData.uploadTotal || 0))}
             </Box>
           </Box>
 

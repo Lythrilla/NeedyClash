@@ -501,6 +501,7 @@ export const ProfileItem = (props: Props) => {
       }}
     >
       <ProfileBox
+        className="custom-profile-card"
         aria-selected={selected}
         onClick={(e) => {
           // 如果正在激活中，阻止重复点击

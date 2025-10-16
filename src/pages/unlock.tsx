@@ -4,6 +4,11 @@ import {
   IconButton,
   Tooltip,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
   TextField,
   Select,
   MenuItem,
@@ -14,12 +19,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Virtuoso } from "react-virtuoso";
 
-import { BaseDialog, BaseEmpty, BasePage } from "@/components/base";
-import {
-  EnhancedDialogTitle,
-  EnhancedFormGroup,
-  EnhancedFormItem,
-} from "@/components/setting/mods/enhanced-dialog-components";
+import { BaseEmpty, BasePage } from "@/components/base";
 import { UnlockItem as UnlockItemComponent } from "@/components/unlock/unlock-item";
 import { showNotice } from "@/services/noticeService";
 
@@ -431,7 +431,7 @@ const UnlockPage = () => {
         />
       )}
 
-      {/* 添加测试项对话框 - 简化版 */}
+      {/* 添加测试项对话框 */}
       <Dialog
         open={dialogOpen}
         onClose={() => {
@@ -447,95 +447,237 @@ const UnlockPage = () => {
         PaperProps={{
           sx: {
             borderRadius: "12px",
-            minWidth: 420,
-            maxWidth: 480,
+            minWidth: 500,
+            maxWidth: 600,
           },
         }}
       >
         <DialogTitle
           sx={{
-            pb: 1.5,
-            px: 2.5,
-            pt: 2.5,
+            pb: 2,
+            borderBottom: (theme) =>
+              `1px solid ${
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.08)"
+                  : "rgba(0, 0, 0, 0.08)"
+              }`,
           }}
         >
-          <Typography sx={{ fontSize: "15px", fontWeight: 600 }}>
+          <Typography variant="h6" sx={{ fontSize: "15px", fontWeight: 600 }}>
             {t("Add Test Item")}
           </Typography>
         </DialogTitle>
 
-        <DialogContent sx={{ px: 2.5, py: 2 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <DialogContent sx={{ px: 3, py: 2.5, overflow: "visible" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
             {/* 名称 */}
-            <TextField
-              autoFocus
-              fullWidth
-              label={t("Item Name")}
-              size="small"
-              required
-              value={newItem.name}
-              onChange={(e) =>
-                setNewItem({ ...newItem, name: e.target.value })
-              }
-              onKeyDown={(e) => {
-                if (
-                  e.key === "Enter" &&
-                  newItem.name.trim() &&
-                  newItem.test_url.trim()
-                ) {
-                  handleAddItem();
-                }
-              }}
-              placeholder={t("Enter streaming service name")}
+            <Box
               sx={{
-                "& .MuiOutlinedInput-root": {
-                  fontSize: "13px",
-                  borderRadius: "8px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "13px",
-                },
+                display: "grid",
+                gridTemplateColumns: "120px 1fr",
+                gap: 2,
+                alignItems: "center",
               }}
-            />
+            >
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "text.secondary",
+                }}
+              >
+                {t("Item Name")} *
+              </Typography>
+              <TextField
+                autoFocus
+                size="small"
+                value={newItem.name}
+                onChange={(e) =>
+                  setNewItem({ ...newItem, name: e.target.value })
+                }
+                placeholder={t("Enter streaming service name")}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    fontSize: "13px",
+                    borderRadius: "8px",
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.02)"
+                        : "rgba(0, 0, 0, 0.02)",
+                  },
+                }}
+              />
+            </Box>
+
+            {/* 描述 */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr",
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "text.secondary",
+                }}
+              >
+                {t("Description")}
+              </Typography>
+              <TextField
+                size="small"
+                value={newItem.description}
+                onChange={(e) =>
+                  setNewItem({ ...newItem, description: e.target.value })
+                }
+                placeholder={t("Optional description")}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    fontSize: "13px",
+                    borderRadius: "8px",
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.02)"
+                        : "rgba(0, 0, 0, 0.02)",
+                  },
+                }}
+              />
+            </Box>
 
             {/* 测试 URL */}
-            <TextField
-              fullWidth
-              label={t("Test URL")}
-              size="small"
-              required
-              value={newItem.test_url}
-              onChange={(e) =>
-                setNewItem({ ...newItem, test_url: e.target.value })
-              }
-              onKeyDown={(e) => {
-                if (
-                  e.key === "Enter" &&
-                  newItem.name.trim() &&
-                  newItem.test_url.trim()
-                ) {
-                  handleAddItem();
-                }
-              }}
-              placeholder="https://example.com/api/check"
+            <Box
               sx={{
-                "& .MuiOutlinedInput-root": {
+                display: "grid",
+                gridTemplateColumns: "120px 1fr",
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "text.secondary",
+                }}
+              >
+                {t("Test URL")} *
+              </Typography>
+              <TextField
+                size="small"
+                value={newItem.test_url}
+                onChange={(e) =>
+                  setNewItem({ ...newItem, test_url: e.target.value })
+                }
+                placeholder="https://example.com/api/check"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    fontSize: "13px",
+                    borderRadius: "8px",
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.02)"
+                        : "rgba(0, 0, 0, 0.02)",
+                  },
+                }}
+              />
+            </Box>
+
+            {/* 请求方法 */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr",
+                gap: 2,
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "text.secondary",
+                }}
+              >
+                {t("Request Method")}
+              </Typography>
+              <Select
+                size="small"
+                value={newItem.test_method}
+                onChange={(e) =>
+                  setNewItem({ ...newItem, test_method: e.target.value })
+                }
+                sx={{
                   fontSize: "13px",
                   borderRadius: "8px",
-                },
-                "& .MuiInputLabel-root": {
-                  fontSize: "13px",
-                },
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.02)"
+                      : "rgba(0, 0, 0, 0.02)",
+                }}
+              >
+                <MenuItem value="GET">GET</MenuItem>
+                <MenuItem value="POST">POST</MenuItem>
+                <MenuItem value="HEAD">HEAD</MenuItem>
+                <MenuItem value="OPTIONS">OPTIONS</MenuItem>
+              </Select>
+            </Box>
+
+            {/* 期望响应 */}
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr",
+                gap: 2,
+                alignItems: "start",
               }}
-            />
+            >
+              <Typography
+                sx={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "text.secondary",
+                  pt: 1,
+                }}
+              >
+                {t("Expected Response")}
+              </Typography>
+              <TextField
+                size="small"
+                value={newItem.expected_response}
+                onChange={(e) =>
+                  setNewItem({ ...newItem, expected_response: e.target.value })
+                }
+                placeholder={t("Expected response text or status code")}
+                multiline
+                rows={3}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    fontSize: "13px",
+                    borderRadius: "8px",
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.02)"
+                        : "rgba(0, 0, 0, 0.02)",
+                  },
+                }}
+              />
+            </Box>
           </Box>
         </DialogContent>
 
         <DialogActions
           sx={{
-            px: 2.5,
+            px: 3,
             py: 2,
-            gap: 1,
+            borderTop: (theme) =>
+              `1px solid ${
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.08)"
+                  : "rgba(0, 0, 0, 0.08)"
+              }`,
           }}
         >
           <Button
@@ -549,10 +691,6 @@ const UnlockPage = () => {
                 expected_response: "",
               });
             }}
-            sx={{
-              textTransform: "none",
-              fontSize: "13px",
-            }}
           >
             {t("Cancel")}
           </Button>
@@ -560,11 +698,6 @@ const UnlockPage = () => {
             variant="contained"
             onClick={handleAddItem}
             disabled={!newItem.name.trim() || !newItem.test_url.trim()}
-            sx={{
-              textTransform: "none",
-              fontSize: "13px",
-              fontWeight: 600,
-            }}
           >
             {t("Add")}
           </Button>

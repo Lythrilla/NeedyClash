@@ -87,7 +87,7 @@ class DelayManager {
       `[DelayManager] 开始测试延迟，代理: ${name}, 组: ${group}, 超时: ${timeout}ms`,
     );
 
-    // 先将状态设置为测试中
+    // Set status to testing
     this.setDelay(name, group, -2);
 
     let delay = -1;
@@ -141,7 +141,7 @@ class DelayManager {
       `[DelayManager] 批量测试延迟开始，组: ${group}, 数量: ${nameList.length}, 并发数: ${concurrency}`,
     );
     const names = nameList.filter(Boolean);
-    // 设置正在延迟测试中
+    // Set all proxies to testing state
     names.forEach((name) => this.setDelay(name, group, -2));
 
     let index = 0;
@@ -153,7 +153,7 @@ class DelayManager {
       if (!currName) return;
 
       try {
-        // 确保API调用前状态为测试中
+        // Ensure proxy is in testing state before API call
         this.setDelay(currName, group, -2);
 
         // 添加一些随机延迟，避免所有请求同时发出和返回

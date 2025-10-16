@@ -5,7 +5,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  alpha,
   useTheme,
   Typography,
 } from "@mui/material";
@@ -22,7 +21,7 @@ interface ItemProps {
   onClick?: () => void | Promise<any>;
 }
 
-// 扁平化现代设计的设置项
+// 精致的设置项组件 - 极简现代设计
 export const SettingItem: React.FC<ItemProps> = ({
   label,
   extra,
@@ -32,16 +31,17 @@ export const SettingItem: React.FC<ItemProps> = ({
 }) => {
   const theme = useTheme();
   const clickable = !!onClick;
+  const isDark = theme.palette.mode === "dark";
 
   const primary = (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
       <Typography
         component="span"
         sx={{
-          fontSize: "13.5px",
-          fontWeight: 400,
+          fontSize: "13px",
+          fontWeight: 500,
           color: "text.primary",
-          letterSpacing: "-0.005em",
+          letterSpacing: "-0.01em",
         }}
       >
         {label}
@@ -66,10 +66,14 @@ export const SettingItem: React.FC<ItemProps> = ({
     <ListItem
       disablePadding
       sx={{
-        borderBottom: `1px solid ${alpha(
-          theme.palette.mode === "dark" ? "#fff" : "#000",
-          0.05,
-        )}`,
+        mb: 0,
+        borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
+        transition: "background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+        "&:hover": {
+          bgcolor: isDark
+            ? "rgba(255, 255, 255, 0.02)"
+            : "rgba(0, 0, 0, 0.015)",
+        },
         "&:last-child": {
           borderBottom: "none",
         },
@@ -79,12 +83,11 @@ export const SettingItem: React.FC<ItemProps> = ({
         onClick={handleClick}
         disabled={isLoading}
         sx={{
-          py: 1.75,
+          py: 1.25,
           px: 0,
-          minHeight: 52,
-          transition: "background-color 0.2s ease",
+          minHeight: 42,
           "&:hover": {
-            bgcolor: alpha(theme.palette.primary.main, 0.04),
+            bgcolor: "transparent",
           },
           "&.Mui-disabled": {
             opacity: 0.5,
@@ -94,27 +97,32 @@ export const SettingItem: React.FC<ItemProps> = ({
         <ListItemText
           primary={primary}
           secondary={secondary}
-          sx={{ my: 0 }}
           secondaryTypographyProps={{
             sx: {
-              fontSize: "11.5px",
+              fontSize: "11px",
               mt: 0.5,
               color: "text.secondary",
+              opacity: 0.7,
             },
           }}
         />
         {isLoading ? (
           <CircularProgress
+            color="inherit"
             size={16}
-            sx={{ ml: 2, color: "text.secondary" }}
+            sx={{ ml: 1, opacity: 0.6 }}
           />
         ) : (
           <ChevronRightRounded
             sx={{
               color: "text.secondary",
               opacity: 0.3,
-              fontSize: 20,
-              ml: 2,
+              fontSize: 18,
+              transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+              ".MuiListItemButton-root:hover &": {
+                opacity: 0.5,
+                transform: "translateX(2px)",
+              },
             }}
           />
         )}
@@ -123,42 +131,46 @@ export const SettingItem: React.FC<ItemProps> = ({
   ) : (
     <ListItem
       sx={{
-        py: 1.75,
+        py: 1.25,
         px: 0,
-        minHeight: 52,
+        mb: 0,
+        minHeight: 42,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        borderBottom: `1px solid ${alpha(
-          theme.palette.mode === "dark" ? "#fff" : "#000",
-          0.05,
-        )}`,
+        borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
+        transition: "background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+        "&:hover": {
+          bgcolor: isDark
+            ? "rgba(255, 255, 255, 0.015)"
+            : "rgba(0, 0, 0, 0.01)",
+        },
         "&:last-child": {
           borderBottom: "none",
-        },
-        transition: "background-color 0.2s ease",
-        "&:hover": {
-          bgcolor: alpha(theme.palette.primary.main, 0.02),
         },
       }}
     >
       <ListItemText
         primary={primary}
         secondary={secondary}
-        sx={{ flex: "1 1 auto", my: 0, mr: 3 }}
+        sx={{ flex: "1 1 auto", my: 0 }}
         secondaryTypographyProps={{
           sx: {
-            fontSize: "11.5px",
+            fontSize: "11px",
             mt: 0.5,
             color: "text.secondary",
+            opacity: 0.7,
           },
         }}
       />
       <Box
         sx={{
+          ml: 2.5,
           display: "flex",
           alignItems: "center",
-          flexShrink: 0,
+          "& .MuiSelect-root, & .MuiInputBase-root": {
+            transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+          },
         }}
       >
         {children}
@@ -167,7 +179,7 @@ export const SettingItem: React.FC<ItemProps> = ({
   );
 };
 
-// 精致优化的设置列表组件
+// 精致的设置列表组件 - 优雅的分组设计
 interface SettingListProps {
   title: string;
   icon?: ReactNode;
@@ -182,73 +194,87 @@ export const SettingList: React.FC<SettingListProps> = ({
   children,
 }) => {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   return (
     <Box sx={{ mb: 0 }}>
-      {/* 设置分组标题 - 精致风格 */}
+      {/* 设置分组标题 - 精致简洁 */}
       <Box
         sx={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: 1.25,
           mb: 2,
-          pb: 1.5,
-          borderBottom: `1px solid ${alpha(
-            theme.palette.mode === "dark" ? "#fff" : "#000",
-            0.06,
-          )}`,
+          pb: 1.25,
+          borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)"}`,
         }}
       >
-        {icon && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "primary.main",
-              bgcolor: alpha(theme.palette.primary.main, 0.08),
-              borderRadius: "8px",
-              p: 0.75,
-              mt: 0.25,
-              "& svg": {
-                fontSize: 18,
-              },
-            }}
-          >
-            {icon}
-          </Box>
-        )}
-        <Box sx={{ flex: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.25,
+            mb: description ? 0.75 : 0,
+          }}
+        >
+          {icon && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 20,
+                height: 20,
+                borderRadius: "6px",
+                bgcolor: isDark
+                  ? "rgba(255, 255, 255, 0.04)"
+                  : "rgba(0, 0, 0, 0.04)",
+                color: "text.secondary",
+                "& svg": {
+                  fontSize: 14,
+                  opacity: 0.8,
+                },
+              }}
+            >
+              {icon}
+            </Box>
+          )}
           <Typography
             sx={{
-              fontSize: "14px",
+              fontSize: "13.5px",
               fontWeight: 600,
               color: "text.primary",
               letterSpacing: "-0.02em",
-              lineHeight: 1.3,
-              mb: description ? 0.5 : 0,
             }}
           >
             {title}
           </Typography>
-          {description && (
-            <Typography
-              sx={{
-                fontSize: "11.5px",
-                color: "text.secondary",
-                lineHeight: 1.5,
-                opacity: 0.8,
-              }}
-            >
-              {description}
-            </Typography>
-          )}
         </Box>
+        {description && (
+          <Typography
+            sx={{
+              fontSize: "11px",
+              color: "text.secondary",
+              opacity: 0.65,
+              mt: 0.5,
+              ml: icon ? 4.5 : 0,
+              lineHeight: 1.4,
+            }}
+          >
+            {description}
+          </Typography>
+        )}
       </Box>
 
       {/* 设置项列表 */}
       <Box>
-        <List sx={{ p: 0 }}>{children}</List>
+        <List
+          sx={{
+            p: 0,
+            "& .MuiListItem-root:first-of-type": {
+              borderTop: `1px solid ${isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
+            },
+          }}
+        >
+          {children}
+        </List>
       </Box>
     </Box>
   );

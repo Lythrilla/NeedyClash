@@ -13,7 +13,7 @@ export const useTrafficData = () => {
   const trafficRef = useRef<TrafficRef>(null);
   const ws = useRef<MihomoWebSocket | null>(null);
   const wsFirstConnection = useRef<boolean>(true);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const response = useSWRSubscription<ITrafficItem, any, string | null>(
     subscriptKey,
@@ -63,7 +63,12 @@ export const useTrafficData = () => {
       }
 
       return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
         ws.current?.close();
+        ws.current = null;
       };
     },
     {

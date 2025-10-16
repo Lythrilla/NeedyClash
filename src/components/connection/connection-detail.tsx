@@ -225,7 +225,7 @@ const InnerConnectionDetail = ({ data, onClose }: InnerProps) => {
               label={t("Source")}
               value={`${metadata.sourceIP}:${metadata.sourcePort}`}
             />
-            <InfoRow label={t("Destination")} value={Destination} />
+            <InfoRow label={t("Destination")} value={Destination || "-"} />
             <InfoRow
               label={t("DestinationPort")}
               value={`${metadata.destinationPort}`}

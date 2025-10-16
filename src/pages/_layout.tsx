@@ -162,10 +162,19 @@ const Layout = () => {
   const { t } = useTranslation();
   const { theme } = useCustomTheme();
   const { verge } = useVerge();
-  const { language, start_page } = verge ?? {};
+  const { language, start_page, theme_setting } = verge ?? {};
   const { switchLanguage } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // 背景设置
+  const backgroundType = theme_setting?.background_type || "none";
+  const backgroundImage = theme_setting?.background_image || "";
+  const backgroundVideo = theme_setting?.background_video || "";
+  const backgroundScale = theme_setting?.background_scale || 1.0;
+  const backgroundOpacity = theme_setting?.background_opacity ?? 1;
+  const backgroundBlur = theme_setting?.background_blur ?? 0;
+  const backgroundBrightness = theme_setting?.background_brightness ?? 100;
   const matchedElement = useRoutes(routers);
   const routersEles = useMemo(() => {
     if (!matchedElement) {
@@ -201,6 +210,7 @@ const Layout = () => {
 
     let fadeTimer: number | null = null;
     let retryTimer: number | null = null;
+    let debugTimer: number | null = null;
     let attempts = 0;
     const maxAttempts = 50;
     let stopped = false;
@@ -606,6 +616,37 @@ const Layout = () => {
       }}
     >
       <ThemeProvider theme={theme}>
+        {/* 背景视频容器 - 实时响应缩放、模糊、透明度和亮度变化 */}
+        {backgroundType === "video" && backgroundVideo && (
+          <div 
+            id="background-video-container"
+            key={`video-${backgroundVideo}-${backgroundScale}-${backgroundBlur}-${backgroundOpacity}-${backgroundBrightness}`}
+          >
+            <video
+              id="background-video"
+              autoPlay
+              loop
+              muted
+              playsInline
+              src={backgroundVideo}
+              style={{ 
+                transform: `translate(-50%, -50%) scale(${backgroundScale})`,
+                opacity: backgroundOpacity,
+                filter: `blur(${backgroundBlur}px) brightness(${backgroundBrightness}%)`,
+                transition: 'transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease',
+              }}
+              onError={(e) => {
+                console.error("[Video Background] Error loading video:", e);
+                console.error("[Video Background] Video src:", backgroundVideo);
+              }}
+              onLoadedData={() => {
+                console.log("[Video Background] Video loaded successfully:", backgroundVideo);
+                console.log("[Video Background] Scale:", backgroundScale, "Blur:", backgroundBlur, "Opacity:", backgroundOpacity, "Brightness:", backgroundBrightness);
+              }}
+            />
+          </div>
+        )}
+        
         {/* 左侧底部窗口控制按钮 */}
         <NoticeManager />
         <div
@@ -642,7 +683,10 @@ const Layout = () => {
             }
           }}
           sx={[
-            ({ palette }) => ({ bgcolor: palette.background.default }),
+            ({ palette }) => ({
+              bgcolor: backgroundType !== "none" ? "transparent" : palette.background.default,
+              backgroundImage: "none",
+            }),
             OS === "linux"
               ? {
                   borderRadius: "8px",
@@ -652,47 +696,47 @@ const Layout = () => {
               : {},
           ]}
         >
-          {/* Custom titlebar */}
-          {customTitlebar}
-
-          {/* 全新左侧边栏布局 */}
-          <div className="layout-content">
-            {/* 渐变玻璃态侧边栏 */}
-            <div className="layout-content__left">
-              {/* Logo区域 */}
-              <div className="the-logo" data-tauri-drag-region="false">
-                <div className="logo-wrapper">
-                  <SvgIcon
-                    component={isDark ? iconDark : iconLight}
-                    sx={{ fontSize: 32 }}
-                    inheritViewBox
-                  />
-                  <LogoSvg
-                    fill={isDark ? "white" : "black"}
-                    style={{ height: "14px", width: "auto", opacity: 0.8 }}
-                  />
-                </div>
-                <UpdateButton className="the-newbtn" />
+          {/* 侧边栏 - 从顶部开始，固定定位 */}
+          <div className="layout-content__left">
+            {/* Logo区域 */}
+            <div className="the-logo" data-tauri-drag-region="false">
+              <div className="logo-wrapper">
+                <SvgIcon
+                  component={isDark ? iconDark : iconLight}
+                  sx={{ fontSize: 32 }}
+                  inheritViewBox
+                />
+                <LogoSvg
+                  fill={isDark ? "white" : "black"}
+                  style={{ height: "14px", width: "auto", opacity: 0.8 }}
+                />
               </div>
-
-              {/* 导航菜单 */}
-              <List className="the-menu">
-                {routers.map((router) => (
-                  <LayoutItem
-                    key={router.label}
-                    to={router.path}
-                    icon={router.icon}
-                  >
-                    {t(router.label)}
-                  </LayoutItem>
-                ))}
-              </List>
-
-              {/* 流量统计 */}
-              <div className="the-traffic">
-                <LayoutTraffic />
-              </div>
+              <UpdateButton className="the-newbtn" />
             </div>
+
+            {/* 导航菜单 */}
+            <List className="the-menu">
+              {routers.map((router) => (
+                <LayoutItem
+                  key={router.label}
+                  to={router.path}
+                  icon={router.icon}
+                >
+                  {t(router.label)}
+                </LayoutItem>
+              ))}
+            </List>
+
+            {/* 流量统计 */}
+            <div className="the-traffic">
+              <LayoutTraffic />
+            </div>
+          </div>
+
+          {/* 右侧区域：标题栏 + 主内容 */}
+          <div className="layout-content">
+            {/* Custom titlebar */}
+            {customTitlebar}
 
             {/* 主内容区域 */}
             <div className="layout-content__right">

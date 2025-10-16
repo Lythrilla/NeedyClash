@@ -9,6 +9,15 @@ use serde_yaml_ng::Mapping;
 use std::collections::HashSet;
 use tokio::fs;
 
+/// Profile Group
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct PrfGroup {
+    pub id: String,
+    pub name: String,
+    pub color: Option<String>,
+    pub icon: Option<String>,
+}
+
 /// Define the `profiles.yaml` schema
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
 pub struct IProfiles {
@@ -17,6 +26,10 @@ pub struct IProfiles {
 
     /// profile list
     pub items: Option<Vec<PrfItem>>,
+
+    /// profile groups
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub groups: Option<Vec<PrfGroup>>,
 }
 
 /// 清理结果
@@ -94,6 +107,11 @@ impl IProfiles {
             if items.iter().any(|e| e.uid == some_uid) {
                 self.current = some_uid;
             }
+        }
+
+        // 支持更新 groups
+        if patch.groups.is_some() {
+            self.groups = patch.groups;
         }
 
         Ok(())
@@ -207,6 +225,7 @@ impl IProfiles {
                 patch!(each, item, extra);
                 patch!(each, item, updated);
                 patch!(each, item, option);
+                patch!(each, item, group_id);
 
                 self.items = Some(items);
                 return self.save_file().await;

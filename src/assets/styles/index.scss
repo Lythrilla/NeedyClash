@@ -1,7 +1,6 @@
 @use "./layout.scss";
 @use "./page.scss";
 @use "./font.scss";
-@use "./select.scss";
 
 body {
   margin: 0;
@@ -17,17 +16,21 @@ body {
 }
 
 :root {
-  /* 极客扁平设计变量 */
-  --primary-main: #6366F1;
+  /* 现代化设计变量 - 优雅舒适 */
+  --primary-main: #7C3AED;
   --text-primary: #0F172A;
   --selection-color: #EEF2FF;
   --scroller-color: #9CA3AF;
-  --background-color: #FAFAFA; /* 更浅的背景 */
-  --background-color-alpha: rgba(99, 102, 241, 0.02);
-  --border-radius: 4px; /* 极简小圆角 */
-  --border-color: #E0E0E0; /* 更浅的边框 */
-  --divider-color: #E0E0E0;
+  --background-color: #F8FAFC; /* 清爽背景 */
+  --background-color-alpha: rgba(124, 58, 237, 0.05);
+  --border-radius: 8px; /* 柔和圆角 */
+  --border-color: #E2E8F0; /* 柔和边框 */
+  --divider-color: #E2E8F0;
   --spacing-unit: 8px;
+  
+  /* 暗色模式变量（通过JS动态设置） */
+  --card-background: #FFFFFF;
+  --card-hover-background: #F8FAFC;
 }
 
 ::selection {
@@ -35,22 +38,26 @@ body {
   background-color: var(--primary-main);
 }
 
-/* 极简滚动条 */
+/* 现代化滚动条 - 优雅舒适 */
 *::-webkit-scrollbar {
-  width: 4px; /* 极细滚动条 */
-  height: 4px;
+  width: 8px; /* 适中宽度 */
+  height: 8px;
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  border-radius: 0; /* 无圆角 */
+  border-radius: 4px; /* 柔和圆角 */
   background-color: var(--scroller-color);
-  transition: background-color 0.15s;
+  transition: background-color 0.2s ease;
 }
 *::-webkit-scrollbar-thumb:hover {
   background-color: #6B7280;
 }
 *::-webkit-scrollbar-corner {
   background-color: transparent;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
 }
 
 body {
@@ -62,6 +69,30 @@ body {
 //     background-color: rgba(18, 18, 18, 1);
 //   }
 // }
+
+/* 背景视频容器样式 */
+#background-video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+#background-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+}
 
 .user-none {
   user-select: none;

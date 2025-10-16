@@ -4,7 +4,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DialogRef } from "@/components/base";
+import { DialogRef, Switch } from "@/components/base";
 import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { useVerge } from "@/hooks/use-verge";
 import { routers } from "@/pages/_routers";
@@ -22,6 +22,7 @@ import { MiscViewer } from "./mods/misc-viewer";
 import { SettingItem, SettingList } from "./mods/setting-comp";
 import { ThemeModeSwitch } from "./mods/theme-mode-switch";
 import { ThemeViewer } from "./mods/theme-viewer";
+import { ThemeViewerEnhanced } from "./mods/theme-viewer-enhanced";
 import { UpdateViewer } from "./mods/update-viewer";
 
 interface Props {
@@ -61,15 +62,21 @@ const SettingVergeBasic = ({ onError }: Props) => {
     env_type,
     startup_script,
     start_page,
+    traffic_quota_reminder,
   } = verge ?? {};
+  
+  const reminderEnabled = traffic_quota_reminder?.enabled ?? false;
+  const reminderThreshold = traffic_quota_reminder?.threshold ?? 80;
   const configRef = useRef<DialogRef>(null);
   const hotkeyRef = useRef<DialogRef>(null);
   const miscRef = useRef<DialogRef>(null);
   const themeRef = useRef<DialogRef>(null);
+  const themeEnhancedRef = useRef<DialogRef>(null);
   const layoutRef = useRef<DialogRef>(null);
   const updateRef = useRef<DialogRef>(null);
   const backupRef = useRef<DialogRef>(null);
 
+  const onSwitchFormat = (_e: any, value: boolean) => value;
   const onChangeData = (patch: any) => {
     mutateVerge({ ...verge, ...patch }, false);
   };
@@ -86,6 +93,7 @@ const SettingVergeBasic = ({ onError }: Props) => {
       description={t("Language, theme, tray and interface settings")}
     >
       <ThemeViewer ref={themeRef} />
+      <ThemeViewerEnhanced ref={themeEnhancedRef} />
       <ConfigViewer ref={configRef} />
       <HotkeyViewer ref={hotkeyRef} />
       <MiscViewer ref={miscRef} />
@@ -101,24 +109,22 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ language: e })}
           onGuard={(e) => patchVerge({ language: e })}
         >
-          <Select size="small" sx={{ width: 110, "> div": { py: "7.5px" } }}>
-            {languageOptions.map(({ code, label }) => (
+          <Select 
+            className="custom-select"
+            size="small" 
+            sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
+            MenuProps={{
+              disablePortal: true,
+              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+              transformOrigin: { vertical: 'top', horizontal: 'left' },
+            }}
+          >
+            {languageOptions.map(({ code, label}) => (
               <MenuItem key={code} value={code}>
                 {label}
               </MenuItem>
             ))}
           </Select>
-        </GuardState>
-      </SettingItem>
-
-      <SettingItem label={t("Theme Mode")}>
-        <GuardState
-          value={theme_mode}
-          onCatch={onError}
-          onChange={(e) => onChangeData({ theme_mode: e })}
-          onGuard={(e) => patchVerge({ theme_mode: e })}
-        >
-          <ThemeModeSwitch />
         </GuardState>
       </SettingItem>
 
@@ -131,7 +137,16 @@ const SettingVergeBasic = ({ onError }: Props) => {
             onChange={(e) => onChangeData({ tray_event: e })}
             onGuard={(e) => patchVerge({ tray_event: e })}
           >
-            <Select size="small" sx={{ width: 140, "> div": { py: "7.5px" } }}>
+            <Select 
+              className="custom-select"
+              size="small" 
+              sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
+              MenuProps={{
+                disablePortal: true,
+                anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+                transformOrigin: { vertical: 'top', horizontal: 'left' },
+              }}
+            >
               <MenuItem value="main_window">{t("Show Main Window")}</MenuItem>
               <MenuItem value="tray_menu">{t("Show Tray Menu")}</MenuItem>
               <MenuItem value="system_proxy">{t("System Proxy")}</MenuItem>
@@ -155,7 +170,16 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ env_type: e })}
           onGuard={(e) => patchVerge({ env_type: e })}
         >
-          <Select size="small" sx={{ width: 140, "> div": { py: "7.5px" } }}>
+          <Select 
+            className="custom-select"
+            size="small" 
+            sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
+            MenuProps={{
+              disablePortal: true,
+              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+              transformOrigin: { vertical: 'top', horizontal: 'left' },
+            }}
+          >
             <MenuItem value="bash">Bash</MenuItem>
             <MenuItem value="fish">Fish</MenuItem>
             <MenuItem value="nushell">Nushell</MenuItem>
@@ -173,7 +197,16 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ start_page: e })}
           onGuard={(e) => patchVerge({ start_page: e })}
         >
-          <Select size="small" sx={{ width: 140, "> div": { py: "7.5px" } }}>
+          <Select 
+            className="custom-select"
+            size="small" 
+            sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
+            MenuProps={{
+              disablePortal: true,
+              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+              transformOrigin: { vertical: 'top', horizontal: 'left' },
+            }}
+          >
             {routers.map((page: { label: string; path: string }) => {
               return (
                 <MenuItem key={page.path} value={page.path}>
@@ -237,8 +270,9 @@ const SettingVergeBasic = ({ onError }: Props) => {
       </SettingItem>
 
       <SettingItem
-        onClick={() => themeRef.current?.open()}
-        label={t("Theme Setting")}
+        onClick={() => themeEnhancedRef.current?.open()}
+        label={t("Theme Customization")}
+        secondary={t("Customize colors, apply preset themes, and set window background")}
       />
 
       <SettingItem
@@ -255,6 +289,63 @@ const SettingVergeBasic = ({ onError }: Props) => {
         onClick={() => hotkeyRef.current?.open()}
         label={t("Hotkey Setting")}
       />
+
+      <SettingItem
+        label={t("Enable Traffic Quota Reminder")}
+        secondary={t("Get notified when subscription traffic usage reaches threshold")}
+      >
+        <GuardState
+          value={reminderEnabled}
+          valueProps="checked"
+          onCatch={onError}
+          onFormat={onSwitchFormat}
+          onChange={(e) => onChangeData({ 
+            traffic_quota_reminder: {
+              ...traffic_quota_reminder,
+              enabled: e,
+              last_reminder: 0,
+            }
+          })}
+          onGuard={(e) => patchVerge({ 
+            traffic_quota_reminder: {
+              ...traffic_quota_reminder,
+              enabled: e,
+              last_reminder: 0,
+            }
+          })}
+        >
+          <Switch edge="end" />
+        </GuardState>
+      </SettingItem>
+
+      {reminderEnabled && (
+        <SettingItem label={t("Reminder Threshold")}>
+          <GuardState
+            value={reminderThreshold}
+            onCatch={onError}
+            onFormat={(e: any) => Number(e.target.value)}
+            onChange={(e) => onChangeData({ 
+              traffic_quota_reminder: {
+                ...traffic_quota_reminder,
+                threshold: e,
+              }
+            })}
+            onGuard={(e) => patchVerge({ 
+              traffic_quota_reminder: {
+                ...traffic_quota_reminder,
+                threshold: e,
+              }
+            })}
+          >
+            <Select className="custom-select" size="small" sx={{ width: 85, "> div": { py: "5.5px", fontSize: "13px" } }}>
+              <MenuItem value={70}>70%</MenuItem>
+              <MenuItem value={80}>80%</MenuItem>
+              <MenuItem value={90}>90%</MenuItem>
+              <MenuItem value={95}>95%</MenuItem>
+            </Select>
+          </GuardState>
+        </SettingItem>
+      )}
     </SettingList>
   );
 };

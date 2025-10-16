@@ -70,6 +70,7 @@ export const ProfileMore = (props: Props) => {
   return (
     <>
       <ProfileBox
+        className="custom-profile-card"
         onDoubleClick={onEditFile}
         onContextMenu={(event) => {
           const { clientX, clientY } = event;

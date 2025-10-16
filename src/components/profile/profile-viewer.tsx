@@ -11,6 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { BaseDialog, Switch } from "@/components/base";
+import { BaseStyledSelect } from "@/components/base/base-styled-select";
 import {
   EnhancedDialogTitle,
   EnhancedFormGroup,
@@ -279,6 +280,28 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
                 fullWidth
                 placeholder={t("Optional description")}
               />
+            )}
+          />
+        </EnhancedFormItem>
+
+        <EnhancedFormItem label={t("Group")} fullWidth>
+          <Controller
+            name="group_id"
+            control={control}
+            render={({ field }) => (
+              <BaseStyledSelect
+                {...field}
+                size="small"
+                fullWidth
+                displayEmpty
+              >
+                <option value="">{t("No Group")}</option>
+                {(profiles?.groups || []).map((group) => (
+                  <option key={group.id} value={group.id}>
+                    {group.name}
+                  </option>
+                ))}
+              </BaseStyledSelect>
             )}
           />
         </EnhancedFormItem>

@@ -34,6 +34,7 @@ import { EnhancedTrafficStats } from "@/components/home/enhanced-traffic-stats";
 import { HomeProfileCard } from "@/components/home/home-profile-card";
 import { ProxyTunCard } from "@/components/home/proxy-tun-card";
 import { useProfiles } from "@/hooks/use-profiles";
+import { useTrafficQuotaReminder } from "@/hooks/use-traffic-quota-reminder";
 import { useVerge } from "@/hooks/use-verge";
 import { entry_lightweight_mode, openWebUrl } from "@/services/cmds";
 
@@ -207,6 +208,9 @@ const HomePage = () => {
   const { t } = useTranslation();
   const { verge } = useVerge();
   const { current, mutateProfiles } = useProfiles();
+
+  // 使用流量配额提醒hook
+  useTrafficQuotaReminder();
 
   // 设置弹窗的状态
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -448,6 +452,7 @@ const HomePage = () => {
                       : "rgba(0, 0, 0, 0.04)"
                   }`,
                 pr: { xs: 1.5, sm: 2 },
+                pt: { xs: 1.5, sm: 2 },
                 pb: { xs: 1.5, sm: 2 },
               }}
             >
@@ -534,6 +539,7 @@ const HomePage = () => {
                       : "rgba(0, 0, 0, 0.04)"
                   }`,
                 pl: { xs: 1.5, sm: 2 },
+                pt: { xs: 1.5, sm: 2 },
                 pb: { xs: 1.5, sm: 2 },
               }}
             >

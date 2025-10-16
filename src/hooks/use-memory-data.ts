@@ -15,7 +15,7 @@ export const useMemoryData = () => {
 
   const ws = useRef<MihomoWebSocket | null>(null);
   const wsFirstConnection = useRef<boolean>(true);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const response = useSWRSubscription<IMemoryUsageItem, any, string | null>(
     subscriptKey,
@@ -63,7 +63,12 @@ export const useMemoryData = () => {
       }
 
       return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
         ws.current?.close();
+        ws.current = null;
       };
     },
     {

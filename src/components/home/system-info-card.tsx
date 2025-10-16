@@ -91,7 +91,9 @@ export const SystemInfoCard = () => {
           });
         }
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error("[SystemInfo] Failed to get system info:", error);
+      });
 
     // 获取最后检查更新时间
     const lastCheck = localStorage.getItem("last_check_update");
@@ -118,7 +120,9 @@ export const SystemInfoCard = () => {
 
       timeoutId = window.setTimeout(() => {
         if (verge?.auto_check_update) {
-          checkUpdate().catch(console.error);
+          checkUpdate().catch((error) => {
+            console.error("[SystemInfo] Auto update check failed:", error);
+          });
         }
       }, 5000);
     }

@@ -55,6 +55,7 @@ import {
   ProfileViewer,
   ProfileViewerRef,
 } from "@/components/profile/profile-viewer";
+import { ProfileGroupManager } from "@/components/profile/profile-group-manager";
 import { ConfigViewer } from "@/components/setting/mods/config-viewer";
 import { useListen } from "@/hooks/use-listen";
 import { useProfiles } from "@/hooks/use-profiles";
@@ -72,7 +73,7 @@ import { showNotice } from "@/services/noticeService";
 import { useSetLoadingCache } from "@/services/states";
 
 // 记录profile切换状态
-const debugProfileSwitch = (action: string, profile: string, extra?: any) => {
+const debugProfileSwitch = (action: string, profile: string, extra?: unknown) => {
   const timestamp = new Date().toISOString().substring(11, 23);
   console.log(
     `[Profile-Debug][${timestamp}] ${action}: ${profile}`,
@@ -83,7 +84,7 @@ const debugProfileSwitch = (action: string, profile: string, extra?: any) => {
 // 检查请求是否已过期
 const isRequestOutdated = (
   currentSequence: number,
-  requestSequenceRef: any,
+  requestSequenceRef: React.MutableRefObject<number>,
   profile: string,
 ) => {
   if (currentSequence !== requestSequenceRef.current) {
@@ -220,6 +221,7 @@ const ProfilePage = () => {
   const location = useLocation();
   const { addListener } = useListen();
   const [activatings, setActivatings] = useState<string[]>([]);
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
 
   // Import state
   const [importUrl, setImportUrl] = useState("");
@@ -303,7 +305,7 @@ const ProfilePage = () => {
     const handleFileDrop = async () => {
       const unlisten = await addListener(
         TauriEvent.DRAG_DROP,
-        async (event: any) => {
+        async (event: { payload: { paths: string[] } }) => {
           const paths = event.payload.paths;
 
           for (const file of paths) {
@@ -357,9 +359,10 @@ const ProfilePage = () => {
       await onEnhance(false);
 
       showNotice("success", "数据已强制刷新", 2000);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       console.error("[紧急刷新] 失败:", error);
-      showNotice("error", `紧急刷新失败: ${error.message}`, 4000);
+      showNotice("error", `紧急刷新失败: ${errorMessage}`, 4000);
     }
   });
 
@@ -377,8 +380,12 @@ const ProfilePage = () => {
 
     const type1 = ["local", "remote"];
 
-    return items.filter((i) => i && type1.includes(i.type!));
-  }, [profiles]);
+    return items.filter((i) => {
+      if (!i || !type1.includes(i.type!)) return false;
+      if (selectedGroupId === null) return true;
+      return i.group_id === selectedGroupId;
+    });
+  }, [profiles, selectedGroupId]);
 
   const currentActivatings = () => {
     return [...new Set([profiles.current ?? ""])].filter(Boolean);
@@ -833,7 +840,11 @@ const ProfilePage = () => {
       if (refreshTimer !== null) {
         window.clearTimeout(refreshTimer);
       }
-      unlistenPromise?.then((unlisten) => unlisten()).catch(console.error);
+      unlistenPromise
+        ?.then((unlisten) => unlisten())
+        .catch((error) => {
+          console.error("[Profile] Failed to unlisten profile change event:", error);
+        });
     };
   }, [mutateProfiles]);
 
@@ -1069,39 +1080,26 @@ const ProfilePage = () => {
         </Box>
       }
     >
-      {/* 配置列表区域 - 精致分区布局 */}
-      <Box
-        sx={{
-          flex: 1,
-          overflow: "auto",
-        }}
-      >
+      {/* 配置列表区域 */}
+      <Box sx={{ flex: 1, overflow: "auto" }}>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={onDragEnd}
         >
-          {/* 导入订阅区域 */}
+          {/* 顶部工具栏区域 */}
           <Box
             sx={{
-              borderBottom: (theme) =>
-                `1px solid ${
-                  theme.palette.mode === "dark"
-                    ? "rgba(255, 255, 255, 0.04)"
-                    : "rgba(0, 0, 0, 0.04)"
-                }`,
-              px: { xs: 1.5, sm: 2 },
-              pt: { xs: 1.25, sm: 1.5 },
-              pb: { xs: 1.25, sm: 1.5 },
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+              px: 2,
+              py: 1.5,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1.5,
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                alignItems: "center",
-              }}
-            >
+            {/* 导入订阅 */}
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
               <TextField
                 fullWidth
                 size="small"
@@ -1118,11 +1116,6 @@ const ProfilePage = () => {
                   "& .MuiOutlinedInput-root": {
                     height: 32,
                     fontSize: "13px",
-                    borderRadius: "8px",
-                    backgroundColor: (theme) =>
-                      theme.palette.mode === "dark"
-                        ? "rgba(255, 255, 255, 0.02)"
-                        : "rgba(0, 0, 0, 0.02)",
                   },
                 }}
                 slotProps={{
@@ -1133,11 +1126,7 @@ const ProfilePage = () => {
                           size="small"
                           onClick={handlePasteUrl}
                           disabled={importLoading}
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            "&:hover": { bgcolor: "action.hover" },
-                          }}
+                          sx={{ width: 24, height: 24 }}
                         >
                           <ContentPasteRounded sx={{ fontSize: 16 }} />
                         </IconButton>
@@ -1155,43 +1144,30 @@ const ProfilePage = () => {
                   minWidth: 70,
                   px: 2,
                   fontSize: "13px",
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  fontWeight: 600,
                 }}
               >
                 {importLoading ? t("Importing...") : t("Import")}
               </Button>
             </Box>
+
+            {/* 分组筛选 */}
+            <ProfileGroupManager onGroupChange={setSelectedGroupId} />
           </Box>
 
           {profileItems.length > 0 ? (
-            <>
-              {/* Subscriptions 区域 */}
-              <Box
-                sx={{
-                  borderBottom: (theme) =>
-                    `1px solid ${
-                      theme.palette.mode === "dark"
-                        ? "rgba(255, 255, 255, 0.04)"
-                    : "rgba(0, 0, 0, 0.04)"
-                }`,
-              px: { xs: 1.5, sm: 2 },
-              pt: { xs: 1.25, sm: 1.5 },
-              pb: { xs: 1.25, sm: 1.5 },
-                }}
-              >
+            <Box sx={{ p: 2 }}>
+              {/* Subscriptions */}
+              <Box sx={{ mb: 3 }}>
                 <Typography
                   variant="caption"
                   sx={{
                     display: "block",
-                    mb: 2.5,
-                    fontWeight: 700,
-                    fontSize: { xs: "9px", sm: "10px" },
-                    letterSpacing: "1.2px",
+                    mb: 1.5,
+                    fontWeight: 600,
+                    fontSize: "11px",
+                    letterSpacing: "0.5px",
                     textTransform: "uppercase",
                     color: "text.secondary",
-                    opacity: 0.7,
                   }}
                 >
                   {t("Subscriptions")}
@@ -1242,25 +1218,18 @@ const ProfilePage = () => {
                 </Box>
               </Box>
 
-              {/* Enhanced 配置区域 */}
-              <Box
-                sx={{
-                  px: { xs: 1.5, sm: 2 },
-                  pt: { xs: 1.25, sm: 1.5 },
-                  pb: { xs: 1.25, sm: 1.5 },
-                }}
-              >
+              {/* Enhanced */}
+              <Box>
                 <Typography
                   variant="caption"
                   sx={{
                     display: "block",
-                    mb: 2.5,
-                    fontWeight: 400,
-                    fontSize: { xs: "9px", sm: "10px" },
-                    letterSpacing: "0.8px",
+                    mb: 1.5,
+                    fontWeight: 600,
+                    fontSize: "11px",
+                    letterSpacing: "0.5px",
                     textTransform: "uppercase",
-                    color: "text.disabled",
-                    opacity: 0.5,
+                    color: "text.secondary",
                   }}
                 >
                   {t("Enhanced")}
@@ -1275,7 +1244,7 @@ const ProfilePage = () => {
                       lg: "repeat(4, 1fr)",
                       xl: "repeat(5, 1fr)",
                     },
-                    gap: { xs: 1.5, sm: 2 },
+                    gap: 2,
                   }}
                 >
                   <ProfileMore
@@ -1297,9 +1266,8 @@ const ProfilePage = () => {
                   />
                 </Box>
               </Box>
-            </>
+            </Box>
           ) : (
-            // 空状态提示 - 精致设计
             <Box
               sx={{
                 display: "flex",
@@ -1308,54 +1276,14 @@ const ProfilePage = () => {
                 justifyContent: "center",
                 height: "100%",
                 minHeight: "400px",
-                px: 3,
               }}
             >
-              <Box
-                sx={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: "20px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === "dark"
-                      ? "rgba(99, 102, 241, 0.08)"
-                      : "rgba(99, 102, 241, 0.05)",
-                  mb: 3,
-                }}
-              >
-                <TextSnippetOutlined
-                  sx={{
-                    fontSize: 48,
-                    color: "primary.main",
-                    opacity: 0.6,
-                  }}
-                />
-              </Box>
-              <Typography
-                sx={{
-                  fontSize: 16,
-                  fontWeight: 600,
-                  color: "text.primary",
-                  mb: 1,
-                }}
-              >
+              <TextSnippetOutlined sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />
+              <Typography variant="h6" sx={{ mb: 1, color: "text.secondary" }}>
                 {t("No Profiles")}
               </Typography>
-              <Typography
-                sx={{
-                  fontSize: 13,
-                  color: "text.secondary",
-                  textAlign: "center",
-                  maxWidth: 300,
-                  lineHeight: 1.6,
-                }}
-              >
-                {t(
-                  "Import a subscription or create a new profile to get started",
-                )}
+              <Typography variant="body2" color="text.secondary">
+                {t("Import a subscription or create a new profile to get started")}
               </Typography>
             </Box>
           )}

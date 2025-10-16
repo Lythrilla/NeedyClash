@@ -55,6 +55,7 @@ export const ProxyItemMini = (props: Props) => {
 
   return (
     <ListItemButton
+      className="custom-proxy-card"
       dense
       selected={selected}
       onClick={() => onClick?.(proxy.name)}

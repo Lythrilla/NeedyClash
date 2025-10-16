@@ -197,7 +197,16 @@ const SettingClash = ({ onError }: Props) => {
             return patchClash({ "log-level": e });
           }}
         >
-          <Select size="small" sx={{ width: 100, "> div": { py: "7.5px" } }}>
+          <Select 
+            className="custom-select"
+            size="small" 
+            sx={{ width: 100, "> div": { py: "5.5px", fontSize: "13px" } }}
+            MenuProps={{
+              disablePortal: true,
+              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+              transformOrigin: { vertical: 'top', horizontal: 'left' },
+            }}
+          >
             <MenuItem value="debug">Debug</MenuItem>
             <MenuItem value="info">Info</MenuItem>
             <MenuItem value="warning">Warn</MenuItem>
@@ -213,7 +222,7 @@ const SettingClash = ({ onError }: Props) => {
           disabled={false}
           size="small"
           value={verge_mixed_port ?? 7897}
-          sx={{ width: 100, input: { py: "7.5px", cursor: "pointer" } }}
+          sx={{ width: 100, input: { py: "5.5px", fontSize: "13px", cursor: "pointer" } }}
           onClick={(e) => {
             portRef.current?.open();
             (e.target as any).blur();
@@ -249,7 +258,7 @@ const SettingClash = ({ onError }: Props) => {
           />
         }
       >
-        <Typography sx={{ py: "7px", pr: 1 }}>{version}</Typography>
+        <Typography sx={{ py: "5.5px", pr: 1, fontSize: "13px" }}>{version}</Typography>
       </SettingItem>
 
       {isWIN && (

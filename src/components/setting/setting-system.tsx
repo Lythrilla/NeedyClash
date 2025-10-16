@@ -1,5 +1,4 @@
-import { WarningRounded, ComputerOutlined } from "@mui/icons-material";
-import { Tooltip } from "@mui/material";
+import { ComputerOutlined } from "@mui/icons-material";
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { mutate } from "swr";
@@ -57,11 +56,10 @@ const SettingSystem = ({ onError }: Props) => {
         label={t("Auto Launch")}
         extra={
           isAdminMode && (
-            <Tooltip
+            <TooltipIcon
               title={t("Administrator mode may not support auto launch")}
-            >
-              <WarningRounded sx={{ color: "warning.main", mr: 1 }} />
-            </Tooltip>
+              sx={{ opacity: "0.7" }}
+            />
           )
         }
       >
