@@ -76,12 +76,22 @@ export const WindowControls = forwardRef(function WindowControls(props, ref) {
       {OS === "windows" && (
         <>
           {/* Windows 风格：最小化 → 最大化 → 关闭 */}
-          <IconButton size="small" sx={{ fontSize: 16 }} onClick={minimize}>
+          <IconButton 
+            size="small" 
+            sx={{ 
+              fontSize: 16,
+              "&:hover": { bgcolor: "action.hover" }
+            }} 
+            onClick={minimize}
+          >
             <Minimize fontSize="inherit" color="inherit" />
           </IconButton>
           <IconButton
             size="small"
-            sx={{ fontSize: 16 }}
+            sx={{ 
+              fontSize: 16,
+              "&:hover": { bgcolor: "action.hover" }
+            }}
             onClick={toggleMaximize}
           >
             {maximized ? (
@@ -92,7 +102,7 @@ export const WindowControls = forwardRef(function WindowControls(props, ref) {
           </IconButton>
           <IconButton
             size="small"
-            sx={{ fontSize: 16, ":hover": { bgcolor: "red", color: "white" } }}
+            sx={{ fontSize: 16, "&:hover": { bgcolor: "red", color: "white" } }}
             onClick={close}
           >
             <Close fontSize="inherit" color="inherit" />
@@ -103,12 +113,22 @@ export const WindowControls = forwardRef(function WindowControls(props, ref) {
       {OS === "linux" && (
         <>
           {/* Linux 桌面常见布局（GNOME/KDE 多为：最小化 → 最大化 → 关闭） */}
-          <IconButton size="small" sx={{ fontSize: 16 }} onClick={minimize}>
+          <IconButton 
+            size="small" 
+            sx={{ 
+              fontSize: 16,
+              "&:hover": { bgcolor: "action.hover" }
+            }} 
+            onClick={minimize}
+          >
             <Minimize fontSize="inherit" color="inherit" />
           </IconButton>
           <IconButton
             size="small"
-            sx={{ fontSize: 16 }}
+            sx={{ 
+              fontSize: 16,
+              "&:hover": { bgcolor: "action.hover" }
+            }}
             onClick={toggleMaximize}
           >
             {maximized ? (
@@ -119,7 +139,7 @@ export const WindowControls = forwardRef(function WindowControls(props, ref) {
           </IconButton>
           <IconButton
             size="small"
-            sx={{ fontSize: 16, ":hover": { bgcolor: "red", color: "white" } }}
+            sx={{ fontSize: 16, "&:hover": { bgcolor: "red", color: "white" } }}
             onClick={close}
           >
             <Close fontSize="inherit" color="inherit" />

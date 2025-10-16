@@ -31,7 +31,13 @@ type SearchProps = {
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-root": {
-    background: theme.palette.mode === "light" ? "#fff" : undefined,
+    height: 32,
+    fontSize: "13px",
+    borderRadius: "8px",
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? "rgba(255, 255, 255, 0.02)"
+        : "rgba(0, 0, 0, 0.02)",
     paddingRight: "4px",
   },
   "& .MuiInputBase-root svg[aria-label='active'] path": {
@@ -61,8 +67,8 @@ export const BaseSearchBox = ({
 
   const iconStyle = {
     style: {
-      height: "24px",
-      width: "24px",
+      height: "18px",
+      width: "18px",
       cursor: "pointer",
     } as React.CSSProperties,
     inheritViewBox: true,
@@ -179,38 +185,80 @@ export const BaseSearchBox = ({
         error={!!errorMessage}
         slotProps={{
           input: {
-            sx: { pr: 1 },
+            sx: { pr: 0.5 },
             endAdornment: (
-              <Box display="flex">
+              <Box display="flex" gap={0.5}>
                 <Tooltip title={t("Match Case")}>
-                  <div>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 24,
+                      height: 24,
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      "&:hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                    onClick={() => setMatchCase((prev) => !prev)}
+                  >
                     <SvgIcon
                       component={matchCaseIcon}
                       {...iconStyle}
                       aria-label={matchCase ? "active" : "inactive"}
-                      onClick={() => setMatchCase((prev) => !prev)}
                     />
-                  </div>
+                  </Box>
                 </Tooltip>
                 <Tooltip title={t("Match Whole Word")}>
-                  <div>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 24,
+                      height: 24,
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      "&:hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                    onClick={() => setMatchWholeWord((prev) => !prev)}
+                  >
                     <SvgIcon
                       component={matchWholeWordIcon}
                       {...iconStyle}
                       aria-label={matchWholeWord ? "active" : "inactive"}
-                      onClick={() => setMatchWholeWord((prev) => !prev)}
                     />
-                  </div>
+                  </Box>
                 </Tooltip>
                 <Tooltip title={t("Use Regular Expression")}>
-                  <div>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 24,
+                      height: 24,
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                      "&:hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                    onClick={handleToggleUseRegularExpression}
+                  >
                     <SvgIcon
                       component={useRegularExpressionIcon}
                       aria-label={useRegularExpression ? "active" : "inactive"}
                       {...iconStyle}
-                      onClick={handleToggleUseRegularExpression}
                     />
-                  </div>
+                  </Box>
                 </Tooltip>
               </Box>
             ),

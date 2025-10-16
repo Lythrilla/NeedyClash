@@ -328,46 +328,61 @@ const HomePage = () => {
       title={t("Label-Home")}
       contentStyle={{ padding: 0, height: "100%" }}
       header={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Tooltip title={t("LightWeight Mode")} arrow>
-            <IconButton
-              onClick={async () => await entry_lightweight_mode()}
-              size="small"
-              sx={{
-                borderRadius: "6px",
-                padding: "6px",
-                "&:hover": { bgcolor: "action.hover" },
-              }}
-            >
-              <HistoryEduOutlined fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t("Manual")} arrow>
-            <IconButton
-              onClick={toGithubDoc}
-              size="small"
-              sx={{
-                borderRadius: "6px",
-                padding: "6px",
-                "&:hover": { bgcolor: "action.hover" },
-              }}
-            >
-              <HelpOutlineRounded fontSize="small" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t("Home Settings")} arrow>
-            <IconButton
-              onClick={openSettings}
-              size="small"
-              sx={{
-                borderRadius: "6px",
-                padding: "6px",
-                "&:hover": { bgcolor: "action.hover" },
-              }}
-            >
-              <SettingsOutlined fontSize="small" />
-            </IconButton>
-          </Tooltip>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          {/* 操作按钮组 - 统一风格 */}
+          <Typography
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "text.disabled",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            TOOLS
+          </Typography>
+
+          <Box sx={{ display: "flex", gap: 0.75 }}>
+            <Tooltip title={t("LightWeight Mode")} arrow>
+              <IconButton
+                onClick={async () => await entry_lightweight_mode()}
+                size="small"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                <HistoryEduOutlined sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t("Manual")} arrow>
+              <IconButton
+                onClick={toGithubDoc}
+                size="small"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                <HelpOutlineRounded sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t("Home Settings")} arrow>
+              <IconButton
+                onClick={openSettings}
+                size="small"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                <SettingsOutlined sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
       }
     >
@@ -382,14 +397,19 @@ const HomePage = () => {
         {/* 顶部横条 - 配置文件 */}
         <Box
           sx={{
-            borderBottom: (theme) => 
-              `1px solid ${theme.palette.mode === "dark" 
-                ? "rgba(255, 255, 255, 0.04)" 
-                : "rgba(0, 0, 0, 0.04)"}`,
-            p: { xs: 1.5, sm: 2 },
+            borderBottom: (theme) =>
+              `1px solid ${
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.04)"
+                  : "rgba(0, 0, 0, 0.04)"
+              }`,
+            pb: { xs: 1.5, sm: 2 },
           }}
         >
-          <HomeProfileCard current={current} onProfileUpdated={mutateProfiles} />
+          <HomeProfileCard
+            current={current}
+            onProfileUpdated={mutateProfiles}
+          />
         </Box>
 
         {/* 主内容区 - 单栏/双栏自适应 */}
@@ -407,54 +427,53 @@ const HomePage = () => {
               display: "flex",
               flexDirection: "column",
               order: { xs: 2, md: 1 },
-              borderRight: { 
-                xs: "none", 
-                md: (theme) => 
-                  `1px solid ${theme.palette.mode === "dark" 
-                    ? "rgba(255, 255, 255, 0.04)" 
-                    : "rgba(0, 0, 0, 0.04)"}` 
+              borderRight: {
+                xs: "none",
+                md: (theme) =>
+                  `1px solid ${
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(0, 0, 0, 0.04)"
+                  }`,
               },
             }}
           >
             {/* Proxy Mode */}
             <Box
               sx={{
-                borderBottom: (theme) => 
-                  `1px solid ${theme.palette.mode === "dark" 
-                    ? "rgba(255, 255, 255, 0.04)" 
-                    : "rgba(0, 0, 0, 0.04)"}`,
-                px: { xs: 1.5, sm: 2 },
-                pt: { xs: 1.5, sm: 2 },
+                borderBottom: (theme) =>
+                  `1px solid ${
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(0, 0, 0, 0.04)"
+                  }`,
+                pr: { xs: 1.5, sm: 2 },
                 pb: { xs: 1.5, sm: 2 },
               }}
             >
-            <Typography
-              variant="caption"
-              sx={{
-                display: "block",
-                mb: 2.5,
-                fontWeight: 700,
-                fontSize: { xs: "9px", sm: "10px" },
-                letterSpacing: "1.2px",
-                textTransform: "uppercase",
-                color: "text.secondary",
-                opacity: 0.7,
-              }}
-            >
-              PROXY MODE
-            </Typography>
-            <Box sx={{ mt: 2.5 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  display: "block",
+                  mb: 2.5,
+                  fontWeight: 700,
+                  fontSize: { xs: "9px", sm: "10px" },
+                  letterSpacing: "1.2px",
+                  textTransform: "uppercase",
+                  color: "text.secondary",
+                  opacity: 0.7,
+                }}
+              >
+                {t("Proxy Mode")}
+              </Typography>
               <ClashModeCard />
-            </Box>
             </Box>
 
             {/* Traffic & Testing */}
             <Box
               sx={{
-                px: { xs: 1.5, sm: 2 },
+                pr: { xs: 1.5, sm: 2 },
                 pt: { xs: 1.5, sm: 2 },
-                pb: { xs: 1.5, sm: 2 },
-                flex: 1,
               }}
             >
               <Typography
@@ -470,11 +489,9 @@ const HomePage = () => {
                   opacity: 0.5,
                 }}
               >
-                Traffic
+                {t("Traffic")}
               </Typography>
-              <Box sx={{ mt: 2.5, mb: 2 }}>
-                <EnhancedTrafficStats />
-              </Box>
+              <EnhancedTrafficStats />
               <Typography
                 variant="caption"
                 sx={{
@@ -488,13 +505,13 @@ const HomePage = () => {
                   opacity: 0.5,
                 }}
               >
-                Testing
+                {t("Testing")}
               </Typography>
-              <Box sx={{ mt: 2.5 }}>
-                <Suspense fallback={<Skeleton variant="rectangular" height={100} />}>
-                  <LazyTestCard />
-                </Suspense>
-              </Box>
+              <Suspense
+                fallback={<Skeleton variant="rectangular" height={100} />}
+              >
+                <LazyTestCard />
+              </Suspense>
             </Box>
           </Box>
 
@@ -510,42 +527,39 @@ const HomePage = () => {
             {/* Network */}
             <Box
               sx={{
-                borderBottom: (theme) => 
-                  `1px solid ${theme.palette.mode === "dark" 
-                    ? "rgba(255, 255, 255, 0.04)" 
-                    : "rgba(0, 0, 0, 0.04)"}`,
-                px: { xs: 1.5, sm: 2 },
-                pt: { xs: 1.5, sm: 2 },
+                borderBottom: (theme) =>
+                  `1px solid ${
+                    theme.palette.mode === "dark"
+                      ? "rgba(255, 255, 255, 0.04)"
+                      : "rgba(0, 0, 0, 0.04)"
+                  }`,
+                pl: { xs: 1.5, sm: 2 },
                 pb: { xs: 1.5, sm: 2 },
               }}
             >
-            <Typography
-              variant="caption"
-              sx={{
-                display: "block",
-                mb: 2.5,
-                fontWeight: 700,
-                fontSize: { xs: "9px", sm: "10px" },
-                letterSpacing: "1.2px",
-                textTransform: "uppercase",
-                color: "text.secondary",
-                opacity: 0.7,
-              }}
-            >
-              NETWORK
-            </Typography>
-            <Box sx={{ mt: 2.5 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  display: "block",
+                  mb: 2.5,
+                  fontWeight: 700,
+                  fontSize: { xs: "9px", sm: "10px" },
+                  letterSpacing: "1.2px",
+                  textTransform: "uppercase",
+                  color: "text.secondary",
+                  opacity: 0.7,
+                }}
+              >
+                {t("Network")}
+              </Typography>
               <ProxyTunCard />
-            </Box>
             </Box>
 
             {/* Info */}
             <Box
               sx={{
-                px: { xs: 1.5, sm: 2 },
+                pl: { xs: 1.5, sm: 2 },
                 pt: { xs: 1.5, sm: 2 },
-                pb: { xs: 1.5, sm: 2 },
-                flex: 1,
               }}
             >
               <Typography
@@ -561,20 +575,22 @@ const HomePage = () => {
                   opacity: 0.5,
                 }}
               >
-                Info
+                {t("Info")}
               </Typography>
-              <Box sx={{ mt: 2.5, mb: 1.5 }}>
-                <Suspense fallback={<Skeleton variant="rectangular" height={80} />}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                <Suspense
+                  fallback={<Skeleton variant="rectangular" height={80} />}
+                >
                   <LazyIpInfoCard />
                 </Suspense>
-              </Box>
-              <Box sx={{ mb: 1.5 }}>
-                <Suspense fallback={<Skeleton variant="rectangular" height={80} />}>
+                <Suspense
+                  fallback={<Skeleton variant="rectangular" height={80} />}
+                >
                   <LazyClashInfoCard />
                 </Suspense>
-              </Box>
-              <Box>
-                <Suspense fallback={<Skeleton variant="rectangular" height={80} />}>
+                <Suspense
+                  fallback={<Skeleton variant="rectangular" height={80} />}
+                >
                   <LazySystemInfoCard />
                 </Suspense>
               </Box>

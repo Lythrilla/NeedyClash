@@ -185,6 +185,7 @@ export const TestCard = () => {
                 width: "24px",
                 height: "24px",
                 "& svg": { fontSize: "16px" },
+                "&:hover": { bgcolor: "action.hover" },
               }}
             >
               <NetworkCheck />
@@ -198,6 +199,7 @@ export const TestCard = () => {
                 width: "24px",
                 height: "24px",
                 "& svg": { fontSize: "16px" },
+                "&:hover": { bgcolor: "action.hover" },
               }}
             >
               <Add />

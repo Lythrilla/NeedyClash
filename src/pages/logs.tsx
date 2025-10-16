@@ -1,8 +1,9 @@
 import {
   PlayCircleOutlineRounded,
   PauseCircleOutlineRounded,
+  DeleteSweepRounded,
 } from "@mui/icons-material";
-import { Box, Button, IconButton, MenuItem } from "@mui/material";
+import { Box, IconButton, MenuItem, Tooltip, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Virtuoso } from "react-virtuoso";
@@ -64,55 +65,83 @@ const LogPage = () => {
     <BasePage
       full
       title={t("Logs")}
-      contentStyle={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "auto",
-      }}
+      contentStyle={{ height: "100%", padding: 0 }}
       header={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-          <IconButton
-            title={t(enableLog ? "Pause" : "Resume")}
-            size="small"
-            color="inherit"
-            onClick={handleToggleLog}
-            sx={{ borderRadius: "6px", padding: "6px" }}
-          >
-            {enableLog ? (
-              <PauseCircleOutlineRounded fontSize="small" />
-            ) : (
-              <PlayCircleOutlineRounded fontSize="small" />
-            )}
-          </IconButton>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Box sx={{ flex: 1 }} />
 
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => {
-              refreshGetClashLog(true);
-              // clearGlobalLogs();
+          {/* 操作按钮组 */}
+          <Typography
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "text.disabled",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
             }}
-            sx={{ minWidth: "70px", padding: "4px 12px", fontSize: "13px" }}
           >
-            {t("Clear")}
-          </Button>
+            ACTIONS
+          </Typography>
+          <Box sx={{ display: "flex", gap: 0.75 }}>
+            <Tooltip title={enableLog ? t("Pause") : t("Resume")} arrow>
+              <IconButton
+                size="small"
+                onClick={handleToggleLog}
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                {enableLog ? (
+                  <PauseCircleOutlineRounded sx={{ fontSize: 18 }} />
+                ) : (
+                  <PlayCircleOutlineRounded sx={{ fontSize: 18 }} />
+                )}
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title={t("Clear")} arrow>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  refreshGetClashLog(true);
+                }}
+                color="error"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                <DeleteSweepRounded sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
       }
     >
+      {/* 筛选和搜索工具栏 */}
       <Box
         sx={{
-          pt: 1,
-          mb: 0.5,
-          mx: "10px",
-          height: "39px",
+          px: { xs: 1.5, sm: 2 },
+          pt: { xs: 1.25, sm: 1.5 },
+          pb: { xs: 1.25, sm: 1.5 },
           display: "flex",
           alignItems: "center",
+          gap: 1,
+          borderBottom: (theme) =>
+            `1px solid ${
+              theme.palette.mode === "dark"
+                ? "rgba(255, 255, 255, 0.04)"
+                : "rgba(0, 0, 0, 0.04)"
+            }`,
         }}
       >
         <BaseStyledSelect
           value={logState}
           onChange={(e) => handleLogLevelChange(e.target.value as LogFilter)}
+          sx={{ minWidth: 100 }}
         >
           <MenuItem value="all">ALL</MenuItem>
           <MenuItem value="debug">DEBUG</MenuItem>
@@ -128,21 +157,28 @@ const LogPage = () => {
         />
       </Box>
 
-      {filterLogs.length > 0 ? (
-        <Virtuoso
-          initialTopMostItemIndex={999}
-          data={filterLogs}
-          style={{
-            flex: 1,
-          }}
-          itemContent={(index, item) => (
-            <LogItem value={item} searchState={searchState} />
-          )}
-          followOutput={"smooth"}
-        />
-      ) : (
-        <BaseEmpty />
-      )}
+      {/* 日志列表 */}
+      <Box
+        sx={{
+          flex: 1,
+          overflow: "hidden",
+          height: "calc(100% - 56px)",
+        }}
+      >
+        {filterLogs.length > 0 ? (
+          <Virtuoso
+            initialTopMostItemIndex={999}
+            data={filterLogs}
+            style={{ height: "100%" }}
+            itemContent={(index, item) => (
+              <LogItem value={item} searchState={searchState} />
+            )}
+            followOutput={"smooth"}
+          />
+        ) : (
+          <BaseEmpty />
+        )}
+      </Box>
     </BasePage>
   );
 };

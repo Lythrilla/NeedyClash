@@ -3,8 +3,15 @@ import {
   PlayCircleOutlineRounded,
   TableChartRounded,
   TableRowsRounded,
+  DeleteSweepRounded,
 } from "@mui/icons-material";
-import { Box, Button, IconButton, MenuItem } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  MenuItem,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -129,77 +136,139 @@ const ConnectionsPage = () => {
   return (
     <BasePage
       full
-      title={<span style={{ whiteSpace: "nowrap" }}>{t("Connections")}</span>}
-      contentStyle={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "auto",
-        borderRadius: "8px",
-      }}
+      title={t("Connections")}
+      contentStyle={{ height: "100%", padding: 0 }}
       header={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Box sx={{ mx: 1 }}>
-            {t("Downloaded")}: {parseTraffic(displayData.downloadTotal)}
-          </Box>
-          <Box sx={{ mx: 1 }}>
-            {t("Uploaded")}: {parseTraffic(displayData.uploadTotal)}
-          </Box>
-          <IconButton
-            color="inherit"
-            size="small"
-            onClick={() =>
-              setSetting((o) =>
-                o?.layout !== "table"
-                  ? { ...o, layout: "table" }
-                  : { ...o, layout: "list" },
-              )
-            }
-            sx={{ borderRadius: "6px", padding: "6px" }}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          {/* Traffic信息 */}
+          <Typography
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "text.disabled",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
           >
-            {isTableLayout ? (
-              <TableRowsRounded titleAccess={t("List View")} fontSize="small" />
-            ) : (
-              <TableChartRounded titleAccess={t("Table View")} fontSize="small" />
-            )}
-          </IconButton>
-          <IconButton
-            color="inherit"
-            size="small"
-            onClick={handlePauseToggle}
-            title={isPaused ? t("Resume") : t("Pause")}
-            sx={{ borderRadius: "6px", padding: "6px" }}
+            TRAFFIC
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+              fontSize: "12px",
+              color: "text.secondary",
+            }}
           >
-            {isPaused ? (
-              <PlayCircleOutlineRounded fontSize="small" />
-            ) : (
-              <PauseCircleOutlineRounded fontSize="small" />
-            )}
-          </IconButton>
-          <Button size="small" variant="contained" onClick={onCloseAll} sx={{ minWidth: "80px", padding: "4px 12px", fontSize: "13px" }}>
-            <span style={{ whiteSpace: "nowrap" }}>{t("Close All")}</span>
-          </Button>
+            <Box>
+              ↓ {parseTraffic(displayData.downloadTotal)}
+            </Box>
+            <Box>
+              ↑ {parseTraffic(displayData.uploadTotal)}
+            </Box>
+          </Box>
+
+          <Box sx={{ flex: 1 }} />
+
+          {/* 操作按钮组 */}
+          <Typography
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "text.disabled",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            ACTIONS
+          </Typography>
+          <Box sx={{ display: "flex", gap: 0.75 }}>
+            <Tooltip
+              title={isTableLayout ? t("List View") : t("Table View")}
+              arrow
+            >
+              <IconButton
+                size="small"
+                onClick={() =>
+                  setSetting((o) =>
+                    o?.layout !== "table"
+                      ? { ...o, layout: "table" }
+                      : { ...o, layout: "list" },
+                  )
+                }
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                {isTableLayout ? (
+                  <TableRowsRounded sx={{ fontSize: 18 }} />
+                ) : (
+                  <TableChartRounded sx={{ fontSize: 18 }} />
+                )}
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title={isPaused ? t("Resume") : t("Pause")} arrow>
+              <IconButton
+                size="small"
+                onClick={handlePauseToggle}
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                {isPaused ? (
+                  <PlayCircleOutlineRounded sx={{ fontSize: 18 }} />
+                ) : (
+                  <PauseCircleOutlineRounded sx={{ fontSize: 18 }} />
+                )}
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title={t("Close All")} arrow>
+              <IconButton
+                size="small"
+                onClick={onCloseAll}
+                color="error"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
+              >
+                <DeleteSweepRounded sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
       }
     >
+      {/* 搜索和筛选工具栏 */}
       <Box
         sx={{
-          pt: 1,
-          mb: 0.5,
-          mx: "10px",
-          height: "36px",
+          px: { xs: 1.5, sm: 2 },
+          pt: { xs: 1.25, sm: 1.5 },
+          pb: { xs: 1.25, sm: 1.5 },
           display: "flex",
           alignItems: "center",
-          userSelect: "text",
-          position: "sticky",
-          top: 0,
-          zIndex: 2,
+          gap: 1,
+          borderBottom: (theme) =>
+            `1px solid ${
+              theme.palette.mode === "dark"
+                ? "rgba(255, 255, 255, 0.04)"
+                : "rgba(0, 0, 0, 0.04)"
+            }`,
         }}
       >
         {!isTableLayout && (
           <BaseStyledSelect
             value={curOrderOpt}
             onChange={(e) => setCurOrderOpt(e.target.value)}
+            sx={{ minWidth: 120 }}
           >
             {Object.keys(orderOpts).map((opt) => (
               <MenuItem key={opt} value={opt}>
@@ -211,28 +280,42 @@ const ConnectionsPage = () => {
         <BaseSearchBox onSearch={handleSearch} />
       </Box>
 
-      {!filterConn || filterConn.length === 0 ? (
-        <BaseEmpty />
-      ) : isTableLayout ? (
-        <ConnectionTable
-          connections={filterConn}
-          onShowDetail={(detail) => detailRef.current?.open(detail)}
-        />
-      ) : (
-        <Virtuoso
-          style={{
-            flex: 1,
-            borderRadius: "8px",
-          }}
-          data={filterConn}
-          itemContent={(_, item) => (
-            <ConnectionItem
-              value={item}
-              onShowDetail={() => detailRef.current?.open(item)}
+      {/* 连接列表 */}
+      <Box
+        sx={{
+          flex: 1,
+          overflow: "hidden",
+          height: "calc(100% - 56px)",
+        }}
+      >
+        {!filterConn || filterConn.length === 0 ? (
+          <BaseEmpty />
+        ) : isTableLayout ? (
+          <Box
+            sx={{
+              height: "100%",
+              px: { xs: 1.5, sm: 2 },
+              pt: { xs: 1.5, sm: 2 },
+            }}
+          >
+            <ConnectionTable
+              connections={filterConn}
+              onShowDetail={(detail) => detailRef.current?.open(detail)}
             />
-          )}
-        />
-      )}
+          </Box>
+        ) : (
+          <Virtuoso
+            style={{ height: "100%" }}
+            data={filterConn}
+            itemContent={(_, item) => (
+              <ConnectionItem
+                value={item}
+                onShowDetail={() => detailRef.current?.open(item)}
+              />
+            )}
+          />
+        )}
+      </Box>
       <ConnectionDetail ref={detailRef} />
     </BasePage>
   );

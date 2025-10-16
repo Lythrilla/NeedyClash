@@ -1,14 +1,19 @@
-import { styled, Box, Typography } from "@mui/material";
+import { styled, Box, alpha, ListItem, ListItemText } from "@mui/material";
 
-const Item = styled(Box)(({ theme }) => ({
-  display: "flex",
-  padding: "4px 16px",
-  color: theme.palette.text.primary,
+const Tag = styled("span")(({ theme }) => ({
+  fontSize: "10px",
+  padding: "0 4px",
+  lineHeight: 1.375,
+  border: "1px solid",
+  borderRadius: 4,
+  borderColor: alpha(theme.palette.text.secondary, 0.35),
+  marginTop: "4px",
+  marginRight: "4px",
 }));
 
 const COLOR = [
-  "primary",
-  "secondary",
+  "primary.main",
+  "secondary.main",
   "info.main",
   "warning.main",
   "success.main",
@@ -34,38 +39,30 @@ const RuleItem = (props: Props) => {
   const { index, value } = props;
 
   return (
-    <Item sx={{ borderBottom: "1px solid var(--divider-color)" }}>
-      <Typography
-        color="text.secondary"
-        variant="body2"
-        sx={{ lineHeight: 2, minWidth: 30, mr: 2.25, textAlign: "center" }}
-      >
-        {index}
-      </Typography>
-
-      <Box sx={{ userSelect: "text" }}>
-        <Typography component="h6" variant="subtitle1" color="text.primary">
-          {value.payload || "-"}
-        </Typography>
-
-        <Typography
-          component="span"
-          variant="body2"
-          color="text.secondary"
-          sx={{ mr: 3, minWidth: 120, display: "inline-block" }}
-        >
-          {value.type}
-        </Typography>
-
-        <Typography
-          component="span"
-          variant="body2"
-          color={parseColor(value.proxy)}
-        >
-          {value.proxy}
-        </Typography>
-      </Box>
-    </Item>
+    <ListItem
+      dense
+      sx={{ borderBottom: "1px solid var(--divider-color)" }}
+    >
+      <ListItemText
+        sx={{ userSelect: "text" }}
+        primary={value.payload || "-"}
+        secondary={
+          <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+            <Tag sx={{ color: "text.secondary" }}>#{index}</Tag>
+            <Tag sx={{ textTransform: "uppercase" }}>
+              {value.type}
+            </Tag>
+            <Tag
+              sx={{
+                color: parseColor(value.proxy),
+              }}
+            >
+              {value.proxy}
+            </Tag>
+          </Box>
+        }
+      />
+    </ListItem>
   );
 };
 

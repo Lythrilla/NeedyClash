@@ -13,6 +13,7 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import {
+  AddRounded,
   ClearRounded,
   ContentPasteRounded,
   LocalFireDepartmentRounded,
@@ -23,8 +24,19 @@ import {
   IndeterminateCheckBoxRounded,
   DeleteRounded,
 } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
-import { Box, Button, Divider, Grid, IconButton, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography,
+  alpha,
+} from "@mui/material";
 import { listen, TauriEvent } from "@tauri-apps/api/event";
 import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { readTextFile } from "@tauri-apps/plugin-fs";
@@ -37,7 +49,6 @@ import useSWR, { mutate } from "swr";
 import { closeAllConnections } from "tauri-plugin-mihomo-api";
 
 import { BasePage, DialogRef } from "@/components/base";
-import { BaseStyledTextField } from "@/components/base/base-styled-text-field";
 import { ProfileItem } from "@/components/profile/profile-item";
 import { ProfileMore } from "@/components/profile/profile-more";
 import {
@@ -51,7 +62,6 @@ import {
   createProfile,
   deleteProfile,
   enhanceProfiles,
-  getProfiles,
   //restartCore,
   getRuntimeLogs,
   importProfile,
@@ -59,7 +69,7 @@ import {
   updateProfile,
 } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
-import { useSetLoadingCache, useThemeMode } from "@/services/states";
+import { useSetLoadingCache } from "@/services/states";
 
 // 记录profile切换状态
 const debugProfileSwitch = (action: string, profile: string, extra?: any) => {
@@ -209,10 +219,11 @@ const ProfilePage = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const { addListener } = useListen();
-  const [url, setUrl] = useState("");
-  const [disabled, setDisabled] = useState(false);
   const [activatings, setActivatings] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+
+  // Import state
+  const [importUrl, setImportUrl] = useState("");
+  const [importLoading, setImportLoading] = useState(false);
 
   // Batch selection states
   const [batchMode, setBatchMode] = useState(false);
@@ -373,74 +384,38 @@ const ProfilePage = () => {
     return [...new Set([profiles.current ?? ""])].filter(Boolean);
   };
 
-  const onImport = async () => {
-    if (!url) return;
+  // Import profile function
+  const handleImport = useLockFn(async () => {
+    if (!importUrl) return;
+
     // 校验url是否为http/https
-    if (!/^https?:\/\//i.test(url)) {
+    if (!/^https?:\/\//i.test(importUrl)) {
       showNotice("error", t("Invalid Profile URL"));
       return;
     }
-    setLoading(true);
 
-    const importVerifier = createImportLandingVerifier(profiles?.items, url);
-
-    const handleImportSuccess = async (noticeKey: string) => {
-      showNotice("success", t(noticeKey));
-      setUrl("");
-      await performRobustRefresh(importVerifier);
-    };
-
-    const waitForImportLanding = async () => {
-      const maxChecks = 2;
-      for (let attempt = 0; attempt <= maxChecks; attempt++) {
-        try {
-          const currentProfiles = await getProfiles();
-          if (importVerifier.hasLanding(currentProfiles)) {
-            return true;
-          }
-
-          if (attempt < maxChecks) {
-            await new Promise((resolve) =>
-              setTimeout(resolve, 200 * (attempt + 1)),
-            );
-          }
-        } catch (verifyErr) {
-          console.warn("[导入验证] 获取配置状态失败:", verifyErr);
-          break;
-        }
-      }
-
-      return false;
-    };
+    setImportLoading(true);
 
     try {
       // 尝试正常导入
-      await importProfile(url);
-      await handleImportSuccess("Profile Imported Successfully");
-      return;
+      await importProfile(importUrl);
+      showNotice("success", t("Profile Imported Successfully"));
+      setImportUrl("");
+      await mutateProfiles();
     } catch (initialErr) {
       console.warn("[订阅导入] 首次导入失败:", initialErr);
 
-      const alreadyImported = await waitForImportLanding();
-      if (alreadyImported) {
-        console.warn(
-          "[订阅导入] 接口返回失败，但检测到订阅已导入，跳过回退导入流程",
-        );
-        await handleImportSuccess("Profile Imported Successfully");
-        return;
-      }
-
-      // 首次导入失败且未检测到数据变更，尝试使用自身代理
+      // 首次导入失败，尝试使用自身代理
       showNotice("info", t("Import failed, retrying with Clash proxy..."));
       try {
-        // 使用自身代理尝试导入
-        await importProfile(url, {
+        await importProfile(importUrl, {
           with_proxy: false,
           self_proxy: true,
         });
-        await handleImportSuccess("Profile Imported with Clash proxy");
+        showNotice("success", t("Profile Imported with Clash proxy"));
+        setImportUrl("");
+        await mutateProfiles();
       } catch (retryErr: any) {
-        // 回退导入也失败
         const retryErrmsg = retryErr?.message || retryErr.toString();
         showNotice(
           "error",
@@ -448,86 +423,14 @@ const ProfilePage = () => {
         );
       }
     } finally {
-      setDisabled(false);
-      setLoading(false);
+      setImportLoading(false);
     }
-  };
+  });
 
-  // 强化的刷新策略
-  const performRobustRefresh = async (
-    importVerifier: ImportLandingVerifier,
-  ) => {
-    const { baselineCount, hasLanding } = importVerifier;
-    let retryCount = 0;
-    const maxRetries = 5;
-    const baseDelay = 200;
-
-    while (retryCount < maxRetries) {
-      try {
-        console.log(`[导入刷新] 第${retryCount + 1}次尝试刷新配置数据`);
-
-        // 强制刷新，绕过所有缓存
-        await mutateProfiles(undefined, {
-          revalidate: true,
-          rollbackOnError: false,
-        });
-
-        // 等待状态稳定
-        await new Promise((resolve) =>
-          setTimeout(resolve, baseDelay * (retryCount + 1)),
-        );
-
-        // 验证刷新是否成功
-        const currentProfiles = await getProfiles();
-        const currentCount = currentProfiles?.items?.length || 0;
-
-        if (currentCount > baselineCount) {
-          console.log(
-            `[导入刷新] 配置刷新成功，配置数量 ${baselineCount} -> ${currentCount}`,
-          );
-          await onEnhance(false);
-          return;
-        }
-
-        if (hasLanding(currentProfiles)) {
-          console.log("[导入刷新] 检测到订阅内容更新，判定刷新成功");
-          await onEnhance(false);
-          return;
-        }
-
-        console.warn(
-          `[导入刷新] 配置数量未增加 (${currentCount}), 继续重试...`,
-        );
-        retryCount++;
-      } catch (error) {
-        console.error(`[导入刷新] 第${retryCount + 1}次刷新失败:`, error);
-        retryCount++;
-        await new Promise((resolve) =>
-          setTimeout(resolve, baseDelay * retryCount),
-        );
-      }
-    }
-
-    // 所有重试失败后的最后尝试
-    console.warn(`[导入刷新] 常规刷新失败，尝试清除缓存重新获取`);
-    try {
-      // 清除SWR缓存并重新获取
-      await mutate("getProfiles", getProfiles(), { revalidate: true });
-      await onEnhance(false);
-      showNotice(
-        "error",
-        t("Profile imported but may need manual refresh"),
-        3000,
-      );
-    } catch (finalError) {
-      console.error(`[导入刷新] 最终刷新尝试失败:`, finalError);
-      showNotice(
-        "error",
-        t("Profile imported successfully, please restart if not visible"),
-        5000,
-      );
-    }
-  };
+  const handlePasteUrl = useLockFn(async () => {
+    const text = await readText();
+    if (text) setImportUrl(text);
+  });
 
   const onDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -799,11 +702,6 @@ const ProfilePage = () => {
     });
   });
 
-  const onCopyLink = async () => {
-    const text = await readText();
-    if (text) setUrl(text);
-  };
-
   // Batch selection functions
   const toggleBatchMode = () => {
     setBatchMode(!batchMode);
@@ -886,12 +784,6 @@ const ProfilePage = () => {
     }
   });
 
-  const mode = useThemeMode();
-  const islight = mode === "light" ? true : false;
-  const dividercolor = islight
-    ? "rgba(0, 0, 0, 0.06)"
-    : "rgba(255, 255, 255, 0.06)";
-
   // 监听后端配置变更
   useEffect(() => {
     let unlistenPromise: Promise<() => void> | undefined;
@@ -959,266 +851,517 @@ const ProfilePage = () => {
     <BasePage
       full
       title={t("Profiles")}
-      contentStyle={{ height: "100%" }}
+      contentStyle={{ height: "100%", padding: 0 }}
       header={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
           {!batchMode ? (
             <>
-              {/* Batch mode toggle button */}
-              <IconButton
-                size="small"
-                color="inherit"
-                title={t("Batch Operations")}
-                onClick={toggleBatchMode}
+              {/* 操作按钮组 - 统一风格 */}
+              <Typography
+                sx={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "text.disabled",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
               >
-                <CheckBoxOutlineBlankRounded />
-              </IconButton>
+                ACTIONS
+              </Typography>
 
-              <IconButton
-                size="small"
-                color="inherit"
-                title={t("Update All Profiles")}
-                onClick={onUpdateAll}
-              >
-                <RefreshRounded />
-              </IconButton>
+              <Box sx={{ display: "flex", gap: 0.75 }}>
+                <Tooltip title={t("New")} arrow>
+                  <IconButton
+                    size="small"
+                    onClick={() => viewerRef.current?.create()}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      "&:hover": { bgcolor: "action.hover" },
+                    }}
+                  >
+                    <TextSnippetOutlined sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
 
-              <IconButton
-                size="small"
-                color="inherit"
-                title={t("View Runtime Config")}
-                onClick={() => configRef.current?.open()}
-              >
-                <TextSnippetOutlined />
-              </IconButton>
+                <Tooltip title={t("Batch Operations")} arrow>
+                  <IconButton
+                    size="small"
+                    onClick={toggleBatchMode}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      "&:hover": { bgcolor: "action.hover" },
+                    }}
+                  >
+                    <CheckBoxOutlineBlankRounded sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
 
-              <IconButton
-                size="small"
-                color="primary"
-                title={t("Reactivate Profiles")}
-                onClick={() => onEnhance(true)}
-              >
-                <LocalFireDepartmentRounded />
-              </IconButton>
+                <Tooltip title={t("Update All Profiles")} arrow>
+                  <IconButton
+                    size="small"
+                    onClick={onUpdateAll}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      "&:hover": { bgcolor: "action.hover" },
+                    }}
+                  >
+                    <RefreshRounded sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
 
-              {/* 故障检测和紧急恢复按钮 */}
-              {(error || isStale) && (
-                <IconButton
-                  size="small"
-                  color="warning"
-                  title="数据异常，点击强制刷新"
-                  onClick={onEmergencyRefresh}
-                  sx={{
-                    animation: "pulse 2s infinite",
-                    "@keyframes pulse": {
-                      "0%": { opacity: 1 },
-                      "50%": { opacity: 0.5 },
-                      "100%": { opacity: 1 },
-                    },
-                  }}
-                >
-                  <ClearRounded />
-                </IconButton>
-              )}
+                <Tooltip title={t("View Runtime Config")} arrow>
+                  <IconButton
+                    size="small"
+                    onClick={() => configRef.current?.open()}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      "&:hover": { bgcolor: "action.hover" },
+                    }}
+                  >
+                    <TextSnippetOutlined sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title={t("Reactivate Profiles")} arrow>
+                  <IconButton
+                    size="small"
+                    color="primary"
+                    onClick={() => onEnhance(true)}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      "&:hover": { bgcolor: "action.hover" },
+                    }}
+                  >
+                    <LocalFireDepartmentRounded sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
+
+                {/* 故障检测和紧急恢复按钮 */}
+                {(error || isStale) && (
+                  <Tooltip title="数据异常，点击强制刷新" arrow>
+                    <IconButton
+                      size="small"
+                      color="warning"
+                      onClick={onEmergencyRefresh}
+                      sx={{
+                        width: 28,
+                        height: 28,
+                        animation: "pulse 2s infinite",
+                        "@keyframes pulse": {
+                          "0%": { opacity: 1 },
+                          "50%": { opacity: 0.5 },
+                          "100%": { opacity: 1 },
+                        },
+                        "&:hover": { bgcolor: "action.hover" },
+                      }}
+                    >
+                      <ClearRounded sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </Box>
             </>
           ) : (
             // Batch mode header
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <IconButton
-                size="small"
-                color="inherit"
-                title={isAllSelected() ? t("Deselect All") : t("Select All")}
-                onClick={
-                  isAllSelected() ? clearAllSelections : selectAllProfiles
-                }
+            <Box
+              sx={{ display: "flex", alignItems: "center", gap: 1.5, flex: 1 }}
+            >
+              <Typography
+                sx={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "text.disabled",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
               >
-                {getSelectionState() === "all" ? (
-                  <CheckBoxRounded />
-                ) : getSelectionState() === "partial" ? (
-                  <IndeterminateCheckBoxRounded />
-                ) : (
-                  <CheckBoxOutlineBlankRounded />
-                )}
-              </IconButton>
-              <IconButton
-                size="small"
-                color="error"
-                title={t("Delete Selected Profiles")}
-                onClick={deleteSelectedProfiles}
-                disabled={selectedProfiles.size === 0}
-              >
-                <DeleteRounded />
-              </IconButton>
-              <Button size="small" variant="outlined" onClick={toggleBatchMode}>
-                {t("Done")}
-              </Button>
-              <Box
-                sx={{ flex: 1, textAlign: "right", color: "text.secondary" }}
+                BATCH
+              </Typography>
+
+              <Box sx={{ display: "flex", gap: 0.75, alignItems: "center" }}>
+                <Tooltip
+                  title={isAllSelected() ? t("Deselect All") : t("Select All")}
+                  arrow
+                >
+                  <IconButton
+                    size="small"
+                    onClick={
+                      isAllSelected() ? clearAllSelections : selectAllProfiles
+                    }
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      "&:hover": { bgcolor: "action.hover" },
+                    }}
+                  >
+                    {getSelectionState() === "all" ? (
+                      <CheckBoxRounded sx={{ fontSize: 18 }} />
+                    ) : getSelectionState() === "partial" ? (
+                      <IndeterminateCheckBoxRounded sx={{ fontSize: 18 }} />
+                    ) : (
+                      <CheckBoxOutlineBlankRounded sx={{ fontSize: 18 }} />
+                    )}
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={t("Delete Selected Profiles")} arrow>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={deleteSelectedProfiles}
+                    disabled={selectedProfiles.size === 0}
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      "&:hover": { bgcolor: "action.hover" },
+                    }}
+                  >
+                    <DeleteRounded sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
+                <Box
+                  onClick={toggleBatchMode}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    px: 1.25,
+                    py: 0.5,
+                    cursor: "pointer",
+                    borderRadius: 1.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      backgroundColor: (theme) =>
+                        alpha(theme.palette.primary.main, 0.04),
+                    },
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 500,
+                      color: "text.secondary",
+                    }}
+                  >
+                    {t("Done")}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Typography
+                sx={{
+                  ml: "auto",
+                  color: "text.secondary",
+                  fontSize: 12,
+                  fontWeight: 500,
+                }}
               >
                 {t("Selected")} {selectedProfiles.size} {t("items")}
-              </Box>
+              </Typography>
             </Box>
           )}
         </Box>
       }
     >
-      <Stack
-        direction="row"
-        spacing={1}
+      {/* 配置列表区域 - 精致分区布局 */}
+      <Box
         sx={{
-          pt: 1,
-          mb: 0.5,
-          mx: "10px",
-          height: "36px",
-          display: "flex",
-          alignItems: "center",
+          flex: 1,
+          overflow: "auto",
         }}
       >
-        <BaseStyledTextField
-          value={url}
-          variant="outlined"
-          onChange={(e) => setUrl(e.target.value)}
-          onKeyDown={(event) => {
-            if (event.key !== "Enter" || event.nativeEvent.isComposing) {
-              return;
-            }
-            if (!url || disabled || loading) {
-              return;
-            }
-            event.preventDefault();
-            void onImport();
-          }}
-          placeholder={t("Profile URL")}
-          slotProps={{
-            input: {
-              sx: { pr: 1 },
-              endAdornment: !url ? (
-                <IconButton
-                  size="small"
-                  sx={{ p: 0.5 }}
-                  title={t("Paste")}
-                  onClick={onCopyLink}
-                >
-                  <ContentPasteRounded fontSize="inherit" />
-                </IconButton>
-              ) : (
-                <IconButton
-                  size="small"
-                  sx={{ p: 0.5 }}
-                  title={t("Clear")}
-                  onClick={() => setUrl("")}
-                >
-                  <ClearRounded fontSize="inherit" />
-                </IconButton>
-              ),
-            },
-          }}
-        />
-        <LoadingButton
-          disabled={!url || disabled}
-          loading={loading}
-          variant="contained"
-          size="small"
-          sx={{ borderRadius: "6px" }}
-          onClick={onImport}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={onDragEnd}
         >
-          {t("Import")}
-        </LoadingButton>
-        <Button
-          variant="contained"
-          size="small"
-          sx={{ borderRadius: "6px" }}
-          onClick={() => viewerRef.current?.create()}
-        >
-          {t("New")}
-        </Button>
-      </Stack>
-
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={onDragEnd}
-      >
-        <Box
-          sx={{
-            pl: "10px",
-            pr: "10px",
-            height: "calc(100% - 48px)",
-            overflowY: "auto",
-          }}
-        >
-          <Box sx={{ mb: 1.5 }}>
-            <Grid container spacing={{ xs: 1, lg: 1 }}>
-              <SortableContext
-                items={profileItems.map((x) => {
-                  return x.uid;
-                })}
+          {/* 导入订阅区域 */}
+          <Box
+            sx={{
+              borderBottom: (theme) =>
+                `1px solid ${
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.04)"
+                    : "rgba(0, 0, 0, 0.04)"
+                }`,
+              px: { xs: 1.5, sm: 2 },
+              pt: { xs: 1.25, sm: 1.5 },
+              pb: { xs: 1.25, sm: 1.5 },
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                gap: 1,
+                alignItems: "center",
+              }}
+            >
+              <TextField
+                fullWidth
+                size="small"
+                value={importUrl}
+                onChange={(e) => setImportUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && importUrl && !importLoading) {
+                    handleImport();
+                  }
+                }}
+                placeholder={t("Enter subscription URL...")}
+                disabled={importLoading}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    height: 32,
+                    fontSize: "13px",
+                    borderRadius: "8px",
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.02)"
+                        : "rgba(0, 0, 0, 0.02)",
+                  },
+                }}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <Tooltip title={t("Paste")} arrow>
+                        <IconButton
+                          size="small"
+                          onClick={handlePasteUrl}
+                          disabled={importLoading}
+                          sx={{
+                            width: 24,
+                            height: 24,
+                            "&:hover": { bgcolor: "action.hover" },
+                          }}
+                        >
+                          <ContentPasteRounded sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </Tooltip>
+                    ),
+                  },
+                }}
+              />
+              <Button
+                variant="contained"
+                onClick={handleImport}
+                disabled={!importUrl || importLoading}
+                sx={{
+                  height: 32,
+                  minWidth: 70,
+                  px: 2,
+                  fontSize: "13px",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  fontWeight: 600,
+                }}
               >
-                {profileItems.map((item) => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={item.file}>
-                    <ProfileItem
-                      id={item.uid}
-                      selected={profiles.current === item.uid}
-                      activating={activatings.includes(item.uid)}
-                      itemData={item}
-                      onSelect={(f) => onSelect(item.uid, f)}
-                      onEdit={() => viewerRef.current?.edit(item)}
-                      onSave={async (prev, curr) => {
-                        if (prev !== curr && profiles.current === item.uid) {
-                          await onEnhance(false);
-                          //  await restartCore();
-                          //   Notice.success(t("Clash Core Restarted"), 1000);
-                        }
-                      }}
-                      onDelete={() => {
-                        if (batchMode) {
-                          toggleProfileSelection(item.uid);
-                        } else {
-                          onDelete(item.uid);
-                        }
-                      }}
-                      batchMode={batchMode}
-                      isSelected={selectedProfiles.has(item.uid)}
-                      onSelectionChange={() => toggleProfileSelection(item.uid)}
-                    />
-                  </Grid>
-                ))}
-              </SortableContext>
-            </Grid>
+                {importLoading ? t("Importing...") : t("Import")}
+              </Button>
+            </Box>
           </Box>
-          <Divider
-            variant="middle"
-            flexItem
-            sx={{ width: `calc(100% - 32px)`, borderColor: dividercolor }}
-          ></Divider>
-          <Box sx={{ mt: 1.5, mb: "10px" }}>
-            <Grid container spacing={{ xs: 1, lg: 1 }}>
-              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-                <ProfileMore
-                  id="Merge"
-                  onSave={async (prev, curr) => {
-                    if (prev !== curr) {
-                      await onEnhance(false);
-                    }
+
+          {profileItems.length > 0 ? (
+            <>
+              {/* Subscriptions 区域 */}
+              <Box
+                sx={{
+                  borderBottom: (theme) =>
+                    `1px solid ${
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.04)"
+                    : "rgba(0, 0, 0, 0.04)"
+                }`,
+              px: { xs: 1.5, sm: 2 },
+              pt: { xs: 1.25, sm: 1.5 },
+              pb: { xs: 1.25, sm: 1.5 },
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    mb: 2.5,
+                    fontWeight: 700,
+                    fontSize: { xs: "9px", sm: "10px" },
+                    letterSpacing: "1.2px",
+                    textTransform: "uppercase",
+                    color: "text.secondary",
+                    opacity: 0.7,
+                  }}
+                >
+                  {t("Subscriptions")}
+                </Typography>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      sm: "repeat(2, 1fr)",
+                      md: "repeat(3, 1fr)",
+                      lg: "repeat(4, 1fr)",
+                      xl: "repeat(5, 1fr)",
+                    },
+                    gap: { xs: 1.5, sm: 2 },
+                  }}
+                >
+                  <SortableContext items={profileItems.map((x) => x.uid)}>
+                    {profileItems.map((item) => (
+                      <ProfileItem
+                        key={item.uid}
+                        id={item.uid}
+                        selected={profiles.current === item.uid}
+                        activating={activatings.includes(item.uid)}
+                        itemData={item}
+                        onSelect={(f) => onSelect(item.uid, f)}
+                        onEdit={() => viewerRef.current?.edit(item)}
+                        onSave={async (prev, curr) => {
+                          if (prev !== curr && profiles.current === item.uid) {
+                            await onEnhance(false);
+                          }
+                        }}
+                        onDelete={() => {
+                          if (batchMode) {
+                            toggleProfileSelection(item.uid);
+                          } else {
+                            onDelete(item.uid);
+                          }
+                        }}
+                        batchMode={batchMode}
+                        isSelected={selectedProfiles.has(item.uid)}
+                        onSelectionChange={() =>
+                          toggleProfileSelection(item.uid)
+                        }
+                      />
+                    ))}
+                  </SortableContext>
+                </Box>
+              </Box>
+
+              {/* Enhanced 配置区域 */}
+              <Box
+                sx={{
+                  px: { xs: 1.5, sm: 2 },
+                  pt: { xs: 1.25, sm: 1.5 },
+                  pb: { xs: 1.25, sm: 1.5 },
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    mb: 2.5,
+                    fontWeight: 400,
+                    fontSize: { xs: "9px", sm: "10px" },
+                    letterSpacing: "0.8px",
+                    textTransform: "uppercase",
+                    color: "text.disabled",
+                    opacity: 0.5,
+                  }}
+                >
+                  {t("Enhanced")}
+                </Typography>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      sm: "repeat(2, 1fr)",
+                      md: "repeat(3, 1fr)",
+                      lg: "repeat(4, 1fr)",
+                      xl: "repeat(5, 1fr)",
+                    },
+                    gap: { xs: 1.5, sm: 2 },
+                  }}
+                >
+                  <ProfileMore
+                    id="Merge"
+                    onSave={async (prev, curr) => {
+                      if (prev !== curr) {
+                        await onEnhance(false);
+                      }
+                    }}
+                  />
+                  <ProfileMore
+                    id="Script"
+                    logInfo={chainLogs["Script"]}
+                    onSave={async (prev, curr) => {
+                      if (prev !== curr) {
+                        await onEnhance(false);
+                      }
+                    }}
+                  />
+                </Box>
+              </Box>
+            </>
+          ) : (
+            // 空状态提示 - 精致设计
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+                minHeight: "400px",
+                px: 3,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "rgba(99, 102, 241, 0.08)"
+                      : "rgba(99, 102, 241, 0.05)",
+                  mb: 3,
+                }}
+              >
+                <TextSnippetOutlined
+                  sx={{
+                    fontSize: 48,
+                    color: "primary.main",
+                    opacity: 0.6,
                   }}
                 />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6, md: 6, lg: 6 }}>
-                <ProfileMore
-                  id="Script"
-                  logInfo={chainLogs["Script"]}
-                  onSave={async (prev, curr) => {
-                    if (prev !== curr) {
-                      await onEnhance(false);
-                    }
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-        <DragOverlay />
-      </DndContext>
+              </Box>
+              <Typography
+                sx={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: "text.primary",
+                  mb: 1,
+                }}
+              >
+                {t("No Profiles")}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: 13,
+                  color: "text.secondary",
+                  textAlign: "center",
+                  maxWidth: 300,
+                  lineHeight: 1.6,
+                }}
+              >
+                {t(
+                  "Import a subscription or create a new profile to get started",
+                )}
+              </Typography>
+            </Box>
+          )}
+          <DragOverlay />
+        </DndContext>
+      </Box>
 
       <ProfileViewer
         ref={viewerRef}

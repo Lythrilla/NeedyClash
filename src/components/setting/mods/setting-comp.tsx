@@ -22,7 +22,7 @@ interface ItemProps {
   onClick?: () => void | Promise<any>;
 }
 
-// 增强型设置项组件 - 更现代的设计
+// 扁平化现代设计的设置项
 export const SettingItem: React.FC<ItemProps> = ({
   label,
   extra,
@@ -34,18 +34,19 @@ export const SettingItem: React.FC<ItemProps> = ({
   const clickable = !!onClick;
 
   const primary = (
-    <Box sx={{ display: "flex", alignItems: "center" }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
       <Typography
         component="span"
         sx={{
-          fontSize: "13px",
-          fontWeight: 500,
+          fontSize: "13.5px",
+          fontWeight: 400,
           color: "text.primary",
+          letterSpacing: "-0.005em",
         }}
       >
         {label}
       </Typography>
-      {extra ? extra : null}
+      {extra}
     </Box>
   );
 
@@ -65,12 +66,12 @@ export const SettingItem: React.FC<ItemProps> = ({
     <ListItem
       disablePadding
       sx={{
-        mb: 0.5,
-        borderRadius: 1.5,
-        overflow: "hidden",
-        transition: "all 0.2s ease",
-        "&:hover": {
-          bgcolor: alpha(theme.palette.primary.main, 0.04),
+        borderBottom: `1px solid ${alpha(
+          theme.palette.mode === "dark" ? "#fff" : "#000",
+          0.05,
+        )}`,
+        "&:last-child": {
+          borderBottom: "none",
         },
       }}
     >
@@ -78,30 +79,42 @@ export const SettingItem: React.FC<ItemProps> = ({
         onClick={handleClick}
         disabled={isLoading}
         sx={{
-          py: 1.5,
-          px: 2,
-          borderRadius: 1.5,
-          minHeight: 48,
+          py: 1.75,
+          px: 0,
+          minHeight: 52,
+          transition: "background-color 0.2s ease",
           "&:hover": {
-            bgcolor: "transparent",
+            bgcolor: alpha(theme.palette.primary.main, 0.04),
+          },
+          "&.Mui-disabled": {
+            opacity: 0.5,
           },
         }}
       >
         <ListItemText
           primary={primary}
           secondary={secondary}
+          sx={{ my: 0 }}
           secondaryTypographyProps={{
-            sx: { fontSize: "11px", mt: 0.5 },
+            sx: {
+              fontSize: "11.5px",
+              mt: 0.5,
+              color: "text.secondary",
+            },
           }}
         />
         {isLoading ? (
-          <CircularProgress color="inherit" size={18} sx={{ ml: 1 }} />
+          <CircularProgress
+            size={16}
+            sx={{ ml: 2, color: "text.secondary" }}
+          />
         ) : (
           <ChevronRightRounded
             sx={{
               color: "text.secondary",
-              opacity: 0.5,
+              opacity: 0.3,
               fontSize: 20,
+              ml: 2,
             }}
           />
         )}
@@ -110,14 +123,19 @@ export const SettingItem: React.FC<ItemProps> = ({
   ) : (
     <ListItem
       sx={{
-        py: 1.5,
-        px: 2,
-        mb: 0.5,
-        borderRadius: 1.5,
-        minHeight: 48,
+        py: 1.75,
+        px: 0,
+        minHeight: 52,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        borderBottom: `1px solid ${alpha(
+          theme.palette.mode === "dark" ? "#fff" : "#000",
+          0.05,
+        )}`,
+        "&:last-child": {
+          borderBottom: "none",
+        },
         transition: "background-color 0.2s ease",
         "&:hover": {
           bgcolor: alpha(theme.palette.primary.main, 0.02),
@@ -127,19 +145,29 @@ export const SettingItem: React.FC<ItemProps> = ({
       <ListItemText
         primary={primary}
         secondary={secondary}
-        sx={{ flex: "1 1 auto", my: 0 }}
+        sx={{ flex: "1 1 auto", my: 0, mr: 3 }}
         secondaryTypographyProps={{
-          sx: { fontSize: "11px", mt: 0.5 },
+          sx: {
+            fontSize: "11.5px",
+            mt: 0.5,
+            color: "text.secondary",
+          },
         }}
       />
-      <Box sx={{ ml: 2, display: "flex", alignItems: "center" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          flexShrink: 0,
+        }}
+      >
         {children}
       </Box>
     </ListItem>
   );
 };
 
-// 增强型设置列表组件 - 带图标和描述
+// 精致优化的设置列表组件
 interface SettingListProps {
   title: string;
   icon?: ReactNode;
@@ -157,14 +185,18 @@ export const SettingList: React.FC<SettingListProps> = ({
 
   return (
     <Box sx={{ mb: 0 }}>
-      {/* 设置分组标题 */}
+      {/* 设置分组标题 - 精致风格 */}
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
-          gap: 1.5,
+          alignItems: "flex-start",
+          gap: 1.25,
           mb: 2,
-          px: 1,
+          pb: 1.5,
+          borderBottom: `1px solid ${alpha(
+            theme.palette.mode === "dark" ? "#fff" : "#000",
+            0.06,
+          )}`,
         }}
       >
         {icon && (
@@ -173,11 +205,11 @@ export const SettingList: React.FC<SettingListProps> = ({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 32,
-              height: 32,
-              borderRadius: 2,
-              bgcolor: alpha(theme.palette.primary.main, 0.08),
               color: "primary.main",
+              bgcolor: alpha(theme.palette.primary.main, 0.08),
+              borderRadius: "8px",
+              p: 0.75,
+              mt: 0.25,
               "& svg": {
                 fontSize: 18,
               },
@@ -188,25 +220,24 @@ export const SettingList: React.FC<SettingListProps> = ({
         )}
         <Box sx={{ flex: 1 }}>
           <Typography
-            variant="h6"
             sx={{
-              fontSize: "15px",
-              fontWeight: 700,
-              letterSpacing: "-0.2px",
+              fontSize: "14px",
+              fontWeight: 600,
               color: "text.primary",
-              mb: description ? 0.25 : 0,
+              letterSpacing: "-0.02em",
+              lineHeight: 1.3,
+              mb: description ? 0.5 : 0,
             }}
           >
             {title}
           </Typography>
           {description && (
             <Typography
-              variant="caption"
               sx={{
-                fontSize: "11px",
+                fontSize: "11.5px",
                 color: "text.secondary",
-                opacity: 0.7,
-                lineHeight: 1.4,
+                lineHeight: 1.5,
+                opacity: 0.8,
               }}
             >
               {description}
@@ -215,18 +246,9 @@ export const SettingList: React.FC<SettingListProps> = ({
         </Box>
       </Box>
 
-      {/* 设置项列表 - 带卡片背景 */}
-      <Box
-        sx={{
-          bgcolor: alpha(theme.palette.background.paper, 0.6),
-          backdropFilter: "blur(10px)",
-          borderRadius: 2.5,
-          border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-          overflow: "hidden",
-          boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.02)}`,
-        }}
-      >
-        <List sx={{ p: 1 }}>{children}</List>
+      {/* 设置项列表 */}
+      <Box>
+        <List sx={{ p: 0 }}>{children}</List>
       </Box>
     </Box>
   );

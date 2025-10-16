@@ -316,7 +316,6 @@ export const useCustomTheme = () => {
         /* 移除可能的白色点或线条 */
         * {
           outline: none !important;
-          box-shadow: none !important;
         }
       `;
 

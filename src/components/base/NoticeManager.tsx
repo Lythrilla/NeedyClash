@@ -147,7 +147,9 @@ export const NoticeManager: React.FC = () => {
                   padding: 0.5,
                   "&:hover": {
                     backgroundColor: (theme) =>
-                      alpha(theme.palette.action.hover, 0.5),
+                      theme.palette.mode === "dark"
+                        ? "rgba(255, 255, 255, 0.08)"
+                        : "rgba(0, 0, 0, 0.04)",
                   },
                 }}
               >

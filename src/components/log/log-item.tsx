@@ -1,45 +1,23 @@
-import { styled, Box } from "@mui/material";
+import {
+  styled,
+  Box,
+  ListItem,
+  ListItemText,
+  alpha,
+} from "@mui/material";
 import type { ReactNode } from "react";
 
 import { SearchState } from "@/components/base/base-search-box";
 
-const Item = styled(Box)(({ theme: { palette, typography } }) => ({
-  padding: "8px 0",
-  margin: "0 12px",
-  lineHeight: 1.35,
-  borderBottom: `1px solid ${palette.divider}`,
-  fontSize: "0.875rem",
-  fontFamily: typography.fontFamily,
-  userSelect: "text",
-  "& .time": {
-    color: palette.text.secondary,
-  },
-  "& .type": {
-    display: "inline-block",
-    marginLeft: 8,
-    textAlign: "center",
-    borderRadius: 2,
-    textTransform: "uppercase",
-    fontWeight: "600",
-  },
-  '& .type[data-type="error"], & .type[data-type="err"]': {
-    color: palette.error.main,
-  },
-  '& .type[data-type="warning"], & .type[data-type="warn"]': {
-    color: palette.warning.main,
-  },
-  '& .type[data-type="info"], & .type[data-type="inf"]': {
-    color: palette.info.main,
-  },
-  "& .data": {
-    color: palette.text.primary,
-    overflowWrap: "anywhere",
-  },
-  "& .highlight": {
-    backgroundColor: palette.mode === "dark" ? "#ffeb3b40" : "#ffeb3b90",
-    borderRadius: 2,
-    padding: "0 2px",
-  },
+const Tag = styled("span")(({ theme }) => ({
+  fontSize: "10px",
+  padding: "0 4px",
+  lineHeight: 1.375,
+  border: "1px solid",
+  borderRadius: 4,
+  borderColor: alpha(theme.palette.text.secondary, 0.35),
+  marginTop: "4px",
+  marginRight: "4px",
 }));
 
 interface Props {
@@ -87,7 +65,14 @@ const LogItem = ({ value, searchState }: Props) => {
         }
 
         elements.push(
-          <span key={`highlight-${start}`} className="highlight">
+          <span
+            key={`highlight-${start}`}
+            style={{
+              backgroundColor: "#ffeb3b40",
+              borderRadius: 2,
+              padding: "0 2px",
+            }}
+          >
             {matchText}
           </span>,
         );
@@ -105,18 +90,39 @@ const LogItem = ({ value, searchState }: Props) => {
     }
   };
 
+  const getTypeColor = (type: string) => {
+    const lowerType = type.toLowerCase();
+    if (lowerType === "error" || lowerType === "err") return "error.main";
+    if (lowerType === "warning" || lowerType === "warn") return "warning.main";
+    if (lowerType === "info" || lowerType === "inf") return "info.main";
+    return "text.secondary";
+  };
+
   return (
-    <Item>
-      <div>
-        <span className="time">{renderHighlightText(value.time || "")}</span>
-        <span className="type" data-type={value.type.toLowerCase()}>
-          {renderHighlightText(value.type)}
-        </span>
-      </div>
-      <div>
-        <span className="data">{renderHighlightText(value.payload)}</span>
-      </div>
-    </Item>
+    <ListItem
+      dense
+      sx={{ borderBottom: "1px solid var(--divider-color)" }}
+    >
+      <ListItemText
+        sx={{ userSelect: "text" }}
+        primary={renderHighlightText(value.payload)}
+        secondary={
+          <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+            <Tag sx={{ color: "text.secondary" }}>
+              {renderHighlightText(value.time || "")}
+            </Tag>
+            <Tag
+              sx={{
+                textTransform: "uppercase",
+                color: getTypeColor(value.type),
+              }}
+            >
+              {renderHighlightText(value.type)}
+            </Tag>
+          </Box>
+        }
+      />
+    </ListItem>
   );
 };
 

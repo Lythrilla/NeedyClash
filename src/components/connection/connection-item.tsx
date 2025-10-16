@@ -42,7 +42,16 @@ export const ConnectionItem = (props: Props) => {
       dense
       sx={{ borderBottom: "1px solid var(--divider-color)" }}
       secondaryAction={
-        <IconButton edge="end" color="inherit" onClick={onDelete}>
+        <IconButton 
+          edge="end" 
+          color="inherit" 
+          onClick={onDelete}
+          sx={{
+            "&:hover": {
+              backgroundColor: "action.hover",
+            },
+          }}
+        >
           <CloseRounded />
         </IconButton>
       }

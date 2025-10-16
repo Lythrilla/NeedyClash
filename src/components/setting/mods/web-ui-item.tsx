@@ -66,6 +66,11 @@ export const WebUIItem = (props: Props) => {
               onChange(editValue);
               setEditing(false);
             }}
+            sx={{
+              "&:hover": {
+                backgroundColor: "action.hover",
+              },
+            }}
           >
             <CheckRounded fontSize="inherit" />
           </IconButton>
@@ -76,6 +81,11 @@ export const WebUIItem = (props: Props) => {
             onClick={() => {
               onCancel?.();
               setEditing(false);
+            }}
+            sx={{
+              "&:hover": {
+                backgroundColor: "action.hover",
+              },
             }}
           >
             <CloseRounded fontSize="inherit" />
@@ -130,6 +140,11 @@ export const WebUIItem = (props: Props) => {
           title={t("Open URL")}
           color="inherit"
           onClick={() => onOpenUrl?.(value)}
+          sx={{
+            "&:hover": {
+              backgroundColor: "action.hover",
+            },
+          }}
         >
           <OpenInNewRounded fontSize="inherit" />
         </IconButton>
@@ -141,6 +156,11 @@ export const WebUIItem = (props: Props) => {
             setEditing(true);
             setEditValue(value);
           }}
+          sx={{
+            "&:hover": {
+              backgroundColor: "action.hover",
+            },
+          }}
         >
           <EditRounded fontSize="inherit" />
         </IconButton>
@@ -149,6 +169,11 @@ export const WebUIItem = (props: Props) => {
           title={t("Delete")}
           color="inherit"
           onClick={onDelete}
+          sx={{
+            "&:hover": {
+              backgroundColor: "action.hover",
+            },
+          }}
         >
           <DeleteRounded fontSize="inherit" />
         </IconButton>

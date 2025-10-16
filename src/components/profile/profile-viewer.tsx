@@ -1,12 +1,8 @@
 import {
-  Box,
-  FormControl,
   InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  styled,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import type { Ref } from "react";
@@ -15,6 +11,11 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { BaseDialog, Switch } from "@/components/base";
+import {
+  EnhancedDialogTitle,
+  EnhancedFormGroup,
+  EnhancedFormItem,
+} from "@/components/setting/mods/enhanced-dialog-components";
 import { useProfiles } from "@/hooks/use-profiles";
 import { createProfile, patchProfile } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
@@ -204,15 +205,6 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
     }
   };
 
-  const text = {
-    fullWidth: true,
-    size: "small",
-    margin: "normal",
-    variant: "outlined",
-    autoComplete: "off",
-    autoCorrect: "off",
-  } as const;
-
   const formType = watch("type");
   const isRemote = formType === "remote";
   const isLocal = formType === "local";
@@ -220,8 +212,8 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
   return (
     <BaseDialog
       open={open}
-      title={openType === "new" ? t("Create Profile") : t("Edit Profile")}
-      contentSx={{ width: 375, pb: 0, maxHeight: "80%" }}
+      title=""
+      contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
       okBtn={t("Save")}
       cancelBtn={t("Cancel")}
       onClose={handleClose}
@@ -229,163 +221,228 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
       onOk={handleOk}
       loading={loading}
     >
-      <Controller
-        name="type"
-        control={control}
-        render={({ field }) => (
-          <FormControl size="small" fullWidth sx={{ mt: 1, mb: 1 }}>
-            <InputLabel>{t("Type")}</InputLabel>
-            <Select {...field} autoFocus label={t("Type")}>
-              <MenuItem value="remote">Remote</MenuItem>
-              <MenuItem value="local">Local</MenuItem>
-            </Select>
-          </FormControl>
-        )}
+      {/* 标题 */}
+      <EnhancedDialogTitle
+        title={openType === "new" ? t("Create Profile") : t("Edit Profile")}
       />
 
-      <Controller
-        name="name"
-        control={control}
-        render={({ field }) => (
-          <TextField {...text} {...field} label={t("Name")} />
-        )}
-      />
-
-      <Controller
-        name="desc"
-        control={control}
-        render={({ field }) => (
-          <TextField {...text} {...field} label={t("Descriptions")} />
-        )}
-      />
-
-      {isRemote && (
-        <>
+      {/* 基本配置 */}
+      <EnhancedFormGroup title={t("Basic Settings")}>
+        <EnhancedFormItem label={t("Type")}>
           <Controller
-            name="url"
+            name="type"
             control={control}
             render={({ field }) => (
-              <TextField
-                {...text}
+              <ToggleButtonGroup
                 {...field}
-                multiline
-                label={t("Subscription URL")}
-              />
-            )}
-          />
-
-          <Controller
-            name="option.user_agent"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...text}
-                {...field}
-                placeholder={`clash-verge/v${version}`}
-                label="User Agent"
-              />
-            )}
-          />
-
-          <Controller
-            name="option.timeout_seconds"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...text}
-                {...field}
-                type="number"
-                placeholder="60"
-                label={t("HTTP Request Timeout")}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {t("seconds")}
-                      </InputAdornment>
-                    ),
+                exclusive
+                size="small"
+                sx={{
+                  "& .MuiToggleButton-root": {
+                    px: 2,
+                    py: 0.5,
+                    fontSize: "13px",
+                    textTransform: "none",
                   },
                 }}
+              >
+                <ToggleButton value="remote">Remote</ToggleButton>
+                <ToggleButton value="local">Local</ToggleButton>
+              </ToggleButtonGroup>
+            )}
+          />
+        </EnhancedFormItem>
+
+        <EnhancedFormItem label={t("Name")} fullWidth>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                size="small"
+                fullWidth
+                placeholder={t("Profile name")}
               />
             )}
           />
-        </>
+        </EnhancedFormItem>
+
+        <EnhancedFormItem label={t("Descriptions")} fullWidth>
+          <Controller
+            name="desc"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                size="small"
+                fullWidth
+                placeholder={t("Optional description")}
+              />
+            )}
+          />
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
+
+      {/* 远程订阅配置 */}
+      {isRemote && (
+        <EnhancedFormGroup title={t("Remote Settings")}>
+          <EnhancedFormItem label={t("Subscription URL")} fullWidth>
+            <Controller
+              name="url"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  size="small"
+                  fullWidth
+                  multiline
+                  rows={2}
+                  placeholder="https://..."
+                />
+              )}
+            />
+          </EnhancedFormItem>
+
+          <EnhancedFormItem
+            label="User Agent"
+            description={t("Custom HTTP User-Agent header")}
+            fullWidth
+          >
+            <Controller
+              name="option.user_agent"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  size="small"
+                  fullWidth
+                  placeholder={`clash-verge/v${version}`}
+                />
+              )}
+            />
+          </EnhancedFormItem>
+
+          <EnhancedFormItem
+            label={t("HTTP Request Timeout")}
+            description={t("Maximum time to wait for response")}
+          >
+            <Controller
+              name="option.timeout_seconds"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  size="small"
+                  type="number"
+                  sx={{ width: 120 }}
+                  placeholder="60"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {t("seconds")}
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              )}
+            />
+          </EnhancedFormItem>
+        </EnhancedFormGroup>
       )}
 
-      {(isRemote || isLocal) && (
-        <Controller
-          name="option.update_interval"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...text}
-              {...field}
-              type="number"
-              label={t("Update Interval")}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">{t("mins")}</InputAdornment>
-                  ),
-                },
+      {/* 本地文件配置 */}
+      {isLocal && openType === "new" && (
+        <EnhancedFormGroup title={t("Local File")}>
+          <EnhancedFormItem label={t("Select File")} fullWidth>
+            <FileInput
+              onChange={(file, val) => {
+                setValue("name", getValues("name") || file.name);
+                fileDataRef.current = val;
               }}
             />
-          )}
-        />
+          </EnhancedFormItem>
+        </EnhancedFormGroup>
       )}
 
-      {isLocal && openType === "new" && (
-        <FileInput
-          onChange={(file, val) => {
-            setValue("name", getValues("name") || file.name);
-            fileDataRef.current = val;
-          }}
-        />
+      {/* 更新配置 */}
+      {(isRemote || isLocal) && (
+        <EnhancedFormGroup title={t("Update Settings")}>
+          <EnhancedFormItem
+            label={t("Update Interval")}
+            description={t("Automatic update interval (0 = disabled)")}
+          >
+            <Controller
+              name="option.update_interval"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  size="small"
+                  type="number"
+                  sx={{ width: 120 }}
+                  placeholder="0"
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {t("mins")}
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              )}
+            />
+          </EnhancedFormItem>
+        </EnhancedFormGroup>
       )}
 
+      {/* 代理选项 */}
       {isRemote && (
-        <>
-          <Controller
-            name="option.with_proxy"
-            control={control}
-            render={({ field }) => (
-              <StyledBox>
-                <InputLabel>{t("Use System Proxy")}</InputLabel>
-                <Switch checked={field.value} {...field} color="primary" />
-              </StyledBox>
-            )}
-          />
+        <EnhancedFormGroup title={t("Proxy Options")}>
+          <EnhancedFormItem
+            label={t("Use System Proxy")}
+            description={t("Use system proxy for subscription requests")}
+          >
+            <Controller
+              name="option.with_proxy"
+              control={control}
+              render={({ field }) => (
+                <Switch edge="end" checked={field.value} {...field} />
+              )}
+            />
+          </EnhancedFormItem>
 
-          <Controller
-            name="option.self_proxy"
-            control={control}
-            render={({ field }) => (
-              <StyledBox>
-                <InputLabel>{t("Use Clash Proxy")}</InputLabel>
-                <Switch checked={field.value} {...field} color="primary" />
-              </StyledBox>
-            )}
-          />
+          <EnhancedFormItem
+            label={t("Use Clash Proxy")}
+            description={t("Use Clash proxy for subscription requests")}
+          >
+            <Controller
+              name="option.self_proxy"
+              control={control}
+              render={({ field }) => (
+                <Switch edge="end" checked={field.value} {...field} />
+              )}
+            />
+          </EnhancedFormItem>
 
-          <Controller
-            name="option.danger_accept_invalid_certs"
-            control={control}
-            render={({ field }) => (
-              <StyledBox>
-                <InputLabel>{t("Accept Invalid Certs (Danger)")}</InputLabel>
-                <Switch checked={field.value} {...field} color="primary" />
-              </StyledBox>
-            )}
-          />
-        </>
+          <EnhancedFormItem
+            label={t("Accept Invalid Certs (Danger)")}
+            description={t("Skip SSL certificate verification (insecure)")}
+          >
+            <Controller
+              name="option.danger_accept_invalid_certs"
+              control={control}
+              render={({ field }) => (
+                <Switch edge="end" checked={field.value} {...field} />
+              )}
+            />
+          </EnhancedFormItem>
+        </EnhancedFormGroup>
       )}
     </BaseDialog>
   );
 }
-
-const StyledBox = styled(Box)(() => ({
-  margin: "8px 0 8px 8px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-}));

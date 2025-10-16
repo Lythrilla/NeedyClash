@@ -4,7 +4,7 @@ import {
   LinkRounded,
   MultipleStopRounded,
 } from "@mui/icons-material";
-import { Box, Chip, Typography, alpha } from "@mui/material";
+import { Box, Typography, alpha } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -226,25 +226,50 @@ const ProxyPage = () => {
             </Box>
           </Box>
 
-          {/* 链式代理按钮 */}
-          <Chip
-            icon={<LinkRounded sx={{ fontSize: "1rem !important" }} />}
-            label={t("Chain Proxy")}
+          {/* 链式代理按钮 - 统一设计风格 */}
+          <Box
             onClick={onToggleChainMode}
-            color={isChainMode ? "primary" : "default"}
-            variant={isChainMode ? "filled" : "outlined"}
             sx={{
-              height: 28,
-              fontSize: 12,
-              fontWeight: 500,
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              px: 1.25,
+              py: 0.5,
               cursor: "pointer",
+              borderRadius: 1.5,
+              border: "1px solid",
+              borderColor: isChainMode ? "primary.main" : "divider",
+              backgroundColor: isChainMode
+                ? (theme) => alpha(theme.palette.primary.main, 0.08)
+                : "transparent",
+              transition: "all 0.2s ease",
               "&:hover": {
+                borderColor: "primary.main",
                 backgroundColor: isChainMode
                   ? (theme) => alpha(theme.palette.primary.main, 0.12)
-                  : (theme) => alpha(theme.palette.action.hover, 0.5),
+                  : (theme) => alpha(theme.palette.primary.main, 0.04),
               },
             }}
-          />
+          >
+            <Box
+              sx={{
+                color: isChainMode ? "primary.main" : "text.secondary",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <LinkRounded sx={{ fontSize: 16 }} />
+            </Box>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: isChainMode ? 600 : 500,
+                color: isChainMode ? "primary.main" : "text.secondary",
+              }}
+            >
+              {t("Chain Proxy")}
+            </Typography>
+          </Box>
         </Box>
       }
     >
