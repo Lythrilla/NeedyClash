@@ -62,7 +62,7 @@ export function LiteModeViewer({ ref }: { ref?: Ref<DialogRef> }) {
       onOk={onSave}
     >
       <List>
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText primary={t("Enter LightWeight Mode Now")} />
           <Typography
             variant="button"
@@ -77,7 +77,7 @@ export function LiteModeViewer({ ref }: { ref?: Ref<DialogRef> }) {
           </Typography>
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText
             primary={t("Auto Enter LightWeight Mode")}
             sx={{ maxWidth: "fit-content" }}
@@ -98,7 +98,7 @@ export function LiteModeViewer({ ref }: { ref?: Ref<DialogRef> }) {
 
         {values.autoEnterLiteMode && (
           <>
-            <ListItem sx={{ padding: "5px 2px" }}>
+            <ListItem sx={{ padding: "5px 16px" }}>
               <ListItemText primary={t("Auto Enter LightWeight Mode Delay")} />
               <TextField
                 autoComplete="off"
@@ -127,7 +127,7 @@ export function LiteModeViewer({ ref }: { ref?: Ref<DialogRef> }) {
               />
             </ListItem>
 
-            <ListItem sx={{ padding: "5px 2px" }}>
+            <ListItem sx={{ padding: "5px 16px" }}>
               <Typography
                 variant="body2"
                 color="text.secondary"

@@ -84,7 +84,7 @@ export const SettingItem: React.FC<ItemProps> = ({
         disabled={isLoading}
         sx={{
           py: 1.25,
-          px: 0,
+          px: 2,
           minHeight: 42,
           "&:hover": {
             bgcolor: "transparent",
@@ -132,7 +132,7 @@ export const SettingItem: React.FC<ItemProps> = ({
     <ListItem
       sx={{
         py: 1.25,
-        px: 0,
+        px: 2,
         mb: 0,
         minHeight: 42,
         display: "flex",

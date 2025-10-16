@@ -32,7 +32,7 @@ const TypeBox = styled(Box)<{ component?: React.ElementType }>(({ theme }) => ({
   border: "1px solid #ccc",
   borderColor: alpha(theme.palette.secondary.main, 0.5),
   color: alpha(theme.palette.secondary.main, 0.8),
-  borderRadius: 4,
+  borderRadius: 0,
   fontSize: 10,
   marginRight: "4px",
   padding: "0 2px",
@@ -194,7 +194,7 @@ export const ProviderButton = () => {
                       {
                         p: 0,
                         mb: "8px",
-                        borderRadius: 2,
+                        borderRadius: 0,
                         overflow: "hidden",
                         transition: "all 0.2s",
                       },
@@ -279,7 +279,7 @@ export const ProviderButton = () => {
                                 value={progress}
                                 sx={{
                                   height: 6,
-                                  borderRadius: 3,
+                                  borderRadius: 0,
                                   opacity: total > 0 ? 1 : 0,
                                 }}
                               />

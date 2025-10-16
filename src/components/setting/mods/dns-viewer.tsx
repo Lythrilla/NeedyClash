@@ -34,7 +34,7 @@ import { useThemeMode } from "@/services/states";
 import getSystem from "@/utils/get-system";
 
 const Item = styled(ListItem)(() => ({
-  padding: "5px 2px",
+  padding: "5px 16px",
   "& textarea": {
     lineHeight: 1.5,
     fontSize: 14,

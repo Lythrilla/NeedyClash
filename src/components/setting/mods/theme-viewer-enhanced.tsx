@@ -173,7 +173,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   const componentStyles = theme.component_styles || {};
   const globalStyle = componentStyles.global || {};
 
-  const updateComponentStyle = async (key: ComponentKey | "global", style: Partial<IComponentStyle>) => {
+  const updateComponentStyle = (key: ComponentKey | "global", style: Partial<IComponentStyle>) => {
     const newComponentStyles = {
       ...componentStyles,
       [key]: {
@@ -186,11 +186,8 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
       component_styles: newComponentStyles,
     };
     setTheme(newTheme);
-    await patchVerge({ theme_setting: newTheme });
-    
-    // 显示成功提示
-    const componentName = key === "global" ? t("Global Default") : t(componentConfigs.find(c => c.key === key)?.label || "");
-    showNotice("success", `${componentName} ${t("updated")}`);
+    // 实时更新，但不显示提示
+    patchVerge({ theme_setting: newTheme });
   };
 
   const resetComponentStyle = async (key: ComponentKey | "global") => {

@@ -140,6 +140,19 @@ export const ProfileMore = (props: Props) => {
         anchorReference="anchorPosition"
         transitionDuration={225}
         MenuListProps={{ sx: { py: 0.5 } }}
+        PaperProps={{
+          sx: {
+            position: 'fixed',
+            backgroundColor: (theme) =>
+              theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+            backdropFilter: "blur(20px) saturate(180%)",
+            WebkitBackdropFilter: "blur(20px) saturate(180%)",
+            border: (theme) =>
+              `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+            borderRadius: "8px",
+            zIndex: 1400,
+          },
+        }}
         onContextMenu={(e) => {
           setAnchorEl(null);
           e.preventDefault();

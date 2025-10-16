@@ -117,7 +117,7 @@ export const ProxyRender = (props: RenderProps) => {
               src={iconCachePath === "" ? group.icon : iconCachePath}
               width="28px"
               height="28px"
-              style={{ marginRight: "12px", borderRadius: "4px" }}
+              style={{ marginRight: "12px", borderRadius: 0 }}
             />
           )}
         {enable_group_icon &&
@@ -127,7 +127,7 @@ export const ProxyRender = (props: RenderProps) => {
               src={group.icon}
               width="28px"
               height="28px"
-              style={{ marginRight: "12px", borderRadius: "4px" }}
+              style={{ marginRight: "12px", borderRadius: 0 }}
             />
           )}
         {enable_group_icon &&
@@ -137,7 +137,7 @@ export const ProxyRender = (props: RenderProps) => {
               src={`data:image/svg+xml;base64,${btoa(group.icon)}`}
               width="28px"
               height="28px"
-              style={{ marginRight: "12px", borderRadius: "4px" }}
+              style={{ marginRight: "12px", borderRadius: 0 }}
             />
           )}
         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -291,7 +291,7 @@ const StyledTypeBox = styled(Box)(({ theme }) => ({
   border: "1px solid #ccc",
   borderColor: alpha(theme.palette.primary.main, 0.5),
   color: alpha(theme.palette.primary.main, 0.8),
-  borderRadius: 4,
+  borderRadius: 0,
   fontSize: 10,
   padding: "0 4px",
   lineHeight: 1.5,

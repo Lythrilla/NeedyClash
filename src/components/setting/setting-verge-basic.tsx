@@ -114,9 +114,21 @@ const SettingVergeBasic = ({ onError }: Props) => {
             size="small" 
             sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
             MenuProps={{
-              disablePortal: true,
               anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
               transformOrigin: { vertical: 'top', horizontal: 'left' },
+              PaperProps: {
+                sx: {
+                  position: 'fixed',
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border: (theme) =>
+                    `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                  borderRadius: "8px",
+                  zIndex: 1400,
+                },
+              },
             }}
           >
             {languageOptions.map(({ code, label}) => (
@@ -142,9 +154,21 @@ const SettingVergeBasic = ({ onError }: Props) => {
               size="small" 
               sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
               MenuProps={{
-                disablePortal: true,
                 anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
                 transformOrigin: { vertical: 'top', horizontal: 'left' },
+                PaperProps: {
+                  sx: {
+                    position: 'fixed',
+                    backgroundColor: (theme) =>
+                      theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                    backdropFilter: "blur(20px) saturate(180%)",
+                    WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                    border: (theme) =>
+                      `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                    borderRadius: "8px",
+                    zIndex: 1400,
+                  },
+                },
               }}
             >
               <MenuItem value="main_window">{t("Show Main Window")}</MenuItem>
@@ -175,9 +199,21 @@ const SettingVergeBasic = ({ onError }: Props) => {
             size="small" 
             sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
             MenuProps={{
-              disablePortal: true,
               anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
               transformOrigin: { vertical: 'top', horizontal: 'left' },
+              PaperProps: {
+                sx: {
+                  position: 'fixed',
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border: (theme) =>
+                    `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                  borderRadius: "8px",
+                  zIndex: 1400,
+                },
+              },
             }}
           >
             <MenuItem value="bash">Bash</MenuItem>
@@ -202,9 +238,21 @@ const SettingVergeBasic = ({ onError }: Props) => {
             size="small" 
             sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
             MenuProps={{
-              disablePortal: true,
               anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
               transformOrigin: { vertical: 'top', horizontal: 'left' },
+              PaperProps: {
+                sx: {
+                  position: 'fixed',
+                  backgroundColor: (theme) =>
+                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border: (theme) =>
+                    `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
+                  borderRadius: "8px",
+                  zIndex: 1400,
+                },
+              },
             }}
           >
             {routers.map((page: { label: string; path: string }) => {

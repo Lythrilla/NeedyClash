@@ -72,15 +72,46 @@ export const useCustomTheme = () => {
   const componentStyles = theme_setting?.component_styles || {};
   const globalStyle = componentStyles.global || {};
   
+  // 辅助函数：将颜色和opacity合并为rgba
+  const applyOpacityToColor = (color: string, opacity: number): string => {
+    // 如果已经是rgba格式，替换alpha值
+    if (color.startsWith('rgba')) {
+      return color.replace(/[\d.]+\)$/, `${opacity})`);
+    }
+    // 如果是rgb格式，转换为rgba
+    if (color.startsWith('rgb(')) {
+      return color.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+    }
+    // 如果是hex格式，转换为rgba
+    if (color.startsWith('#')) {
+      const hex = color.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+    // 其他格式直接返回
+    return color;
+  };
+
   // 获取组件样式或使用全局默认值
   const getComponentStyle = (key: string) => {
     const compStyle = (componentStyles as any)[key] || {};
     if (compStyle.enabled === false) return null;
     
+    // 检查是否真的设置了样式（组件级别或全局级别）
+    const hasComponentStyle = compStyle.background_color || compStyle.blur !== undefined || compStyle.opacity !== undefined;
+    const hasGlobalStyle = globalStyle.background_color || globalStyle.blur !== undefined || globalStyle.opacity !== undefined;
+    
+    // 如果都没设置，返回 null
+    if (!hasComponentStyle && !hasGlobalStyle) return null;
+    
+    const baseColor = compStyle.background_color || globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)");
+    const opacity = compStyle.opacity ?? globalStyle.opacity ?? 0.7;
+    
     return {
-      backgroundColor: compStyle.background_color || globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)"),
+      backgroundColor: applyOpacityToColor(baseColor, opacity),
       blur: compStyle.blur ?? globalStyle.blur ?? 25,
-      opacity: compStyle.opacity ?? globalStyle.opacity ?? 0.7,
     };
   };
 
@@ -224,6 +255,16 @@ export const useCustomTheme = () => {
           breakpoints: {
             values: { xs: 0, sm: 650, md: 900, lg: 1200, xl: 1536 },
           },
+          zIndex: {
+            mobileStepper: 1000,
+            fab: 1050,
+            speedDial: 1050,
+            appBar: 1100,
+            drawer: 1200,
+            modal: 1300,
+            snackbar: 1400,
+            tooltip: 1500,
+          },
           palette: {
             mode,
             primary: { main: setting.primary_color || dt.primary_color },
@@ -265,7 +306,7 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 paper: {
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   boxShadow: mode === "light" 
                     ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
                     : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
@@ -277,7 +318,7 @@ export const useCustomTheme = () => {
                 paper: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: "8px",
+                  borderRadius: 0,
                 },
                 list: {
                   padding: "4px",
@@ -287,7 +328,7 @@ export const useCustomTheme = () => {
             MuiMenuItem: {
               styleOverrides: {
                 root: {
-                  borderRadius: "6px",
+                  borderRadius: 0,
                   margin: "2px 4px",
                   padding: "8px 12px",
                   fontSize: "14px",
@@ -325,7 +366,7 @@ export const useCustomTheme = () => {
                         ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
                         : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
                       mt: 0.5,
-                      borderRadius: "8px",
+                      borderRadius: 0,
                       "& .MuiList-root": {
                         padding: "4px",
                       },
@@ -336,10 +377,10 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 select: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   "&:focus": {
                     backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                    borderRadius: "8px",
+                    borderRadius: 0,
                   },
                 },
                 icon: {
@@ -351,13 +392,13 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 select: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   padding: "5.5px 32px 5.5px 12px",
                   fontSize: "13px",
                   color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)",
                   "&:focus": {
                     backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                    borderRadius: "8px",
+                    borderRadius: 0,
                   },
                 },
                 icon: {
@@ -411,7 +452,7 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   transition: "all 0.2s ease",
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: mode === "light" ? "#CBD5E1" : "rgba(255, 255, 255, 0.2)",
@@ -426,7 +467,7 @@ export const useCustomTheme = () => {
                 },
                 notchedOutline: {
                   borderColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   transition: "all 0.2s ease",
                 },
                 input: {
@@ -438,7 +479,7 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   textTransform: "none",
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   fontWeight: 500,
                 },
                 outlined: {
@@ -461,7 +502,7 @@ export const useCustomTheme = () => {
             MuiIconButton: {
               styleOverrides: {
                 root: {
-                  borderRadius: "8px",
+                  borderRadius: 0,
                   "&:hover": {
                     backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
                   },
@@ -473,7 +514,7 @@ export const useCustomTheme = () => {
                 root: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: "12px",
+                  borderRadius: 0,
                   transition: "all 0.2s ease",
                   "&:hover": {
                     borderColor: setting.primary_color || dt.primary_color,
@@ -487,7 +528,7 @@ export const useCustomTheme = () => {
                 paper: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: "12px",
+                  borderRadius: 0,
                 },
               },
             },
@@ -510,7 +551,7 @@ export const useCustomTheme = () => {
                 tooltip: {
                   backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(50, 50, 50, 0.95)",
                   fontSize: "12px",
-                  borderRadius: "6px",
+                  borderRadius: 0,
                   padding: "6px 12px",
                 },
                 arrow: {
@@ -541,7 +582,7 @@ export const useCustomTheme = () => {
             MuiChip: {
               styleOverrides: {
                 root: {
-                  borderRadius: "16px",
+                  borderRadius: 0,
                 },
               },
             },
@@ -568,7 +609,7 @@ export const useCustomTheme = () => {
                   height: 24,
                 },
                 track: {
-                  borderRadius: "13px",
+                  borderRadius: 0,
                   backgroundColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.2)",
                   opacity: 1,
                 },
@@ -695,23 +736,35 @@ export const useCustomTheme = () => {
           ${backgroundType === "none" ? `background-color: var(--background-color);` : "background-color: transparent;"}
         }
 
-        /* 对话框样式优化 - 始终应用 */
+        /* 对话框样式优化 - 始终应用，无论背景类型 */
         .MuiDialog-paper {
-          ${backgroundType !== "none" 
-            ? `background-color: ${mode === "light" ? "rgba(255, 255, 255, 0.85)" : "rgba(40, 40, 40, 0.85)"} !important;
-               backdrop-filter: blur(25px) saturate(180%);
-               -webkit-backdrop-filter: blur(25px) saturate(180%);`
-            : `background-color: ${mode === "light" ? "#ffffff" : "#282828"} !important;`
-          }
+          background-color: ${mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(40, 40, 40, 0.95)"} !important;
+          backdrop-filter: blur(25px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
         }
+
+        /* 下拉菜单背景 - 全局默认样式 */
+        ${(() => {
+          const selectStyle = getComponentStyle("select");
+          if (selectStyle) {
+            return `
+        .MuiPaper-root.MuiMenu-paper,
+        .MuiPaper-root.MuiPopover-paper {
+          background-color: ${selectStyle.backgroundColor} !important;
+          backdrop-filter: blur(${selectStyle.blur}px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(${selectStyle.blur}px) saturate(180%) !important;
+        }
+            `;
+          }
+          return "";
+        })()}
 
         /* 侧边栏自定义样式 - 使用伪元素实现背景效果，不影响内容 */
         ${
-          sidebarBgColor || sidebarOpacity !== 1 || sidebarBlur > 0
+          sidebarBgColor || sidebarOpacity !== 1 || sidebarBlur > 0 || (hasCustomBackground && (globalStyle.background_color || globalStyle.blur))
             ? `
         .layout-content__left {
           position: relative !important;
-          isolation: isolate !important;
           background-color: transparent !important;
         }
         
@@ -726,10 +779,16 @@ export const useCustomTheme = () => {
             sidebarBgColor 
               ? `background-color: ${sidebarBgColor} !important;
                  opacity: ${sidebarOpacity} !important;`
+              : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground
+              ? `background-color: ${globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)")} !important;`
               : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${sidebarOpacity})` : `rgba(255, 255, 255, ${sidebarOpacity})`} !important;`
           }
           ${sidebarBlur > 0 ? `backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;
-          -webkit-backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;` : ""}
+          -webkit-backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;` 
+          : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground && (globalStyle.blur ?? 25) > 0
+          ? `backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;`
+          : ""}
           z-index: 0 !important;
           pointer-events: none !important;
         }
@@ -744,11 +803,10 @@ export const useCustomTheme = () => {
 
         /* Header自定义样式 - 使用伪元素实现背景效果，不影响内容 */
         ${
-          headerBgColor || headerOpacity !== 1 || headerBlur > 0
+          headerBgColor || headerOpacity !== 1 || headerBlur > 0 || (hasCustomBackground && (globalStyle.background_color || globalStyle.blur))
             ? `
         .base-page > header {
           position: relative !important;
-          isolation: isolate !important;
           background-color: transparent !important;
         }
         
@@ -763,10 +821,16 @@ export const useCustomTheme = () => {
             headerBgColor 
               ? `background-color: ${headerBgColor} !important;
                  opacity: ${headerOpacity} !important;`
+              : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground
+              ? `background-color: ${globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)")} !important;`
               : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${headerOpacity})` : `rgba(255, 255, 255, ${headerOpacity})`} !important;`
           }
           ${headerBlur > 0 ? `backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;
-          -webkit-backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;` : ""}
+          -webkit-backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;` 
+          : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground && (globalStyle.blur ?? 25) > 0
+          ? `backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;`
+          : ""}
           z-index: 0 !important;
           pointer-events: none !important;
         }
@@ -802,7 +866,6 @@ export const useCustomTheme = () => {
         
         .settings-section {
           position: relative !important;
-          isolation: isolate !important;
         }
         `
             : ""
@@ -831,7 +894,6 @@ export const useCustomTheme = () => {
         
         .analytics-section {
           position: relative !important;
-          isolation: isolate !important;
           background-color: transparent !important;
         }
         `
@@ -856,20 +918,10 @@ export const useCustomTheme = () => {
           filter: blur(${backgroundBlur}px) brightness(${backgroundBrightness}%) !important;
         }
 
-        /* 确保所有内容在背景之上，但不影响 MUI Portal */
-        body > div:not(.MuiModal-root):not(.MuiPopover-root):not(.MuiPopper-root):not([role="presentation"]):not([role="tooltip"]) {
+        /* 确保主应用容器在背景之上 */
+        body > div#root {
           position: relative !important;
           z-index: 1 !important;
-        }
-        
-        /* 确保 MUI 弹出层在最上层 */
-        .MuiModal-root,
-        .MuiPopover-root,
-        .MuiPopper-root,
-        [role="presentation"],
-        [role="tooltip"] {
-          z-index: 1300 !important;
-          position: fixed !important;
         }
         `
             : ""
@@ -901,20 +953,10 @@ export const useCustomTheme = () => {
           transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease, filter 0.3s ease !important;
         }
 
-        /* 确保所有内容在背景之上，但不影响 MUI Portal */
-        body > div:not(.MuiModal-root):not(.MuiPopover-root):not(.MuiPopper-root):not([role="presentation"]):not([role="tooltip"]) {
+        /* 确保主应用容器在背景之上 */
+        body > div#root {
           position: relative !important;
           z-index: 1 !important;
-        }
-        
-        /* 确保 MUI 弹出层在最上层 */
-        .MuiModal-root,
-        .MuiPopover-root,
-        .MuiPopper-root,
-        [role="presentation"],
-        [role="tooltip"] {
-          z-index: 1300 !important;
-          position: fixed !important;
         }
         `;
               })()
@@ -952,26 +994,38 @@ export const useCustomTheme = () => {
           transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease !important;
         }
 
-        /* 确保内容在背景之上，但不影响 MUI Portal */
-        body > div:not(#background-video-container):not(.MuiModal-root):not(.MuiPopover-root):not(.MuiPopper-root):not([role="presentation"]):not([role="tooltip"]) {
+        /* 确保主应用容器在背景之上 */
+        body > div#root {
           position: relative !important;
           z-index: 1 !important;
-        }
-        
-        /* 确保 MUI 弹出层在最上层 */
-        .MuiModal-root,
-        .MuiPopover-root,
-        .MuiPopper-root,
-        [role="presentation"],
-        [role="tooltip"] {
-          z-index: 1300 !important;
-          position: fixed !important;
         }
         `;
               })()
             : ""
         }
 
+        /* 强制确保所有菜单和弹出层正确显示 */
+        .MuiPopover-root,
+        .MuiModal-root,
+        .MuiPopper-root {
+          z-index: 1400 !important;
+        }
+        
+        .MuiPopover-paper,
+        .MuiMenu-paper,
+        .MuiMenu-list,
+        .MuiDialog-paper {
+          z-index: 1400 !important;
+        }
+        
+        /* 确保菜单 Paper 不被其他样式影响 */
+        .MuiMenu-paper,
+        .MuiPopover-paper {
+          position: fixed !important;
+        }
+
+        /* 设置页面按钮和列表项样式优化 - 移除全局padding，使用组件内部控制 */
+        
         /* Tab 组件优化 */
         .MuiTab-root {
           text-transform: none;
@@ -1076,231 +1130,100 @@ export const useCustomTheme = () => {
         ${(() => {
           const styles: string[] = [];
           
-          // Select 下拉框
+          // Select 下拉框 - 应用自定义样式
           const selectStyle = getComponentStyle("select");
-          if (selectStyle && hasCustomBackground) {
+          if (selectStyle) {
             styles.push(`
-              .custom-select::before,
-              .MuiPaper-root.MuiMenu-paper::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
+              .custom-select::before {
                 background-color: ${selectStyle.backgroundColor} !important;
                 backdrop-filter: blur(${selectStyle.blur}px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(${selectStyle.blur}px) saturate(180%) !important;
-                border-radius: 8px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${selectStyle.opacity} !important;
-              }
-              
-              .custom-select,
-              .MuiPaper-root.MuiMenu-paper {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
               }
             `);
           }
           
-          // Profile 卡片
+          // Profile 卡片 - 固定位置组件，可以安全使用模糊
           const profileCardStyle = getComponentStyle("profile_card");
-          if (profileCardStyle && hasCustomBackground) {
+          if (profileCardStyle) {
             styles.push(`
-              .custom-profile-card::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
+              .custom-profile-card {
                 background-color: ${profileCardStyle.backgroundColor} !important;
                 backdrop-filter: blur(${profileCardStyle.blur}px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(${profileCardStyle.blur}px) saturate(180%) !important;
-                border-radius: 8px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${profileCardStyle.opacity} !important;
-              }
-              
-              .custom-profile-card {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
               }
             `);
           }
           
-          // Proxy 卡片
+          // Proxy 卡片 - 固定位置组件，可以安全使用模糊
           const proxyCardStyle = getComponentStyle("proxy_card");
-          if (proxyCardStyle && hasCustomBackground) {
+          if (proxyCardStyle) {
             styles.push(`
-              .custom-proxy-card::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
+              .custom-proxy-card {
                 background-color: ${proxyCardStyle.backgroundColor} !important;
                 backdrop-filter: blur(${proxyCardStyle.blur}px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(${proxyCardStyle.blur}px) saturate(180%) !important;
-                border-radius: 8px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${proxyCardStyle.opacity} !important;
-              }
-              
-              .custom-proxy-card {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
               }
             `);
           }
           
           // TextField 编辑框
           const textfieldStyle = getComponentStyle("textfield");
-          if (textfieldStyle && hasCustomBackground) {
+          if (textfieldStyle) {
             styles.push(`
-              .custom-textfield .MuiOutlinedInput-root::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
+              .MuiTextField-root .MuiOutlinedInput-root {
                 background-color: ${textfieldStyle.backgroundColor} !important;
-                backdrop-filter: blur(${textfieldStyle.blur}px) saturate(180%) !important;
-                -webkit-backdrop-filter: blur(${textfieldStyle.blur}px) saturate(180%) !important;
-                border-radius: 8px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${textfieldStyle.opacity} !important;
-              }
-              
-              .custom-textfield .MuiOutlinedInput-root {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
               }
             `);
           }
           
-          // Analytics 图表
+          // Analytics 图表 - 固定位置组件，可以安全使用模糊
           const analyticsChartStyle = getComponentStyle("analytics_chart");
-          if (analyticsChartStyle && hasCustomBackground) {
+          if (analyticsChartStyle) {
             styles.push(`
-              .custom-analytics-chart::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
+              .custom-analytics-chart {
+                position: relative !important;
+                overflow: hidden !important;
                 background-color: ${analyticsChartStyle.backgroundColor} !important;
                 backdrop-filter: blur(${analyticsChartStyle.blur}px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(${analyticsChartStyle.blur}px) saturate(180%) !important;
-                border-radius: 8px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${analyticsChartStyle.opacity} !important;
-              }
-              
-              .custom-analytics-chart {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
               }
             `);
           }
           
-          // Analytics 头部
+          // Analytics 头部 - 固定位置组件，可以安全使用模糊
           const analyticsHeaderStyle = getComponentStyle("analytics_header");
-          if (analyticsHeaderStyle && hasCustomBackground) {
+          if (analyticsHeaderStyle) {
             styles.push(`
-              .custom-analytics-header::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
+              .custom-analytics-header {
                 background-color: ${analyticsHeaderStyle.backgroundColor} !important;
                 backdrop-filter: blur(${analyticsHeaderStyle.blur}px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(${analyticsHeaderStyle.blur}px) saturate(180%) !important;
-                border-radius: 8px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${analyticsHeaderStyle.opacity} !important;
-              }
-              
-              .custom-analytics-header {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
               }
             `);
           }
           
-          // Dialog 弹窗
+          // Dialog 弹窗 - Portal组件，只用背景色，不破坏定位
           const dialogStyle = getComponentStyle("dialog");
-          if (dialogStyle && hasCustomBackground) {
+          if (dialogStyle) {
             styles.push(`
-              .custom-dialog .MuiPaper-root::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                background-color: ${dialogStyle.backgroundColor} !important;
-                backdrop-filter: blur(${dialogStyle.blur}px) saturate(180%) !important;
-                -webkit-backdrop-filter: blur(${dialogStyle.blur}px) saturate(180%) !important;
-                border-radius: 8px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${dialogStyle.opacity} !important;
-              }
-              
               .custom-dialog .MuiPaper-root {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
+                background-color: ${dialogStyle.backgroundColor} !important;
               }
             `);
           }
           
-          // 导航栏图标 hover 透明模糊效果（排除代理节点卡片）
+          // 导航栏图标 hover 效果
           if (hasCustomBackground && globalStyle) {
-            const navBgColor = globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)");
-            const navBlur = globalStyle.blur ?? 25;
+            const baseNavColor = globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)");
             const navOpacity = globalStyle.opacity ?? 0.7;
+            const navBgColor = applyOpacityToColor(baseNavColor, navOpacity);
+            const navBlur = globalStyle.blur ?? 25;
             
             styles.push(`
-              .MuiListItemButton-root:not(.custom-proxy-card):hover::before {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
+              .MuiListItemButton-root:not(.custom-proxy-card):hover {
                 background-color: ${navBgColor} !important;
                 backdrop-filter: blur(${navBlur}px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(${navBlur}px) saturate(180%) !important;
-                border-radius: 6px !important;
-                z-index: -1 !important;
-                pointer-events: none !important;
-                opacity: ${navOpacity} !important;
-              }
-              
-              .MuiListItemButton-root:not(.custom-proxy-card):hover {
-                position: relative !important;
-                isolation: isolate !important;
-                background-color: transparent !important;
               }
             `);
           }

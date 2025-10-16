@@ -279,6 +279,10 @@ pub struct IVergeTheme {
     pub header_background_color: Option<String>, // Header背景色
     pub header_opacity: Option<f32>, // Header不透明度 0.0-1.0
     pub header_blur: Option<f32>, // Header模糊度 0-50
+    
+    // 组件微调设置
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub component_styles: Option<serde_json::Value>, // 组件样式配置(JSON)
 }
 
 impl IVerge {

@@ -22,7 +22,7 @@
     border-right: 1px solid var(--border-color);
     overflow: hidden;
     transition: border-color 0.2s ease;
-    z-index: 100; /* 确保在其他内容之上 */
+    z-index: 10; /* 低于弹出层，确保菜单不被遮挡 */
 
     .the-logo {
       /* 现代Logo区域 */

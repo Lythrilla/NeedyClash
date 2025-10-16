@@ -148,7 +148,7 @@ export function ThemeViewer(props: { ref?: React.Ref<DialogRef> }) {
 }
 
 const Item = styled(ListItem)(() => ({
-  padding: "5px 2px",
+  padding: "5px 16px",
 }));
 
 const Round = styled("div")(() => ({

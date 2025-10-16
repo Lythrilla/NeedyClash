@@ -121,7 +121,7 @@ export function ControllerViewer({ ref }: { ref?: Ref<DialogRef> }) {
       <List>
         <ListItem
           sx={{
-            padding: "5px 2px",
+            padding: "5px 16px",
             display: "flex",
             justifyContent: "space-between",
           }}
@@ -137,7 +137,7 @@ export function ControllerViewer({ ref }: { ref?: Ref<DialogRef> }) {
 
         <ListItem
           sx={{
-            padding: "5px 2px",
+            padding: "5px 16px",
             display: "flex",
             justifyContent: "space-between",
           }}
@@ -171,7 +171,7 @@ export function ControllerViewer({ ref }: { ref?: Ref<DialogRef> }) {
 
         <ListItem
           sx={{
-            padding: "5px 2px",
+            padding: "5px 16px",
             display: "flex",
             justifyContent: "space-between",
           }}

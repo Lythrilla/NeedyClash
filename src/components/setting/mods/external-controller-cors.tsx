@@ -190,7 +190,7 @@ export const HeaderConfiguration = forwardRef<ClashHeaderConfigingRef>(
         onOk={handleSave}
       >
         <List sx={{ width: "90%", padding: 2 }}>
-          <ListItem sx={{ padding: "8px 0" }}>
+          <ListItem sx={{ padding: "8px 16px" }}>
             <Box
               display="flex"
               justifyContent="space-between"
@@ -215,7 +215,7 @@ export const HeaderConfiguration = forwardRef<ClashHeaderConfigingRef>(
 
           <Divider sx={{ my: 2 }} />
 
-          <ListItem sx={{ padding: "8px 0" }}>
+          <ListItem sx={{ padding: "8px 16px" }}>
             <div style={{ width: "100%" }}>
               <div style={{ marginBottom: 8, fontWeight: "bold" }}>
                 {t("Allowed Origins")}

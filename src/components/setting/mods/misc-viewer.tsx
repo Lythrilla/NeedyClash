@@ -86,7 +86,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
       onOk={onSave}
     >
       <List>
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText primary={t("App Log Level")} />
           <Select
             size="small"
@@ -107,7 +107,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           </Select>
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText
             primary={t("App Log Max Size")}
             sx={{ maxWidth: "fit-content" }}
@@ -137,7 +137,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           />
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText
             primary={t("App Log Max Count")}
             sx={{ maxWidth: "fit-content" }}
@@ -167,7 +167,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           />
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText
             primary={t("Auto Close Connections")}
             sx={{ maxWidth: "fit-content" }}
@@ -186,7 +186,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           />
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText primary={t("Auto Check Update")} />
           <Switch
             edge="end"
@@ -197,7 +197,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           />
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText
             primary={t("Enable Builtin Enhanced")}
             sx={{ maxWidth: "fit-content" }}
@@ -216,7 +216,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           />
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText primary={t("Proxy Layout Columns")} />
           <Select
             size="small"
@@ -240,7 +240,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           </Select>
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText primary={t("Auto Log Clean")} />
           <Select
             size="small"
@@ -268,7 +268,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           </Select>
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText
             primary={t("Auto Delay Detection")}
             sx={{ maxWidth: "fit-content" }}
@@ -287,7 +287,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           />
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText
             primary={t("Default Latency Test")}
             sx={{ maxWidth: "fit-content" }}
@@ -311,7 +311,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
           />
         </ListItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
+        <ListItem sx={{ padding: "5px 16px" }}>
           <ListItemText primary={t("Default Latency Timeout")} />
           <TextField
             autoComplete="new-password"

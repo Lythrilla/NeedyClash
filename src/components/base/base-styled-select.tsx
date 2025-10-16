@@ -13,7 +13,6 @@ export const BaseStyledSelect = styled((props: SelectProps<string>) => {
         props.native
           ? undefined
           : {
-              disablePortal: true,
               anchorOrigin: {
                 vertical: 'bottom',
                 horizontal: 'left',
@@ -24,8 +23,11 @@ export const BaseStyledSelect = styled((props: SelectProps<string>) => {
               },
               PaperProps: {
                 sx: {
+                  position: 'fixed',
                   backgroundColor: (theme) =>
-                    theme.palette.mode === "light" ? "#FFFFFF" : "#3232326b",
+                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
                   border: (theme) =>
                     `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
                   boxShadow: (theme) =>
@@ -35,6 +37,7 @@ export const BaseStyledSelect = styled((props: SelectProps<string>) => {
                   mt: 0.5,
                   borderRadius: "8px",
                   maxHeight: '300px',
+                  zIndex: 1400,
                   "& .MuiList-root": {
                     padding: "4px",
                   },

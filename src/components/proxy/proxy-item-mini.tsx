@@ -255,7 +255,7 @@ const Widget = styled(Box)(({ theme: { typography } }) => ({
   fontSize: 12,
   fontWeight: 600,
   fontFamily: "monospace",
-  borderRadius: "3px",
+  borderRadius: 0,
 }));
 
 const TypeBox = styled(Box, {
@@ -265,7 +265,7 @@ const TypeBox = styled(Box, {
   border: "1px solid",
   borderColor: alpha(theme.palette.text.secondary, 0.2),
   color: alpha(theme.palette.text.secondary, 0.5),
-  borderRadius: 3,
+  borderRadius: 0,
   fontSize: 10,
   fontWeight: 600,
   marginRight: "4px",

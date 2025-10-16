@@ -169,7 +169,7 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
       onOk={onSave}
     >
       <List sx={{ width: "100%" }}>
-        <ListItem sx={{ padding: "4px 0", minHeight: 36 }}>
+        <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
           <ListItemText
             primary={t("Mixed Port")}
             slotProps={{ primary: { sx: { fontSize: 12 } } }}
@@ -201,7 +201,7 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
           </div>
         </ListItem>
 
-        <ListItem sx={{ padding: "4px 0", minHeight: 36 }}>
+        <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
           <ListItemText
             primary={t("Socks Port")}
             slotProps={{ primary: { sx: { fontSize: 12 } } }}
@@ -235,7 +235,7 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
           </div>
         </ListItem>
 
-        <ListItem sx={{ padding: "4px 0", minHeight: 36 }}>
+        <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
           <ListItemText
             primary={t("Http Port")}
             slotProps={{ primary: { sx: { fontSize: 12 } } }}
@@ -270,7 +270,7 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
         </ListItem>
 
         {OS !== "windows" && (
-          <ListItem sx={{ padding: "4px 0", minHeight: 36 }}>
+          <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
             <ListItemText
               primary={t("Redir Port")}
               slotProps={{ primary: { sx: { fontSize: 12 } } }}
@@ -306,7 +306,7 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
         )}
 
         {OS === "linux" && (
-          <ListItem sx={{ padding: "4px 0", minHeight: 36 }}>
+          <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
             <ListItemText
               primary={t("Tproxy Port")}
               slotProps={{ primary: { sx: { fontSize: 12 } } }}

@@ -449,7 +449,7 @@ export const ProxyGroups = (props: Props) => {
                       sx={{
                         border: "1px solid",
                         borderColor: "divider",
-                        borderRadius: "4px",
+                        borderRadius: 0,
                         padding: "4px 8px",
                       }}
                     >
