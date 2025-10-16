@@ -24,9 +24,9 @@ export const BasePage: React.FC<Props> = (props) => {
         <header data-tauri-drag-region="true" style={{ userSelect: "none" }}>
           <Typography
             sx={{
-              fontSize: "24px",
-              fontWeight: "700",
-              letterSpacing: "-0.5px",
+              fontSize: "20px", /* 更小的标题 */
+              fontWeight: "600",
+              letterSpacing: "-0.3px",
             }}
             data-tauri-drag-region="true"
           >

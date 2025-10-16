@@ -1,22 +1,24 @@
 import {
+  AccessTimeRounded,
   CloudUploadOutlined,
-  DnsOutlined,
   EventOutlined,
   LaunchOutlined,
-  SpeedOutlined,
+  SpeedRounded,
   StorageOutlined,
+  TrendingUpRounded,
   UpdateOutlined,
 } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Chip,
+  Divider,
   LinearProgress,
   Link,
   Stack,
   Typography,
   alpha,
   keyframes,
-  useTheme,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import dayjs from "dayjs";
@@ -85,9 +87,6 @@ const ProfileDetails = ({
   onUpdateProfile: () => void;
   updating: boolean;
 }) => {
-  const { t } = useTranslation();
-  const theme = useTheme();
-
   const usedTraffic = useMemo(() => {
     if (!current.extra) return 0;
     return current.extra.upload + current.extra.download;
@@ -100,146 +99,235 @@ const ProfileDetails = ({
   }, [current.extra, usedTraffic]);
 
   return (
-    <Box>
-      <Stack spacing={2}>
+    <Box 
+      sx={{ 
+        display: "flex", 
+        flexDirection: "column",
+        gap: 2,
+      }}
+    >
+      {/* 第一行：订阅来源（加强版） */}
+      <Box>
         {current.url && (
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <DnsOutlined fontSize="small" color="action" />
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              noWrap
-              sx={{ display: "flex", alignItems: "center" }}
-            >
-              <span style={{ flexShrink: 0 }}>{t("From")}: </span>
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0, flex: 1 }}>
+              <StorageOutlined sx={{ fontSize: 18, color: "primary.main", opacity: 0.8 }} />
               {current.home ? (
                 <Link
                   component="button"
-                  fontWeight="medium"
                   onClick={() => current.home && openWebUrl(current.home)}
                   sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    minWidth: 0,
-                    maxWidth: "calc(100% - 40px)",
-                    ml: 0.5,
-                  }}
-                  title={parseUrl(current.url)}
-                >
-                  <Typography
-                    component="span"
-                    sx={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      minWidth: 0,
-                      flex: 1,
-                    }}
-                  >
-                    {parseUrl(current.url)}
-                  </Typography>
-                  <LaunchOutlined
-                    fontSize="inherit"
-                    sx={{
-                      ml: 0.5,
-                      fontSize: "0.8rem",
-                      opacity: 0.7,
-                      flexShrink: 0,
-                    }}
-                  />
-                </Link>
-              ) : (
-                <Typography
-                  component="span"
-                  fontWeight="medium"
-                  sx={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: "text.primary",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    minWidth: 0,
-                    flex: 1,
-                    ml: 0.5,
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    "&:hover": { 
+                      color: "primary.main",
+                    },
                   }}
                   title={parseUrl(current.url)}
                 >
                   {parseUrl(current.url)}
+                  <LaunchOutlined sx={{ fontSize: "0.8rem", opacity: 0.5 }} />
+                </Link>
+              ) : (
+                <Typography
+                  sx={{
+                    fontSize: 15,
+                    fontWeight: 700,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {parseUrl(current.url) || "本地配置"}
                 </Typography>
               )}
-            </Typography>
-          </Stack>
+            </Box>
+          </Box>
         )}
-
+        
+        {/* 更新信息 */}
         {current.updated && (
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <UpdateOutlined
-              fontSize="small"
-              color="action"
-              sx={{
+          <Box 
+            sx={{ 
+              display: "flex", 
+              alignItems: "center",
+              gap: 2,
+              justifyContent: "space-between",
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <AccessTimeRounded sx={{ fontSize: 14, color: "text.disabled" }} />
+              <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
+                更新于 {dayjs(current.updated * 1000).format("YYYY-MM-DD HH:mm")}
+              </Typography>
+            </Box>
+            
+            <Box 
+              sx={{ 
+                display: "flex", 
+                alignItems: "center", 
+                gap: 0.75,
                 cursor: "pointer",
-                animation: updating ? `${round} 1.5s linear infinite` : "none",
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 1.5,
+                border: (theme) => `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+                "&:hover": { 
+                  borderColor: "primary.main",
+                  backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                },
               }}
               onClick={onUpdateProfile}
-            />
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ cursor: "pointer" }}
-              onClick={onUpdateProfile}
             >
-              {t("Update Time")}:{" "}
-              <Box component="span" fontWeight="medium">
-                {dayjs(current.updated * 1000).format("YYYY-MM-DD HH:mm")}
-              </Box>
-            </Typography>
-          </Stack>
-        )}
-
-        {current.extra && (
-          <>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <SpeedOutlined fontSize="small" color="action" />
-              <Typography variant="body2" color="text.secondary">
-                {t("Used / Total")}:{" "}
-                <Box component="span" fontWeight="medium">
-                  {parseTraffic(usedTraffic)} /{" "}
-                  {parseTraffic(current.extra.total)}
-                </Box>
+              <UpdateOutlined
+                sx={{
+                  fontSize: "0.85rem",
+                  color: "text.secondary",
+                  animation: updating ? `${round} 1.5s linear infinite` : "none",
+                }}
+              />
+              <Typography sx={{ fontSize: 11, fontWeight: 500, color: "text.secondary" }}>
+                刷新
               </Typography>
-            </Stack>
+            </Box>
+          </Box>
+        )}
+      </Box>
 
+      {/* 第二行：流量统计（分组展示） */}
+      {current.extra && (
+        <Box 
+          sx={{ 
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.5,
+          }}
+        >
+          {/* 数据网格 */}
+          <Box 
+            sx={{ 
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(4, 1fr)" },
+              gap: 1.5,
+            }}
+          >
+            {/* 已用流量 */}
+            <Box 
+              sx={{ 
+                display: "flex",
+                flexDirection: "column",
+                gap: 0.5,
+              }}
+            >
+              <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                已用流量
+              </Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}>
+                {parseTraffic(usedTraffic)}
+              </Typography>
+            </Box>
+
+            {/* 总流量 */}
+            <Box 
+              sx={{ 
+                display: "flex",
+                flexDirection: "column",
+                gap: 0.5,
+              }}
+            >
+              <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                总流量
+              </Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}>
+                {parseTraffic(current.extra.total)}
+              </Typography>
+            </Box>
+
+            {/* 剩余流量 */}
+            <Box 
+              sx={{ 
+                display: "flex",
+                flexDirection: "column",
+                gap: 0.5,
+              }}
+            >
+              <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                剩余流量
+              </Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "success.main" }}>
+                {parseTraffic(current.extra.total - usedTraffic)}
+              </Typography>
+            </Box>
+
+            {/* 到期时间 */}
             {current.extra.expire > 0 && (
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <EventOutlined fontSize="small" color="action" />
-                <Typography variant="body2" color="text.secondary">
-                  {t("Expire Time")}:{" "}
-                  <Box component="span" fontWeight="medium">
-                    {parseExpire(current.extra.expire)}
-                  </Box>
+              <Box 
+                sx={{ 
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 0.5,
+                }}
+              >
+                <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                  到期时间
                 </Typography>
-              </Stack>
+                <Typography sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}>
+                  {parseExpire(current.extra.expire)}
+                </Typography>
+              </Box>
             )}
+          </Box>
 
-            <Box sx={{ mt: 1 }}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ mb: 0.5, display: "block" }}
+          {/* 进度条区域 */}
+          <Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.75 }}>
+              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "text.secondary" }}>
+                使用进度
+              </Typography>
+              <Typography 
+                sx={{ 
+                  fontSize: 13, 
+                  fontWeight: 700,
+                  color: trafficPercentage > 90 
+                    ? "error.main" 
+                    : trafficPercentage > 70 
+                    ? "warning.main" 
+                    : "primary.main",
+                }}
               >
                 {trafficPercentage}%
               </Typography>
-              <LinearProgress
-                variant="determinate"
-                value={trafficPercentage}
-                sx={{
-                  height: 8,
-                  borderRadius: 4,
-                  backgroundColor: alpha(theme.palette.primary.main, 0.12),
-                }}
-              />
             </Box>
-          </>
-        )}
-      </Stack>
+            
+            <LinearProgress
+              variant="determinate"
+              value={trafficPercentage}
+              sx={{
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                "& .MuiLinearProgress-bar": {
+                  borderRadius: 4,
+                  background: (theme) => 
+                    trafficPercentage > 90
+                      ? `linear-gradient(90deg, ${theme.palette.error.main}, ${theme.palette.error.dark})`
+                      : trafficPercentage > 70
+                      ? `linear-gradient(90deg, ${theme.palette.warning.main}, ${theme.palette.warning.dark})`
+                      : `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                },
+              }}
+            />
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 };

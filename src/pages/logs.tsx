@@ -71,17 +71,18 @@ const LogPage = () => {
         overflow: "auto",
       }}
       header={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
           <IconButton
             title={t(enableLog ? "Pause" : "Resume")}
             size="small"
             color="inherit"
             onClick={handleToggleLog}
+            sx={{ borderRadius: "6px", padding: "6px" }}
           >
             {enableLog ? (
-              <PauseCircleOutlineRounded />
+              <PauseCircleOutlineRounded fontSize="small" />
             ) : (
-              <PlayCircleOutlineRounded />
+              <PlayCircleOutlineRounded fontSize="small" />
             )}
           </IconButton>
 
@@ -92,6 +93,7 @@ const LogPage = () => {
               refreshGetClashLog(true);
               // clearGlobalLogs();
             }}
+            sx={{ minWidth: "70px", padding: "4px 12px", fontSize: "13px" }}
           >
             {t("Clear")}
           </Button>

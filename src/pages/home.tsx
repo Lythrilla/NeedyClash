@@ -20,6 +20,7 @@ import {
   IconButton,
   Skeleton,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { Suspense, lazy, useCallback, useMemo, useState } from "react";
@@ -259,10 +260,11 @@ const HomePage = () => {
       renderCard(
         "profile",
         <HomeProfileCard current={current} onProfileUpdated={mutateProfiles} />,
+        12, // 配置文件独占一行
       ),
-      renderCard("proxy", <CurrentProxyCard />),
-      renderCard("network", <NetworkSettingsCard />),
-      renderCard("mode", <ClashModeEnhancedCard />),
+      renderCard("mode", <ClashModeEnhancedCard />, 3), // 模式卡片
+      renderCard("network", <NetworkSettingsCard />, 3), // 网络设置
+      renderCard("proxy", <CurrentProxyCard />, 6), // 当前代理 - 内容更多，给更多空间
     ],
     [current, mutateProfiles, renderCard],
   );
@@ -291,27 +293,31 @@ const HomePage = () => {
       ),
       renderCard(
         "test",
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
+        <Suspense fallback={<Skeleton variant="rectangular" height={160} />}>
           <LazyTestCard />
         </Suspense>,
+        3, // 网站测试
       ),
       renderCard(
         "ip",
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
+        <Suspense fallback={<Skeleton variant="rectangular" height={160} />}>
           <LazyIpInfoCard />
         </Suspense>,
+        3, // IP信息
       ),
       renderCard(
         "clashinfo",
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
+        <Suspense fallback={<Skeleton variant="rectangular" height={160} />}>
           <LazyClashInfoCard />
         </Suspense>,
+        3, // Clash信息
       ),
       renderCard(
         "systeminfo",
-        <Suspense fallback={<Skeleton variant="rectangular" height={200} />}>
+        <Suspense fallback={<Skeleton variant="rectangular" height={160} />}>
           <LazySystemInfoCard />
         </Suspense>,
+        3, // 系统信息
       ),
     ],
     [t, renderCard],
@@ -320,53 +326,262 @@ const HomePage = () => {
   return (
     <BasePage
       title={t("Label-Home")}
-      contentStyle={{ padding: 3 }}
+      contentStyle={{ padding: 0, height: "100%" }}
       header={
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Tooltip title={t("LightWeight Mode")} arrow>
             <IconButton
               onClick={async () => await entry_lightweight_mode()}
-              size="medium"
+              size="small"
               sx={{
-                borderRadius: "10px",
+                borderRadius: "6px",
+                padding: "6px",
                 "&:hover": { bgcolor: "action.hover" },
               }}
             >
-              <HistoryEduOutlined />
+              <HistoryEduOutlined fontSize="small" />
             </IconButton>
           </Tooltip>
           <Tooltip title={t("Manual")} arrow>
             <IconButton
               onClick={toGithubDoc}
-              size="medium"
+              size="small"
               sx={{
-                borderRadius: "10px",
+                borderRadius: "6px",
+                padding: "6px",
                 "&:hover": { bgcolor: "action.hover" },
               }}
             >
-              <HelpOutlineRounded />
+              <HelpOutlineRounded fontSize="small" />
             </IconButton>
           </Tooltip>
           <Tooltip title={t("Home Settings")} arrow>
             <IconButton
               onClick={openSettings}
-              size="medium"
+              size="small"
               sx={{
-                borderRadius: "10px",
+                borderRadius: "6px",
+                padding: "6px",
                 "&:hover": { bgcolor: "action.hover" },
               }}
             >
-              <SettingsOutlined />
+              <SettingsOutlined fontSize="small" />
             </IconButton>
           </Tooltip>
         </Box>
       }
     >
-      <Grid container spacing={2.5} columns={{ xs: 6, sm: 6, md: 12 }}>
-        {criticalCards}
+      {/* Flexbox 布局 */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100%",
+        }}
+      >
+        {/* 顶部横条 - 配置文件 */}
+        <Box
+          sx={{
+            borderBottom: (theme) => 
+              `1px solid ${theme.palette.mode === "dark" 
+                ? "rgba(255, 255, 255, 0.04)" 
+                : "rgba(0, 0, 0, 0.04)"}`,
+            p: { xs: 1.5, sm: 2 },
+          }}
+        >
+          <HomeProfileCard current={current} onProfileUpdated={mutateProfiles} />
+        </Box>
 
-        {nonCriticalCards}
-      </Grid>
+        {/* 主内容区 - 单栏/双栏自适应 */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            flex: 1,
+          }}
+        >
+          {/* 左列 */}
+          <Box
+            sx={{
+              width: { xs: "100%", md: "50%" },
+              display: "flex",
+              flexDirection: "column",
+              order: { xs: 2, md: 1 },
+              borderRight: { 
+                xs: "none", 
+                md: (theme) => 
+                  `1px solid ${theme.palette.mode === "dark" 
+                    ? "rgba(255, 255, 255, 0.04)" 
+                    : "rgba(0, 0, 0, 0.04)"}` 
+              },
+            }}
+          >
+            {/* Proxy Mode */}
+            <Box
+              sx={{
+                borderBottom: (theme) => 
+                  `1px solid ${theme.palette.mode === "dark" 
+                    ? "rgba(255, 255, 255, 0.04)" 
+                    : "rgba(0, 0, 0, 0.04)"}`,
+                px: { xs: 1.5, sm: 2 },
+                pt: { xs: 1.5, sm: 2 },
+                pb: { xs: 1.5, sm: 2 },
+              }}
+            >
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                mb: 2.5,
+                fontWeight: 700,
+                fontSize: { xs: "9px", sm: "10px" },
+                letterSpacing: "1.2px",
+                textTransform: "uppercase",
+                color: "text.secondary",
+                opacity: 0.7,
+              }}
+            >
+              PROXY MODE
+            </Typography>
+            <Box sx={{ mt: 2.5 }}>
+              <ClashModeCard />
+            </Box>
+            </Box>
+
+            {/* Traffic & Testing */}
+            <Box
+              sx={{
+                px: { xs: 1.5, sm: 2 },
+                pt: { xs: 1.5, sm: 2 },
+                pb: { xs: 1.5, sm: 2 },
+                flex: 1,
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  display: "block",
+                  mb: 2.5,
+                  fontWeight: 400,
+                  fontSize: { xs: "9px", sm: "10px" },
+                  letterSpacing: "0.8px",
+                  textTransform: "uppercase",
+                  color: "text.disabled",
+                  opacity: 0.5,
+                }}
+              >
+                Traffic
+              </Typography>
+              <Box sx={{ mt: 2.5, mb: 2 }}>
+                <EnhancedTrafficStats />
+              </Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  display: "block",
+                  mb: 2.5,
+                  fontWeight: 400,
+                  fontSize: { xs: "9px", sm: "10px" },
+                  letterSpacing: "0.8px",
+                  textTransform: "uppercase",
+                  color: "text.disabled",
+                  opacity: 0.5,
+                }}
+              >
+                Testing
+              </Typography>
+              <Box sx={{ mt: 2.5 }}>
+                <Suspense fallback={<Skeleton variant="rectangular" height={100} />}>
+                  <LazyTestCard />
+                </Suspense>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* 右列 */}
+          <Box
+            sx={{
+              width: { xs: "100%", md: "50%" },
+              display: "flex",
+              flexDirection: "column",
+              order: { xs: 1, md: 2 },
+            }}
+          >
+            {/* Network */}
+            <Box
+              sx={{
+                borderBottom: (theme) => 
+                  `1px solid ${theme.palette.mode === "dark" 
+                    ? "rgba(255, 255, 255, 0.04)" 
+                    : "rgba(0, 0, 0, 0.04)"}`,
+                px: { xs: 1.5, sm: 2 },
+                pt: { xs: 1.5, sm: 2 },
+                pb: { xs: 1.5, sm: 2 },
+              }}
+            >
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                mb: 2.5,
+                fontWeight: 700,
+                fontSize: { xs: "9px", sm: "10px" },
+                letterSpacing: "1.2px",
+                textTransform: "uppercase",
+                color: "text.secondary",
+                opacity: 0.7,
+              }}
+            >
+              NETWORK
+            </Typography>
+            <Box sx={{ mt: 2.5 }}>
+              <ProxyTunCard />
+            </Box>
+            </Box>
+
+            {/* Info */}
+            <Box
+              sx={{
+                px: { xs: 1.5, sm: 2 },
+                pt: { xs: 1.5, sm: 2 },
+                pb: { xs: 1.5, sm: 2 },
+                flex: 1,
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{
+                  display: "block",
+                  mb: 2.5,
+                  fontWeight: 400,
+                  fontSize: { xs: "9px", sm: "10px" },
+                  letterSpacing: "0.8px",
+                  textTransform: "uppercase",
+                  color: "text.disabled",
+                  opacity: 0.5,
+                }}
+              >
+                Info
+              </Typography>
+              <Box sx={{ mt: 2.5, mb: 1.5 }}>
+                <Suspense fallback={<Skeleton variant="rectangular" height={80} />}>
+                  <LazyIpInfoCard />
+                </Suspense>
+              </Box>
+              <Box sx={{ mb: 1.5 }}>
+                <Suspense fallback={<Skeleton variant="rectangular" height={80} />}>
+                  <LazyClashInfoCard />
+                </Suspense>
+              </Box>
+              <Box>
+                <Suspense fallback={<Skeleton variant="rectangular" height={80} />}>
+                  <LazySystemInfoCard />
+                </Suspense>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       {/* 首页设置弹窗 */}
       <HomeSettingsDialog
@@ -379,7 +594,6 @@ const HomePage = () => {
   );
 };
 
-// 增强版网络设置卡片组件
 const NetworkSettingsCard = () => {
   const { t } = useTranslation();
   return (
@@ -394,7 +608,6 @@ const NetworkSettingsCard = () => {
   );
 };
 
-// 增强版 Clash 模式卡片组件
 const ClashModeEnhancedCard = () => {
   const { t } = useTranslation();
   return (

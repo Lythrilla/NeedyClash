@@ -11,7 +11,7 @@ import {
   SortByAlphaRounded,
   SortRounded,
 } from "@mui/icons-material";
-import { Box, IconButton, TextField, SxProps } from "@mui/material";
+import { Box, IconButton, TextField, SxProps, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -63,88 +63,146 @@ export const ProxyHead = ({
   }, [groupName, testUrl, defaultLatencyUrl, url]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, ...sx }}>
-      <IconButton
-        size="small"
-        color="inherit"
-        title={t("locate")}
-        onClick={onLocation}
-      >
-        <MyLocationRounded />
-      </IconButton>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 0.5,
+        py: 1,
+        px: 1.5,
+        borderBottom: "1px solid",
+        borderColor: "divider",
+        ...sx,
+      }}
+    >
+      <Tooltip title={t("locate")} arrow placement="top">
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={onLocation}
+          sx={{
+            width: 32,
+            height: 32,
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
+          <MyLocationRounded sx={{ fontSize: 18 }} />
+        </IconButton>
+      </Tooltip>
 
-      <IconButton
-        size="small"
-        color="inherit"
-        title={t("Delay check")}
-        onClick={() => {
-          console.log(`[ProxyHead] 点击延迟测试按钮，组: ${groupName}`);
-          // Remind the user that it is custom test url
-          if (testUrl?.trim() && textState !== "filter") {
-            console.log(`[ProxyHead] 使用自定义测试URL: ${testUrl}`);
-            onHeadState({ textState: "url" });
-          }
-          onCheckDelay();
-        }}
-      >
-        <NetworkCheckRounded />
-      </IconButton>
+      <Tooltip title={t("Delay check")} arrow placement="top">
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={() => {
+            console.log(`[ProxyHead] 点击延迟测试按钮，组: ${groupName}`);
+            if (testUrl?.trim() && textState !== "filter") {
+              console.log(`[ProxyHead] 使用自定义测试URL: ${testUrl}`);
+              onHeadState({ textState: "url" });
+            }
+            onCheckDelay();
+          }}
+          sx={{
+            width: 32,
+            height: 32,
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
+          <NetworkCheckRounded sx={{ fontSize: 18 }} />
+        </IconButton>
+      </Tooltip>
 
-      <IconButton
-        size="small"
-        color="inherit"
+      <Tooltip
         title={
           [t("Sort by default"), t("Sort by delay"), t("Sort by name")][
             sortType
           ]
         }
-        onClick={() =>
-          onHeadState({ sortType: ((sortType + 1) % 3) as ProxySortType })
-        }
+        arrow
+        placement="top"
       >
-        {sortType !== 1 && sortType !== 2 && <SortRounded />}
-        {sortType === 1 && <AccessTimeRounded />}
-        {sortType === 2 && <SortByAlphaRounded />}
-      </IconButton>
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={() =>
+            onHeadState({ sortType: ((sortType + 1) % 3) as ProxySortType })
+          }
+          sx={{
+            width: 32,
+            height: 32,
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
+          {sortType !== 1 && sortType !== 2 && <SortRounded sx={{ fontSize: 18 }} />}
+          {sortType === 1 && <AccessTimeRounded sx={{ fontSize: 18 }} />}
+          {sortType === 2 && <SortByAlphaRounded sx={{ fontSize: 18 }} />}
+        </IconButton>
+      </Tooltip>
 
-      <IconButton
-        size="small"
-        color="inherit"
-        title={t("Delay check URL")}
-        onClick={() =>
-          onHeadState({ textState: textState === "url" ? null : "url" })
-        }
-      >
-        {textState === "url" ? (
-          <WifiTetheringRounded />
-        ) : (
-          <WifiTetheringOffRounded />
-        )}
-      </IconButton>
+      <Tooltip title={t("Delay check URL")} arrow placement="top">
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={() =>
+            onHeadState({ textState: textState === "url" ? null : "url" })
+          }
+          sx={{
+            width: 32,
+            height: 32,
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
+          {textState === "url" ? (
+            <WifiTetheringRounded sx={{ fontSize: 18 }} />
+          ) : (
+            <WifiTetheringOffRounded sx={{ fontSize: 18 }} />
+          )}
+        </IconButton>
+      </Tooltip>
 
-      <IconButton
-        size="small"
-        color="inherit"
+      <Tooltip
         title={showType ? t("Proxy basic") : t("Proxy detail")}
-        onClick={() => onHeadState({ showType: !showType })}
+        arrow
+        placement="top"
       >
-        {showType ? <VisibilityRounded /> : <VisibilityOffRounded />}
-      </IconButton>
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={() => onHeadState({ showType: !showType })}
+          sx={{
+            width: 32,
+            height: 32,
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
+          {showType ? (
+            <VisibilityRounded sx={{ fontSize: 18 }} />
+          ) : (
+            <VisibilityOffRounded sx={{ fontSize: 18 }} />
+          )}
+        </IconButton>
+      </Tooltip>
 
-      <IconButton
-        size="small"
-        color="inherit"
-        title={t("Filter")}
-        onClick={() =>
-          onHeadState({ textState: textState === "filter" ? null : "filter" })
-        }
-      >
-        {textState === "filter" ? (
-          <FilterAltRounded />
-        ) : (
-          <FilterAltOffRounded />
-        )}
-      </IconButton>
+      <Tooltip title={t("Filter")} arrow placement="top">
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={() =>
+            onHeadState({ textState: textState === "filter" ? null : "filter" })
+          }
+          sx={{
+            width: 32,
+            height: 32,
+            "&:hover": { bgcolor: "action.hover" },
+          }}
+        >
+          {textState === "filter" ? (
+            <FilterAltRounded sx={{ fontSize: 18 }} />
+          ) : (
+            <FilterAltOffRounded sx={{ fontSize: 18 }} />
+          )}
+        </IconButton>
+      </Tooltip>
 
       {textState === "filter" && (
         <TextField
@@ -156,7 +214,18 @@ export const ProxyHead = ({
           variant="outlined"
           placeholder={t("Filter conditions")}
           onChange={(e) => onHeadState({ filterText: e.target.value })}
-          sx={{ ml: 0.5, flex: "1 1 auto", input: { py: 0.65, px: 1 } }}
+          sx={{
+            ml: 0.5,
+            flex: "1 1 auto",
+            "& .MuiOutlinedInput-root": {
+              fontSize: "13px",
+              height: 32,
+              "& input": {
+                py: 0.5,
+                px: 1.5,
+              },
+            },
+          }}
         />
       )}
 
@@ -171,7 +240,18 @@ export const ProxyHead = ({
           variant="outlined"
           placeholder={t("Delay check URL")}
           onChange={(e) => onHeadState({ testUrl: e.target.value })}
-          sx={{ ml: 0.5, flex: "1 1 auto", input: { py: 0.65, px: 1 } }}
+          sx={{
+            ml: 0.5,
+            flex: "1 1 auto",
+            "& .MuiOutlinedInput-root": {
+              fontSize: "13px",
+              height: 32,
+              "& input": {
+                py: 0.5,
+                px: 1.5,
+              },
+            },
+          }}
         />
       )}
     </Box>

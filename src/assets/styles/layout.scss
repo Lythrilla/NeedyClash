@@ -2,23 +2,24 @@
   width: 100%;
   height: 100vh;
   display: flex;
-  flex-direction: row; /* 改为横向布局 */
+  flex-direction: column; /* 纵向布局，为标题栏预留 */
   overflow: hidden;
 
   .layout-content {
     /* 现代化布局容器 */
     display: flex;
+    flex-direction: row; /* 横向布局：侧边栏 + 主内容 */
     flex: 1;
     overflow: hidden;
 
     &__left {
-      /* 紧凑响应式侧边栏 */
-      flex: 0 0 200px;
+      /* 极简响应式侧边栏 */
+      flex: 0 0 180px;
       display: flex;
       height: 100%;
-      padding: 16px 12px;
+      padding: 12px 8px;
       flex-direction: column;
-      gap: 8px; /* 减小间距 */
+      gap: 6px;
       box-sizing: border-box;
       background: transparent;
       border-right: 1px solid var(--border-color);
@@ -26,22 +27,22 @@
       overflow: hidden;
 
       .the-logo {
-        /* 紧凑Logo区域 */
+        /* 极简Logo区域 */
         position: relative;
         flex: 0 0 auto;
         display: flex;
         height: auto;
-        padding: 4px;
-        margin-bottom: 0; /* 去掉底部边距 */
+        padding: 2px;
+        margin-bottom: 0;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
 
         .logo-wrapper {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
+          gap: 6px;
         }
 
         img,
@@ -49,15 +50,15 @@
           width: 24px;
           height: 24px;
           pointer-events: none;
+          opacity: 0.8;
         }
 
         .logo-text {
-          font-size: 14px;
-          font-weight: 700;
-          letter-spacing: -0.2px;
+          font-size: 12px;
+          font-weight: 400;
+          letter-spacing: 0;
+          opacity: 0.6;
         }
-
-
       }
 
       .the-menu {

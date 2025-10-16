@@ -1,5 +1,5 @@
 import { GitHub, HelpOutlineRounded, Telegram } from "@mui/icons-material";
-import { Box, ButtonGroup, IconButton, Grid } from "@mui/material";
+import { Box, ButtonGroup, IconButton, Grid, alpha, useTheme } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useTranslation } from "react-i18next";
 
@@ -32,78 +32,87 @@ const SettingPage = () => {
   });
 
   const mode = useThemeMode();
+  const theme = useTheme();
   const isDark = mode === "light" ? false : true;
 
   return (
     <BasePage
       title={t("Settings")}
+      contentStyle={{ padding: 0 }}
       header={
-        <ButtonGroup variant="contained" aria-label="Basic button group">
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
           <IconButton
-            size="medium"
+            size="small"
             color="inherit"
             title={t("Manual")}
             onClick={toGithubDoc}
+            sx={{ borderRadius: "6px", padding: "6px" }}
           >
-            <HelpOutlineRounded fontSize="inherit" />
+            <HelpOutlineRounded fontSize="small" />
           </IconButton>
           <IconButton
-            size="medium"
+            size="small"
             color="inherit"
             title={t("TG Channel")}
             onClick={toTelegramChannel}
+            sx={{ borderRadius: "6px", padding: "6px" }}
           >
-            <Telegram fontSize="inherit" />
+            <Telegram fontSize="small" />
           </IconButton>
 
           <IconButton
-            size="medium"
+            size="small"
             color="inherit"
             title={t("Github Repo")}
             onClick={toGithubRepo}
+            sx={{ borderRadius: "6px", padding: "6px" }}
           >
-            <GitHub fontSize="inherit" />
+            <GitHub fontSize="small" />
           </IconButton>
-        </ButtonGroup>
+        </Box>
       }
     >
-      <Grid container spacing={1.5} columns={{ xs: 6, sm: 6, md: 12 }}>
-        <Grid size={6}>
+      {/* 极简设置布局 - 去除卡片，使用分隔线 */}
+      <Grid container spacing={0} columns={{ xs: 1, sm: 1, md: 2 }}>
+        {/* 左列 */}
+        <Grid size={1}>
           <Box
             sx={{
-              borderRadius: 2,
-              marginBottom: 1.5,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
+              borderRight: { md: "1px solid" },
+              borderColor: "divider",
+              p: 3,
             }}
           >
-            <SettingSystem onError={onError} />
-          </Box>
-          <Box
-            sx={{
-              borderRadius: 2,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
-            }}
-          >
-            <SettingClash onError={onError} />
+            <Box sx={{ mb: 4 }}>
+              <SettingSystem onError={onError} />
+            </Box>
+            <Box
+              sx={{
+                pt: 4,
+                borderTop: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <SettingClash onError={onError} />
+            </Box>
           </Box>
         </Grid>
-        <Grid size={6}>
-          <Box
-            sx={{
-              borderRadius: 2,
-              marginBottom: 1.5,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
-            }}
-          >
-            <SettingVergeBasic onError={onError} />
-          </Box>
-          <Box
-            sx={{
-              borderRadius: 2,
-              backgroundColor: isDark ? "#282a36" : "#ffffff",
-            }}
-          >
-            <SettingVergeAdvanced onError={onError} />
+
+        {/* 右列 */}
+        <Grid size={1}>
+          <Box sx={{ p: 3 }}>
+            <Box sx={{ mb: 4 }}>
+              <SettingVergeBasic onError={onError} />
+            </Box>
+            <Box
+              sx={{
+                pt: 4,
+                borderTop: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <SettingVergeAdvanced onError={onError} />
+            </Box>
           </Box>
         </Grid>
       </Grid>

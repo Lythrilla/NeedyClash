@@ -1,12 +1,5 @@
-import {
-  Box,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { RestartAltOutlined } from "@mui/icons-material";
+import { Box, Button, TextField } from "@mui/material";
 import { useLockFn } from "ahooks";
 import type { Ref } from "react";
 import { useImperativeHandle, useState } from "react";
@@ -19,6 +12,11 @@ import { showNotice } from "@/services/noticeService";
 import getSystem from "@/utils/get-system";
 
 import { StackModeSwitch } from "./stack-mode-switch";
+import {
+  EnhancedDialogTitle,
+  EnhancedFormItem,
+  EnhancedFormGroup,
+} from "./enhanced-dialog-components";
 
 const OS = getSystem();
 
@@ -93,12 +91,22 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
   return (
     <BaseDialog
       open={open}
-      title={
-        <Box display="flex" justifyContent="space-between" gap={1}>
-          <Typography variant="h6">{t("Tun Mode")}</Typography>
+      title=""
+      contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
+      okBtn={t("Save")}
+      cancelBtn={t("Cancel")}
+      onClose={() => setOpen(false)}
+      onCancel={() => setOpen(false)}
+      onOk={onSave}
+    >
+      {/* 标题 */}
+      <EnhancedDialogTitle
+        title={t("Tun Mode")}
+        action={
           <Button
             variant="outlined"
             size="small"
+            startIcon={<RestartAltOutlined />}
             onClick={async () => {
               const tun = {
                 stack: "gvisor",
@@ -130,18 +138,15 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
           >
             {t("Reset to Default")}
           </Button>
-        </Box>
-      }
-      contentSx={{ width: 450 }}
-      okBtn={t("Save")}
-      cancelBtn={t("Cancel")}
-      onClose={() => setOpen(false)}
-      onCancel={() => setOpen(false)}
-      onOk={onSave}
-    >
-      <List>
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Stack")} />
+        }
+      />
+
+      {/* 网络配置 */}
+      <EnhancedFormGroup title={t("Network Configuration")}>
+        <EnhancedFormItem
+          label={t("Stack")}
+          description={t("The network stack to use for TUN mode")}
+        >
           <StackModeSwitch
             value={values.stack}
             onChange={(value) => {
@@ -151,45 +156,53 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
               }));
             }}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Device")} />
+        <EnhancedFormItem
+          label={t("Device")}
+          description={t("Virtual network interface name")}
+        >
           <TextField
             autoComplete="new-password"
             size="small"
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            sx={{ width: 250 }}
+            sx={{ width: 200 }}
             value={values.device}
             placeholder="Mihomo"
             onChange={(e) =>
               setValues((v) => ({ ...v, device: e.target.value }))
             }
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Auto Route")} />
+        <EnhancedFormItem
+          label={t("Auto Route")}
+          description={t("Automatically configure system routing")}
+        >
           <Switch
             edge="end"
             checked={values.autoRoute}
             onChange={(_, c) => setValues((v) => ({ ...v, autoRoute: c }))}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Strict Route")} />
+        <EnhancedFormItem
+          label={t("Strict Route")}
+          description={t("Enable strict route mode")}
+        >
           <Switch
             edge="end"
             checked={values.strictRoute}
             onChange={(_, c) => setValues((v) => ({ ...v, strictRoute: c }))}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Auto Detect Interface")} />
+        <EnhancedFormItem
+          label={t("Auto Detect Interface")}
+          description={t("Automatically detect outbound interface")}
+        >
           <Switch
             edge="end"
             checked={values.autoDetectInterface}
@@ -197,27 +210,38 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
               setValues((v) => ({ ...v, autoDetectInterface: c }))
             }
           />
-        </ListItem>
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("DNS Hijack")} />
+      {/* DNS 配置 */}
+      <EnhancedFormGroup title={t("DNS Configuration")}>
+        <EnhancedFormItem
+          label={t("DNS Hijack")}
+          description={t("Hijack DNS queries")}
+          fullWidth
+        >
           <TextField
             autoComplete="new-password"
             size="small"
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            sx={{ width: 250 }}
+            fullWidth
             value={values.dnsHijack.join(",")}
-            placeholder="Please use , to separate multiple DNS servers"
+            placeholder="any:53"
             onChange={(e) =>
               setValues((v) => ({ ...v, dnsHijack: e.target.value.split(",") }))
             }
           />
-        </ListItem>
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("MTU")} />
+      {/* 性能设置 */}
+      <EnhancedFormGroup title={t("Performance Settings")}>
+        <EnhancedFormItem
+          label={t("MTU")}
+          description={t("Maximum transmission unit")}
+        >
           <TextField
             autoComplete="new-password"
             size="small"
@@ -225,7 +249,7 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            sx={{ width: 250 }}
+            sx={{ width: 120 }}
             value={values.mtu}
             placeholder="1500"
             onChange={(e) =>
@@ -235,8 +259,8 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
               }))
             }
           />
-        </ListItem>
-      </List>
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
     </BaseDialog>
   );
 }

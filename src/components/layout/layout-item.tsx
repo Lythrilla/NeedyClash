@@ -28,27 +28,32 @@ export const LayoutItem = (props: Props) => {
         sx={[
           {
             /* 紧凑居中设计 */
-            borderRadius: "7px",
-            padding: "8px 12px",
-            minHeight: "38px",
+            borderRadius: "6px",
+            padding: "8px 10px",
+            minHeight: "36px",
             transition: "all 0.2s ease",
             display: "flex",
             justifyContent: "center",
             
             "& .MuiListItemText-primary": {
               color: "text.primary",
-              fontWeight: "500",
-              fontSize: "13px",
+              fontWeight: "400",
+              fontSize: "12px",
               lineHeight: "18px",
               textAlign: "center",
             },
             "& .MuiListItemIcon-root": {
               minWidth: "28px",
               color: "text.secondary",
-              fontSize: "19px",
+              opacity: 0.6,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              "& svg": {
+                fontSize: "18px",
+                width: "18px",
+                height: "18px",
+              },
             },
             
             /* Hover效果 */
@@ -68,10 +73,11 @@ export const LayoutItem = (props: Props) => {
                 
                 "& .MuiListItemText-primary": {
                   color: "#FFFFFF",
-                  fontWeight: "600",
+                  fontWeight: "500",
                 },
                 "& .MuiListItemIcon-root": {
                   color: "#FFFFFF",
+                  opacity: 1,
                 },
                 
                 "&:hover": {

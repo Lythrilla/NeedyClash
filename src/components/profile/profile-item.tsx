@@ -585,7 +585,7 @@ export const ProfileItem = (props: Props) => {
 
             <Typography
               width={batchMode ? "calc(100% - 56px)" : "calc(100% - 36px)"}
-              sx={{ fontSize: "18px", fontWeight: "600", lineHeight: "26px" }}
+              sx={{ fontSize: "15px", fontWeight: "600", lineHeight: "22px" }} /* 更小的字号 */
               variant="h6"
               component="h2"
               noWrap

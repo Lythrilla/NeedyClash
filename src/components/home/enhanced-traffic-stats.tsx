@@ -7,6 +7,7 @@ import {
   MemoryRounded,
 } from "@mui/icons-material";
 import {
+  Box,
   Grid,
   PaletteColor,
   Paper,
@@ -70,69 +71,79 @@ const CompactStatCard = memo(
     }, [theme.palette, color]);
 
     return (
-      <Paper
-        elevation={0}
+      <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          borderRadius: 2,
-          bgcolor: alpha(colorValue, 0.05),
-          border: `1px solid ${alpha(colorValue, 0.15)}`,
-          padding: "8px",
-          transition: "all 0.2s ease-in-out",
+          padding: "8px 0",
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          transition: "all 0.15s ease",
           cursor: onClick ? "pointer" : "default",
           "&:hover": onClick
             ? {
-                bgcolor: alpha(colorValue, 0.1),
-                border: `1px solid ${alpha(colorValue, 0.3)}`,
-                boxShadow: `0 4px 8px rgba(0,0,0,0.05)`,
+                borderColor: colorValue,
               }
             : {},
+          "&:last-child": {
+            borderBottom: "none",
+          },
         }}
         onClick={onClick}
       >
-        {/* 图标容器 */}
-        <Grid
-          component="div"
+        {/* 图标 - 极简 */}
+        <Box
           sx={{
             mr: 1,
-            ml: "2px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            width: 32,
-            height: 32,
-            borderRadius: "50%",
-            bgcolor: alpha(colorValue, 0.1),
             color: colorValue,
+            opacity: 0.7,
+            "& svg": {
+              fontSize: "16px",
+            },
           }}
         >
           {icon}
-        </Grid>
+        </Box>
 
         {/* 文本内容 */}
-        <Grid component="div" sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Typography variant="caption" color="text.secondary" noWrap>
+        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+          <Typography
+            variant="caption"
+            fontSize="9px"
+            color="text.disabled"
+            sx={{
+              opacity: 0.5,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+            noWrap
+          >
             {title}
           </Typography>
-          <Grid
-            component="div"
-            sx={{ display: "flex", alignItems: "baseline" }}
-          >
+          <Box sx={{ display: "flex", alignItems: "baseline", mt: 0.25 }}>
             <Typography
-              variant="body1"
-              fontWeight="bold"
+              variant="body2"
+              fontSize="13px"
+              fontWeight="500"
               noWrap
               sx={{ mr: 0.5 }}
             >
               {value}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography
+              variant="caption"
+              fontSize="9px"
+              color="text.secondary"
+              sx={{ opacity: 0.6 }}
+            >
               {unit}
             </Typography>
-          </Grid>
-        </Grid>
-      </Paper>
+          </Box>
+        </Box>
+      </Box>
     );
   },
 );
@@ -191,28 +202,33 @@ export const EnhancedTrafficStats = () => {
     };
   }, [traffic, memory, connections]);
 
-  // 渲染流量图表 - 使用useMemo缓存渲染结果
+  // 渲染流量图表 - 极简轻量设计
   const trafficGraphComponent = useMemo(() => {
     if (!trafficGraph || !pageVisible) return null;
 
     return (
-      <Paper
-        elevation={0}
+      <Box
         sx={{
-          height: 130,
+          height: 100,
           cursor: "pointer",
-          border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
-          borderRadius: 2,
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: "4px",
           overflow: "hidden",
+          backgroundColor: "transparent",
+          transition: "border-color 0.15s",
+          "&:hover": {
+            borderColor: "primary.main",
+          },
         }}
         onClick={() => trafficRef.current?.toggleStyle()}
       >
         <div style={{ height: "100%", position: "relative" }}>
           <EnhancedCanvasTrafficGraph ref={trafficRef} />
         </div>
-      </Paper>
+      </Box>
     );
-  }, [trafficGraph, pageVisible, theme.palette.divider]);
+  }, [trafficGraph, pageVisible]);
 
   // 使用useMemo计算统计卡片配置
   const statCards = useMemo(

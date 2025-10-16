@@ -1,4 +1,4 @@
-import { WarningRounded } from "@mui/icons-material";
+import { WarningRounded, ComputerOutlined } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,7 +41,11 @@ const SettingSystem = ({ onError }: Props) => {
   };
 
   return (
-    <SettingList title={t("System Setting")}>
+    <SettingList
+      title={t("System Setting")}
+      icon={<ComputerOutlined />}
+      description={t("System proxy, TUN mode and startup settings")}
+    >
       <SysproxyViewer ref={sysproxyRef} />
       <TunViewer ref={tunRef} />
 

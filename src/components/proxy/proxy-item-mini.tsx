@@ -60,15 +60,14 @@ export const ProxyItemMini = (props: Props) => {
       onClick={() => onClick?.(proxy.name)}
       sx={[
         {
-          height: 56,
-          borderRadius: 1.5,
-          pl: 1.5,
-          pr: 1,
+          px: 1.5,
+          py: 1,
+          borderBottom: "1px solid",
+          borderColor: "divider",
           justifyContent: "space-between",
           alignItems: "center",
         },
         ({ palette: { mode, primary } }) => {
-          const bgcolor = mode === "light" ? "#ffffff" : "#24252f";
           const showDelay = delay > 0;
           const selectColor = mode === "light" ? primary.main : primary.light;
 
@@ -76,23 +75,23 @@ export const ProxyItemMini = (props: Props) => {
             "&:hover .the-check": { display: !showDelay ? "block" : "none" },
             "&:hover .the-delay": { display: showDelay ? "block" : "none" },
             "&:hover .the-icon": { display: "none" },
+            "&:hover": {
+              bgcolor: "action.hover",
+            },
             "& .the-pin, & .the-unpin": {
               position: "absolute",
               fontSize: "12px",
-              top: "-5px",
-              right: "-5px",
+              top: "-3px",
+              right: "-3px",
             },
             "& .the-unpin": { filter: "grayscale(1)" },
             "&.Mui-selected": {
-              width: `calc(100% + 3px)`,
-              marginLeft: `-3px`,
               borderLeft: `3px solid ${selectColor}`,
-              bgcolor:
-                mode === "light"
-                  ? alpha(primary.main, 0.15)
-                  : alpha(primary.main, 0.35),
+              bgcolor: alpha(primary.main, mode === "light" ? 0.08 : 0.15),
+              "&:hover": {
+                bgcolor: alpha(primary.main, mode === "light" ? 0.12 : 0.2),
+              },
             },
-            backgroundColor: bgcolor,
           };
         },
       ]}
@@ -111,6 +110,9 @@ export const ProxyItemMini = (props: Props) => {
             wordBreak: "break-all",
             overflow: "hidden",
             whiteSpace: "nowrap",
+            fontSize: "13px",
+            fontWeight: 500,
+            lineHeight: 1.5,
           }}
         >
           {proxy.name}
@@ -248,24 +250,27 @@ export const ProxyItemMini = (props: Props) => {
 };
 
 const Widget = styled(Box)(({ theme: { typography } }) => ({
-  padding: "2px 4px",
-  fontSize: 14,
-  fontFamily: typography.fontFamily,
-  borderRadius: "4px",
+  padding: "2px 6px",
+  fontSize: 12,
+  fontWeight: 600,
+  fontFamily: "monospace",
+  borderRadius: "3px",
 }));
 
 const TypeBox = styled(Box, {
   shouldForwardProp: (prop) => prop !== "component",
-})<{ component?: React.ElementType }>(({ theme: { typography } }) => ({
+})<{ component?: React.ElementType }>(({ theme }) => ({
   display: "inline-block",
-  border: "1px solid #ccc",
-  borderColor: "text.secondary",
-  color: "text.secondary",
-  borderRadius: 4,
+  border: "1px solid",
+  borderColor: alpha(theme.palette.text.secondary, 0.2),
+  color: alpha(theme.palette.text.secondary, 0.5),
+  borderRadius: 3,
   fontSize: 10,
-  fontFamily: typography.fontFamily,
+  fontWeight: 600,
   marginRight: "4px",
   marginTop: "auto",
-  padding: "0 4px",
-  lineHeight: 1.5,
+  padding: "1px 4px",
+  lineHeight: 1.2,
+  textTransform: "uppercase",
+  letterSpacing: "0.3px",
 }));

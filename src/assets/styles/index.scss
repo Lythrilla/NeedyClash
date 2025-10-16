@@ -1,6 +1,7 @@
 @use "./layout.scss";
 @use "./page.scss";
 @use "./font.scss";
+@use "./select.scss";
 
 body {
   margin: 0;
@@ -16,17 +17,17 @@ body {
 }
 
 :root {
-  /* 现代化扁平设计变量 */
+  /* 极客扁平设计变量 */
   --primary-main: #6366F1;
   --text-primary: #0F172A;
   --selection-color: #EEF2FF;
-  --scroller-color: #CBD5E1;
-  --background-color: #F8FAFC;
-  --background-color-alpha: rgba(99, 102, 241, 0.04);
-  --border-radius: 12px; /* 更大但统一的圆角 */
-  --border-color: #E2E8F0; /* 边框颜色 */
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); /* 极轻的阴影 */
-  --spacing-unit: 8px; /* 基础间距单位 */
+  --scroller-color: #9CA3AF;
+  --background-color: #FAFAFA; /* 更浅的背景 */
+  --background-color-alpha: rgba(99, 102, 241, 0.02);
+  --border-radius: 4px; /* 极简小圆角 */
+  --border-color: #E0E0E0; /* 更浅的边框 */
+  --divider-color: #E0E0E0;
+  --spacing-unit: 8px;
 }
 
 ::selection {
@@ -34,19 +35,19 @@ body {
   background-color: var(--primary-main);
 }
 
-/* 扁平化滚动条 */
+/* 极简滚动条 */
 *::-webkit-scrollbar {
-  width: 6px; /* 更细的滚动条 */
-  height: 6px;
+  width: 4px; /* 极细滚动条 */
+  height: 4px;
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  border-radius: 3px; /* 小圆角 */
+  border-radius: 0; /* 无圆角 */
   background-color: var(--scroller-color);
-  transition: background-color 0.2s;
+  transition: background-color 0.15s;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #9CA3AF;
+  background-color: #6B7280;
 }
 *::-webkit-scrollbar-corner {
   background-color: transparent;

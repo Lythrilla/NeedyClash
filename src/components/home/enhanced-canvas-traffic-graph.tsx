@@ -1,4 +1,4 @@
-import { Box, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import type { Ref } from "react";
 import {
   memo,
@@ -860,8 +860,7 @@ export const EnhancedCanvasTrafficGraph = memo(
           width: "100%",
           height: "100%",
           position: "relative",
-          bgcolor: "action.hover",
-          borderRadius: 1,
+          bgcolor: "transparent",
           cursor: "pointer",
           overflow: "hidden",
         }}
@@ -890,92 +889,83 @@ export const EnhancedCanvasTrafficGraph = memo(
             pointerEvents: "none",
           }}
         >
-          {/* 时间范围按钮 */}
+          {/* 时间范围按钮 - 极简 */}
           <Box
             component="div"
             onClick={handleTimeRangeClick}
             sx={{
               position: "absolute",
-              top: 6,
-              left: 40, // 向右移动，避免与Y轴最大值标签重叠
-              fontSize: "11px",
-              fontWeight: "bold",
-              color: "text.secondary",
+              top: 4,
+              left: 32,
+              fontSize: "8px",
+              fontWeight: 400,
+              color: "text.disabled",
+              opacity: 0.5,
               cursor: "pointer",
               pointerEvents: "all",
-              px: 1,
-              py: 0.5,
-              borderRadius: 0.5,
-              bgcolor: "rgba(0,0,0,0.05)",
+              px: 0.75,
+              py: 0.25,
+              borderRadius: "2px",
+              backgroundColor: "transparent",
+              transition: "opacity 0.15s",
               "&:hover": {
-                bgcolor: "rgba(0,0,0,0.1)",
+                opacity: 1,
               },
             }}
           >
             {getTimeRangeText()}
           </Box>
 
-          {/* 图例 */}
+          {/* 图例 - 极简 */}
           <Box
             sx={{
               position: "absolute",
-              top: 6,
-              right: 8,
+              bottom: 4,
+              right: 6,
               display: "flex",
-              flexDirection: "column",
-              gap: 0.5,
+              gap: 1,
+              fontSize: "8px",
+              pointerEvents: "none",
             }}
           >
-            <Box
-              sx={{
-                fontSize: "11px",
-                fontWeight: "bold",
-                color: colors.up,
-                textAlign: "right",
-              }}
-            >
-              {t("Upload")}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  bgcolor: colors.up,
+                  opacity: 0.7,
+                }}
+              />
+              <Typography
+                variant="caption"
+                fontSize="8px"
+                color="text.disabled"
+                sx={{ opacity: 0.5 }}
+              >
+                {t("Upload")}
+              </Typography>
             </Box>
-            <Box
-              sx={{
-                fontSize: "11px",
-                fontWeight: "bold",
-                color: colors.down,
-                textAlign: "right",
-              }}
-            >
-              {t("Download")}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  bgcolor: colors.down,
+                  opacity: 0.7,
+                }}
+              />
+              <Typography
+                variant="caption"
+                fontSize="8px"
+                color="text.disabled"
+                sx={{ opacity: 0.5 }}
+              >
+                {t("Download")}
+              </Typography>
             </Box>
-          </Box>
-
-          {/* 样式指示器 */}
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 6,
-              right: 8,
-              fontSize: "10px",
-              color: "text.disabled",
-              opacity: 0.7,
-            }}
-          >
-            {chartStyle === "bezier" ? "Smooth" : "Linear"}
-          </Box>
-
-          {/* 数据统计指示器（左下角） */}
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 6,
-              left: 8,
-              fontSize: "9px",
-              color: "text.disabled",
-              opacity: 0.6,
-              lineHeight: 1.2,
-            }}
-          >
-            Points: {displayData.length} | Compressed:{" "}
-            {samplerStats.compressedBufferSize}
           </Box>
 
           {/* 悬浮提示框 */}

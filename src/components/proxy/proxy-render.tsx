@@ -99,21 +99,25 @@ export const ProxyRender = (props: RenderProps) => {
     return (
       <ListItemButton
         dense
-        style={{
-          background: itembackgroundcolor,
-          height: "100%",
-          margin: "8px 8px",
-          borderRadius: "8px",
-        }}
         onClick={() => onHeadState(group.name, { open: !headState?.open })}
+        sx={{
+          py: 1.5,
+          px: 2,
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          "&:hover": {
+            bgcolor: "action.hover",
+          },
+        }}
       >
         {enable_group_icon &&
           group.icon &&
           group.icon.trim().startsWith("http") && (
             <img
               src={iconCachePath === "" ? group.icon : iconCachePath}
-              width="32px"
-              style={{ marginRight: "12px", borderRadius: "6px" }}
+              width="28px"
+              height="28px"
+              style={{ marginRight: "12px", borderRadius: "4px" }}
             />
           )}
         {enable_group_icon &&
@@ -121,8 +125,9 @@ export const ProxyRender = (props: RenderProps) => {
           group.icon.trim().startsWith("data") && (
             <img
               src={group.icon}
-              width="32px"
-              style={{ marginRight: "12px", borderRadius: "6px" }}
+              width="28px"
+              height="28px"
+              style={{ marginRight: "12px", borderRadius: "4px" }}
             />
           )}
         {enable_group_icon &&
@@ -130,49 +135,70 @@ export const ProxyRender = (props: RenderProps) => {
           group.icon.trim().startsWith("<svg") && (
             <img
               src={`data:image/svg+xml;base64,${btoa(group.icon)}`}
-              width="32px"
+              width="28px"
+              height="28px"
+              style={{ marginRight: "12px", borderRadius: "4px" }}
             />
           )}
-        <ListItemText
-          primary={<StyledPrimary>{group.name}</StyledPrimary>}
-          secondary={
-            <Box
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography
+            sx={{
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "text.primary",
+              lineHeight: 1.4,
+            }}
+          >
+            {group.name}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mt: 0.25,
+            }}
+          >
+            <Typography
               sx={{
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                pt: "2px",
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "text.secondary",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
-              <Box component="span" sx={{ marginTop: "2px" }}>
-                <StyledTypeBox>{group.type}</StyledTypeBox>
-                <StyledSubtitle sx={{ color: "text.secondary" }}>
-                  {group.now}
-                </StyledSubtitle>
-              </Box>
-            </Box>
-          }
-          slotProps={{
-            secondary: {
-              component: "div",
-              sx: { display: "flex", alignItems: "center", color: "#ccc" },
-            },
-          }}
-        />
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Tooltip title={t("Proxy Count")} arrow>
-            <Chip
-              size="small"
-              label={`${group.all.length}`}
+              {group.type}
+            </Typography>
+            <Typography
               sx={{
-                mr: 1,
-                backgroundColor: (theme) =>
-                  alpha(theme.palette.primary.main, 0.1),
-                color: (theme) => theme.palette.primary.main,
+                fontSize: "12px",
+                color: "text.secondary",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
-            />
-          </Tooltip>
-          {headState?.open ? <ExpandLessRounded /> : <ExpandMoreRounded />}
+            >
+              {group.now}
+            </Typography>
+          </Box>
+        </Box>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography
+            sx={{
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "text.secondary",
+              fontFamily: "monospace",
+            }}
+          >
+            {group.all.length}
+          </Typography>
+          {headState?.open ? (
+            <ExpandLessRounded sx={{ fontSize: 20, color: "text.secondary" }} />
+          ) : (
+            <ExpandMoreRounded sx={{ fontSize: 20, color: "text.secondary" }} />
+          )}
         </Box>
       </ListItemButton>
     );

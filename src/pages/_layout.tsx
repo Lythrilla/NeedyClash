@@ -13,6 +13,7 @@ import iconDark from "@/assets/image/icon_dark.svg?react";
 import iconLight from "@/assets/image/icon_light.svg?react";
 import LogoSvg from "@/assets/image/logo.svg?react";
 import { NoticeManager } from "@/components/base/NoticeManager";
+import { CustomTitlebar } from "@/components/layout/custom-titlebar";
 import { WindowControls } from "@/components/controller/window-controller";
 import { LayoutItem } from "@/components/layout/layout-item";
 import { LayoutTraffic } from "@/components/layout/layout-traffic";
@@ -184,24 +185,14 @@ const Layout = () => {
   const windowControls = useRef<any>(null);
   const { decorated } = useWindowDecorations();
 
+  // 始终显示自定义标题栏（仅 Windows）
   const customTitlebar = useMemo(() => {
-    console.debug(
-      "[Layout] Titlebar rendering - decorated:",
-      decorated,
-      "| showing:",
-      !decorated,
-      "| theme mode:",
-      mode,
-    );
-    if (!decorated) {
-      return (
-        <div className="the_titlebar" data-tauri-drag-region="true">
-          <WindowControls ref={windowControls} />
-        </div>
-      );
+    const OS = getSystem();
+    if (OS === "windows") {
+      return <CustomTitlebar />;
     }
     return null;
-  }, [decorated, mode]);
+  }, []);
 
   useEffect(() => {
     if (!themeReady || overlayRemovedRef.current) {
@@ -673,12 +664,12 @@ const Layout = () => {
                 <div className="logo-wrapper">
                   <SvgIcon
                     component={isDark ? iconDark : iconLight}
-                    sx={{ fontSize: 24 }}
+                    sx={{ fontSize: 32 }}
                     inheritViewBox
                   />
                   <LogoSvg
                     fill={isDark ? "white" : "black"}
-                    style={{ height: "14px", width: "auto" }}
+                    style={{ height: "14px", width: "auto", opacity: 0.8 }}
                   />
                 </div>
                 <UpdateButton className="the-newbtn" />

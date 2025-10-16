@@ -1,4 +1,4 @@
-import { ContentCopyRounded } from "@mui/icons-material";
+import { ContentCopyRounded, PaletteOutlined } from "@mui/icons-material";
 import { Button, Input, MenuItem, Select } from "@mui/material";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useCallback, useRef } from "react";
@@ -80,7 +80,11 @@ const SettingVergeBasic = ({ onError }: Props) => {
   }, [t]);
 
   return (
-    <SettingList title={t("Verge Basic Setting")}>
+    <SettingList
+      title={t("Verge Basic Setting")}
+      icon={<PaletteOutlined />}
+      description={t("Language, theme, tray and interface settings")}
+    >
       <ThemeViewer ref={themeRef} />
       <ConfigViewer ref={configRef} />
       <HotkeyViewer ref={hotkeyRef} />

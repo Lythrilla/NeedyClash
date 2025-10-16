@@ -1,4 +1,4 @@
-import { LanRounded, SettingsRounded } from "@mui/icons-material";
+import { LanRounded, SettingsRounded, ExtensionOutlined } from "@mui/icons-material";
 import { MenuItem, Select, TextField, Typography } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
 import { useLockFn } from "ahooks";
@@ -93,7 +93,11 @@ const SettingClash = ({ onError }: Props) => {
   });
 
   return (
-    <SettingList title={t("Clash Setting")}>
+    <SettingList
+      title={t("Clash Setting")}
+      icon={<ExtensionOutlined />}
+      description={t("Clash core, ports, DNS and network configuration")}
+    >
       <WebUIViewer ref={webRef} />
       <ClashPortViewer ref={portRef} />
       <ControllerViewer ref={ctrlRef} />

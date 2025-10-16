@@ -47,12 +47,18 @@ export const ProfileBox = styled(Box)(({
     display: "block",
     cursor: "pointer",
     textAlign: "left",
-    padding: "8px 16px",
+    padding: "10px 14px", /* 更紧凑的 padding */
     boxSizing: "border-box",
-    backgroundColor,
+    backgroundColor: mode === "light" ? "#ffffff" : "rgba(40, 42, 54, 0.7)", /* 暗色模式半透明 */
     ...borderSelect,
-    borderRadius: "8px",
+    borderRadius: "7px", /* 更小的圆角 */
+    border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(51, 65, 85, 0.5)"}`, /* 添加边框 */
     color,
+    transition: "all 0.2s ease",
+    "&:hover": {
+      backgroundColor: mode === "light" ? "#FAFAFA" : "rgba(40, 42, 54, 0.9)",
+      borderColor: mode === "light" ? primary.main : alpha(primary.main, 0.5),
+    },
     "& h2": { color: h2color },
   };
 });

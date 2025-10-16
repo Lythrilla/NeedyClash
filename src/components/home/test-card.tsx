@@ -26,17 +26,17 @@ import { useVerge } from "@/hooks/use-verge";
 
 import { EnhancedCard } from "./enhanced-card";
 
-// 自定义滚动条样式
+// 极简滚动框样式
 const ScrollBox = styled(Box)(({ theme }) => ({
-  maxHeight: "180px",
+  maxHeight: "160px",
   overflowY: "auto",
   overflowX: "hidden",
   "&::-webkit-scrollbar": {
-    width: "6px",
+    width: "4px",
   },
   "&::-webkit-scrollbar-thumb": {
-    backgroundColor: alpha(theme.palette.text.primary, 0.2),
-    borderRadius: "3px",
+    backgroundColor: alpha(theme.palette.text.secondary, 0.3),
+    borderRadius: "2px",
   },
 }));
 
@@ -145,7 +145,7 @@ export const TestCard = () => {
   // 使用useMemo优化UI内容，减少渲染计算
   const renderTestItems = useMemo(
     () => (
-      <Grid container spacing={1} columns={12}>
+      <Grid container spacing={0.75} columns={12}>
         <SortableContext items={testList.map((x) => x.uid)}>
           {testList.map((item) => (
             <Grid key={item.uid} size={3}>
@@ -176,21 +176,37 @@ export const TestCard = () => {
       title={t("Website Tests")}
       icon={<NetworkCheck />}
       action={
-        <Box sx={{ display: "flex", gap: 1 }}>
+        <Box sx={{ display: "flex", gap: 0.25 }}>
           <Tooltip title={t("Test All")} arrow>
-            <IconButton size="small" onClick={handleTestAll}>
-              <NetworkCheck fontSize="small" />
+            <IconButton
+              size="small"
+              onClick={handleTestAll}
+              sx={{
+                width: "24px",
+                height: "24px",
+                "& svg": { fontSize: "16px" },
+              }}
+            >
+              <NetworkCheck />
             </IconButton>
           </Tooltip>
           <Tooltip title={t("Create Test")} arrow>
-            <IconButton size="small" onClick={handleCreateTest}>
-              <Add fontSize="small" />
+            <IconButton
+              size="small"
+              onClick={handleCreateTest}
+              sx={{
+                width: "24px",
+                height: "24px",
+                "& svg": { fontSize: "16px" },
+              }}
+            >
+              <Add />
             </IconButton>
           </Tooltip>
         </Box>
       }
     >
-      <ScrollBox>
+      <Box sx={{ mt: 1 }}>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -199,7 +215,7 @@ export const TestCard = () => {
           {renderTestItems}
           <DragOverlay />
         </DndContext>
-      </ScrollBox>
+      </Box>
 
       <TestViewer ref={viewerRef} onChange={onTestListItemChange} />
     </EnhancedCard>

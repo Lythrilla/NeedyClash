@@ -15,31 +15,51 @@ import { EnhancedCard } from "./enhanced-card";
 // 定义刷新时间（秒）
 const IP_REFRESH_SECONDS = 300;
 
-// 提取InfoItem子组件并使用memo优化
-const InfoItem = memo(({ label, value }: { label: string; value: string }) => (
-  <Box sx={{ mb: 0.7, display: "flex", alignItems: "flex-start" }}>
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      sx={{ minwidth: 60, mr: 0.5, flexShrink: 0, textAlign: "right" }}
-    >
-      {label}:
-    </Typography>
-    <Typography
-      variant="body2"
+
+const InfoRow = memo(
+  ({ label, value }: { label: string; value: string | React.ReactNode }) => (
+    <Box
       sx={{
-        ml: 0.5,
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        wordBreak: "break-word",
-        whiteSpace: "normal",
-        flexGrow: 1,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        py: 0.75,
+        borderBottom: "1px solid",
+        borderColor: "divider",
+        "&:last-child": {
+          borderBottom: "none",
+        },
       }}
     >
-      {value || "Unknown"}
-    </Typography>
-  </Box>
-));
+      <Typography
+        variant="body2"
+        sx={{
+          fontSize: "10px",
+          color: "text.disabled",
+          opacity: 0.6,
+          textTransform: "uppercase",
+          letterSpacing: "0.5px",
+        }}
+      >
+        {label}
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          fontSize: "11px",
+          fontWeight: 500,
+          color: "text.primary",
+          textAlign: "right",
+          maxWidth: "60%",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {value || "-"}
+      </Typography>
+    </Box>
+  )
+);
 
 // 获取国旗表情
 const getCountryFlag = (countryCode: string) => {
@@ -167,150 +187,98 @@ export const IpInfoCard = () => {
     );
   }
 
-  // 渲染正常数据
+  // 渲染正常数据 - 极简设计
   return (
     <EnhancedCard
       title={t("IP Information")}
       icon={<LocationOnOutlined />}
       iconColor="info"
       action={
-        <IconButton size="small" onClick={fetchIpInfo}>
+        <IconButton
+          size="small"
+          onClick={fetchIpInfo}
+          sx={{
+            width: "24px",
+            height: "24px",
+            "& svg": { fontSize: "16px" },
+          }}
+        >
           <RefreshOutlined />
         </IconButton>
       }
     >
-      <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            flex: 1,
-            overflow: "hidden",
-          }}
-        >
-          {/* 左侧：国家和IP地址 */}
-          <Box sx={{ width: "40%", overflow: "hidden" }}>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                mb: 1,
-                overflow: "hidden",
-              }}
-            >
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
+        {/* 国家/地区 */}
+        <InfoRow
+          label={t("Location")}
+          value={
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               <Box
                 component="span"
                 sx={{
-                  fontSize: "1.5rem",
-                  mr: 1,
-                  display: "inline-block",
-                  width: 28,
-                  textAlign: "center",
-                  flexShrink: 0,
+                  fontSize: "14px",
                   fontFamily: '"twemoji mozilla", sans-serif',
                 }}
               >
                 {getCountryFlag(ipInfo?.country_code)}
               </Box>
-              <Typography
-                variant="subtitle1"
+              <span>{ipInfo?.country || "-"}</span>
+            </Box>
+          }
+        />
+
+        {/* IP 地址 */}
+        <InfoRow
+          label="IP"
+          value={
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+              <Box
+                component="span"
                 sx={{
-                  fontWeight: "medium",
+                  fontFamily: "monospace",
+                  fontSize: "10px",
+                  maxWidth: "120px",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  maxWidth: "100%",
                 }}
               >
-                {ipInfo?.country || t("Unknown")}
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ flexShrink: 0 }}
-              >
-                {t("IP")}:
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  ml: 1,
-                  overflow: "hidden",
-                  maxWidth: "calc(100% - 30px)",
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontFamily: "monospace",
-                    fontSize: "0.75rem",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    wordBreak: "break-all",
-                  }}
-                >
-                  {showIp ? ipInfo?.ip : "••••••••••"}
-                </Typography>
-                <IconButton size="small" onClick={toggleShowIp}>
-                  {showIp ? (
-                    <VisibilityOffOutlined fontSize="small" />
-                  ) : (
-                    <VisibilityOutlined fontSize="small" />
-                  )}
-                </IconButton>
+                {showIp ? ipInfo?.ip : "•••••"}
               </Box>
+              <IconButton
+                size="small"
+                onClick={toggleShowIp}
+                sx={{
+                  width: "16px",
+                  height: "16px",
+                  ml: 0.5,
+                  "& svg": { fontSize: "12px" },
+                }}
+              >
+                {showIp ? <VisibilityOffOutlined /> : <VisibilityOutlined />}
+              </IconButton>
             </Box>
+          }
+        />
 
-            <InfoItem
-              label={t("ASN")}
-              value={ipInfo?.asn ? `AS${ipInfo.asn}` : "N/A"}
-            />
-          </Box>
+        {/* ISP */}
+        <InfoRow
+          label="ISP"
+          value={ipInfo?.isp || ipInfo?.asn_organization || "-"}
+        />
 
-          {/* 右侧：组织、ISP和位置信息 */}
-          <Box sx={{ width: "60%", overflow: "auto" }}>
-            <InfoItem label={t("ISP")} value={ipInfo?.isp} />
-            <InfoItem label={t("ORG")} value={ipInfo?.asn_organization} />
-            <InfoItem
-              label={t("Location")}
-              value={[ipInfo?.city, ipInfo?.region].filter(Boolean).join(", ")}
-            />
-            <InfoItem label={t("Timezone")} value={ipInfo?.timezone} />
-          </Box>
-        </Box>
+        {/* 城市 */}
+        {ipInfo?.city && (
+          <InfoRow
+            label={t("City")}
+            value={[ipInfo?.city, ipInfo?.region].filter(Boolean).join(", ")}
+          />
+        )}
 
-        <Box
-          sx={{
-            mt: "auto",
-            pt: 0.5,
-            borderTop: 1,
-            borderColor: "divider",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            opacity: 0.7,
-            fontSize: "0.7rem",
-          }}
-        >
-          <Typography variant="caption">
-            {t("Auto refresh")}: {countdown}s
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{
-              textOverflow: "ellipsis",
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {ipInfo?.country_code}, {ipInfo?.longitude?.toFixed(2)},{" "}
-            {ipInfo?.latitude?.toFixed(2)}
-          </Typography>
-        </Box>
+        {/* ASN */}
+        <InfoRow
+          label="ASN"
+          value={ipInfo?.asn ? `AS${ipInfo.asn}` : "-"}
+        />
       </Box>
     </EnhancedCard>
   );

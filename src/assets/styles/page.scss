@@ -1,4 +1,4 @@
-/* 现代化页面布局 */
+/* 轻量现代化页面布局 */
 .base-page {
   width: 100%;
   height: 100%;
@@ -6,16 +6,24 @@
   flex-direction: column;
   
   > header {
-    flex: 0 0 60px;
+    flex: 0 0 52px; /* 更紧凑的高度 */
     width: 100%;
     margin: 0;
-    padding: 0 28px;
+    padding: 0 12px; /* 小屏幕更小的padding */
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--border-color);
     background: transparent;
+    
+    @media (min-width: 600px) {
+      padding: 0 16px;
+    }
+    
+    @media (min-width: 900px) {
+      padding: 0 20px;
+    }
   }
 
   .base-container {
@@ -28,15 +36,23 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      padding: 24px 0;
+      padding: 16px 0; /* 更小的上下padding */
       box-sizing: border-box;
       scrollbar-gutter: stable;
       
-      .base-content {
-        width: calc(100% - 28px * 2);
-        margin: 0 auto;
-        max-width: 1400px; /* 最大宽度限制 */
-      }
+        .base-content {
+          width: calc(100% - 16px);
+          margin: 0 auto;
+          max-width: 1400px;
+          
+          @media (min-width: 600px) {
+            width: calc(100% - 32px);
+          }
+          
+          @media (min-width: 900px) {
+            width: calc(100% - 48px);
+          }
+        }
     }
 
     &.no-padding {

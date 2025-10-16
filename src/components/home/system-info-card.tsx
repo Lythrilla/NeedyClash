@@ -7,6 +7,7 @@ import {
   ExtensionOutlined,
 } from "@mui/icons-material";
 import {
+  Box,
   Typography,
   Stack,
   Divider,
@@ -273,93 +274,136 @@ export const SystemInfoCard = () => {
       icon={<InfoOutlined />}
       iconColor="error"
       action={
-        <IconButton size="small" onClick={goToSettings} title={t("Settings")}>
-          <SettingsOutlined fontSize="small" />
+        <IconButton
+          size="small"
+          onClick={goToSettings}
+          title={t("Settings")}
+          sx={{
+            width: "24px",
+            height: "24px",
+            "& svg": { fontSize: "16px" },
+          }}
+        >
+          <SettingsOutlined />
         </IconButton>
       }
     >
-      <Stack spacing={1.5}>
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
+      <Stack spacing={0}>
+        {/* OS Info */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            py: 0.75,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "10px",
+              color: "text.disabled",
+              opacity: 0.6,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
             {t("OS Info")}
           </Typography>
-          <Typography variant="body2" fontWeight="medium">
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "11px",
+              fontWeight: 500,
+              maxWidth: "60%",
+              textAlign: "right",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {systemState.osInfo}
           </Typography>
-        </Stack>
-        <Divider />
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
+        </Box>
+
+        {/* Auto Launch */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            py: 0.75,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
         >
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "10px",
+              color: "text.disabled",
+              opacity: 0.6,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
             {t("Auto Launch")}
           </Typography>
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             {isAdminMode && (
               <Tooltip
                 title={t("Administrator mode may not support auto launch")}
               >
-                <WarningOutlined sx={{ color: "warning.main", fontSize: 20 }} />
+                <WarningOutlined
+                  sx={{ color: "warning.main", fontSize: "14px" }}
+                />
               </Tooltip>
             )}
             <Chip
               size="small"
-              label={autoLaunchEnabled ? t("Enabled") : t("Disabled")}
+              label={autoLaunchEnabled ? t("On") : t("Off")}
               color={autoLaunchEnabled ? "success" : "default"}
-              variant={autoLaunchEnabled ? "filled" : "outlined"}
+              variant="outlined"
               onClick={toggleAutoLaunch}
-              sx={{ cursor: "pointer" }}
+              sx={{
+                cursor: "pointer",
+                height: "20px",
+                fontSize: "9px",
+                "& .MuiChip-label": {
+                  px: 1,
+                },
+              }}
             />
-          </Stack>
-        </Stack>
-        <Divider />
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
+          </Box>
+        </Box>
+
+        {/* Version */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            py: 0.75,
+          }}
         >
-          <Typography variant="body2" color="text.secondary">
-            {t("Running Mode")}
-          </Typography>
           <Typography
             variant="body2"
-            fontWeight="medium"
-            onClick={handleRunningModeClick}
-            sx={runningModeStyle}
-          >
-            {getModeIcon()}
-            {getModeText()}
-          </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
-            {t("Last Check Update")}
-          </Typography>
-          <Typography
-            variant="body2"
-            fontWeight="medium"
-            onClick={onCheckUpdate}
             sx={{
-              cursor: "pointer",
-              textDecoration: "underline",
-              "&:hover": { opacity: 0.7 },
+              fontSize: "10px",
+              color: "text.disabled",
+              opacity: 0.6,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
             }}
           >
-            {systemState.lastCheckUpdate}
+            {t("Version")}
           </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
-            {t("Verge Version")}
-          </Typography>
-          <Typography variant="body2" fontWeight="medium">
+          <Typography
+            variant="body2"
+            sx={{ fontSize: "11px", fontWeight: 500 }}
+          >
             v{appVersion}
           </Typography>
-        </Stack>
+        </Box>
       </Stack>
     </EnhancedCard>
   );

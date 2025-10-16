@@ -3,7 +3,7 @@ import {
   LanguageRounded,
   MultipleStopRounded,
 } from "@mui/icons-material";
-import { Box, Paper, Stack, Typography } from "@mui/material";
+import { Box, Typography, alpha } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -59,108 +59,105 @@ export const ClashModeCard = () => {
     }
   });
 
-  // 按钮样式
-  const buttonStyles = (mode: string) => ({
-    cursor: "pointer",
-    px: 2,
-    py: 1.2,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 1,
-    bgcolor: mode === currentMode ? "primary.main" : "background.paper",
-    color: mode === currentMode ? "primary.contrastText" : "text.primary",
-    borderRadius: 1.5,
-    transition: "all 0.2s ease-in-out",
-    position: "relative",
-    overflow: "visible",
-    "&:hover": {
-      transform: "translateY(-1px)",
-      boxShadow: 1,
-    },
-    "&:active": {
-      transform: "translateY(1px)",
-    },
-    "&::after":
-      mode === currentMode
-        ? {
-            content: '""',
-            position: "absolute",
-            bottom: -16,
-            left: "50%",
-            width: 2,
-            height: 16,
-            bgcolor: "primary.main",
-            transform: "translateX(-50%)",
-          }
-        : {},
-  });
-
-  // 描述样式
-  const descriptionStyles = {
-    width: "95%",
-    textAlign: "center",
-    color: "text.secondary",
-    p: 0.8,
-    borderRadius: 1,
-    borderColor: "primary.main",
-    borderWidth: 1,
-    borderStyle: "solid",
-    backgroundColor: "background.paper",
-    wordBreak: "break-word",
-    hyphens: "auto",
-  };
-
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-      {/* 模式选择按钮组 */}
-      <Stack
-        direction="row"
-        spacing={1}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          py: 1,
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
-        {modeList.map((mode) => (
-          <Paper
-            key={mode}
-            elevation={mode === currentMode ? 2 : 0}
-            onClick={() => onChangeMode(mode)}
-            sx={buttonStyles(mode)}
-          >
-            {modeIcons[mode]}
-            <Typography
-              variant="body2"
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: mode === currentMode ? 600 : 400,
-              }}
-            >
-              {t(mode)}
-            </Typography>
-          </Paper>
-        ))}
-      </Stack>
-
-      {/* 说明文本区域 */}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 0,
+        width: "100%",
+        flex: 1,
+      }}
+    >
+      {/* 模式按钮组 - 横向排列 */}
       <Box
         sx={{
-          width: "100%",
-          my: 1,
-          position: "relative",
           display: "flex",
-          justifyContent: "center",
-          overflow: "visible",
+          gap: { xs: 0.75, sm: 1 },
+          width: "100%",
+          flexWrap: { xs: "nowrap", sm: "nowrap" },
         }}
       >
-        <Typography variant="caption" component="div" sx={descriptionStyles}>
+        {modeList.map((mode) => {
+          const isActive = mode === currentMode;
+
+          return (
+            <Box
+              key={mode}
+              onClick={() => onChangeMode(mode)}
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: { xs: 0.5, sm: 0.75 },
+                px: { xs: 1, sm: 1.5, md: 2 },
+                py: { xs: 1, sm: 1.25, md: 1.5 },
+                cursor: "pointer",
+                borderRadius: "6px",
+                minWidth: 0,
+                border: "1px solid",
+                borderColor: isActive ? "primary.main" : "divider",
+                backgroundColor: isActive
+                  ? (theme) => alpha(theme.palette.primary.main, 0.08)
+                  : "transparent",
+                transition: "all 0.2s ease",
+                "&:hover": {
+                  borderColor: "primary.main",
+                  backgroundColor: isActive
+                    ? (theme) => alpha(theme.palette.primary.main, 0.12)
+                    : (theme) => alpha(theme.palette.primary.main, 0.04),
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  fontSize: { xs: 16, sm: 18, md: 20 },
+                  color: isActive ? "primary.main" : "text.secondary",
+                  display: "flex",
+                  alignItems: "center",
+                  transition: "color 0.2s ease",
+                }}
+              >
+                {modeIcons[mode]}
+              </Box>
+              <Typography
+                sx={{
+                  fontSize: { xs: 10, sm: 11, md: 12 },
+                  fontWeight: isActive ? 600 : 500,
+                  color: isActive ? "primary.main" : "text.secondary",
+                  textTransform: "capitalize",
+                  transition: "all 0.2s ease",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {t(mode)}
+              </Typography>
+            </Box>
+          );
+        })}
+      </Box>
+
+      {/* 当前模式描述 */}
+      {modeDescription && (
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: { xs: 10, sm: 11 },
+            lineHeight: 1.6,
+            color: "text.secondary",
+            textAlign: "center",
+            px: { xs: 0.5, sm: 0 },
+            mt: 1.25,
+            mb: 0,
+          }}
+        >
           {modeDescription}
         </Typography>
-      </Box>
+      )}
     </Box>
   );
 };

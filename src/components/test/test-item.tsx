@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { LanguageRounded } from "@mui/icons-material";
-import { Box, Divider, MenuItem, Menu, styled, alpha } from "@mui/material";
+import { Box, MenuItem, Menu, alpha, useTheme } from "@mui/material";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { UnlistenFn } from "@tauri-apps/api/event";
 import { useLockFn } from "ahooks";
@@ -13,8 +13,6 @@ import { useListen } from "@/hooks/use-listen";
 import { cmdTestDelay, downloadIconCache } from "@/services/cmds";
 import delayManager from "@/services/delay";
 import { showNotice } from "@/services/noticeService";
-
-import { TestBox } from "./test-box";
 
 interface Props {
   id: string;
@@ -29,6 +27,7 @@ export const TestItem = ({
   onEdit,
   onDelete: removeTest,
 }: Props) => {
+  const theme = useTheme();
   const {
     attributes,
     listeners,
@@ -124,99 +123,152 @@ export const TestItem = ({
         zIndex: isDragging ? "calc(infinity)" : undefined,
       }}
     >
-      <TestBox
+      <Box
+        ref={setNodeRef}
+        {...attributes}
+        {...listeners}
         onContextMenu={(event) => {
           const { clientX, clientY } = event;
           setPosition({ top: clientY, left: clientX });
           setAnchorEl(event.currentTarget);
           event.preventDefault();
         }}
+        sx={{
+          position: "relative",
+          padding: "6px",
+          borderRadius: "4px",
+          border: "1px solid",
+          borderColor: "divider",
+          backgroundColor: "transparent",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: isDragging ? "grabbing" : "grab",
+          transition: "all 0.15s",
+          "&:hover": {
+            borderColor: "primary.main",
+            backgroundColor: alpha(theme.palette.primary.main, 0.04),
+          },
+        }}
       >
+        {/* 图标 */}
         <Box
-          position="relative"
-          sx={{ cursor: "move" }}
-          ref={setNodeRef}
-          {...attributes}
-          {...listeners}
+          sx={{
+            width: "28px",
+            height: "28px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mb: 0.5,
+            opacity: 0.8,
+          }}
         >
           {icon && icon.trim() !== "" ? (
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <>
               {icon.trim().startsWith("http") && (
                 <img
                   src={iconCachePath === "" ? icon : iconCachePath}
-                  height="40px"
+                  height="28px"
+                  style={{ maxWidth: "28px", objectFit: "contain" }}
                 />
               )}
               {icon.trim().startsWith("data") && (
-                <img src={icon} height="40px" />
+                <img
+                  src={icon}
+                  height="28px"
+                  style={{ maxWidth: "28px", objectFit: "contain" }}
+                />
               )}
               {icon.trim().startsWith("<svg") && (
                 <img
                   src={`data:image/svg+xml;base64,${btoa(icon)}`}
-                  height="40px"
+                  height="28px"
+                  style={{ maxWidth: "28px", objectFit: "contain" }}
                 />
               )}
-            </Box>
+            </>
           ) : (
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <LanguageRounded sx={{ height: "40px" }} fontSize="large" />
-            </Box>
+            <LanguageRounded sx={{ fontSize: "28px", opacity: 0.6 }} />
           )}
-
-          <Box sx={{ display: "flex", justifyContent: "center" }}>{name}</Box>
         </Box>
-        <Divider sx={{ marginTop: "8px" }} />
+
+        {/* 名称 */}
+        <Box
+          sx={{
+            fontSize: "9px",
+            fontWeight: 400,
+            color: "text.secondary",
+            textAlign: "center",
+            mb: 0.5,
+            maxWidth: "100%",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {name}
+        </Box>
+
+        {/* 延迟显示 */}
         <Box
           sx={{
             display: "flex",
             justifyContent: "center",
-            marginTop: "8px",
-            color: "primary.main",
+            alignItems: "center",
+            minHeight: "18px",
           }}
         >
-          {delay === -2 && (
-            <Widget>
-              <BaseLoading />
-            </Widget>
-          )}
+          {delay === -2 && <BaseLoading />}
 
           {delay === -1 && (
-            <Widget
-              className="the-check"
+            <Box
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 onDelay();
               }}
-              sx={({ palette }) => ({
-                ":hover": { bgcolor: alpha(palette.primary.main, 0.15) },
-              })}
+              sx={{
+                fontSize: "8px",
+                padding: "2px 4px",
+                borderRadius: "2px",
+                cursor: "pointer",
+                color: "primary.main",
+                opacity: 0.6,
+                "&:hover": {
+                  opacity: 1,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                },
+              }}
             >
               {t("Test")}
-            </Widget>
+            </Box>
           )}
 
           {delay >= 0 && (
-            // 显示延迟
-            <Widget
-              className="the-delay"
+            <Box
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 onDelay();
               }}
-              color={delayManager.formatDelayColor(delay)}
-              sx={({ palette }) => ({
-                ":hover": {
-                  bgcolor: alpha(palette.primary.main, 0.15),
+              sx={{
+                fontSize: "8px",
+                fontWeight: 500,
+                padding: "2px 4px",
+                borderRadius: "2px",
+                cursor: "pointer",
+                color: delayManager.formatDelayColor(delay),
+                "&:hover": {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
                 },
-              })}
+              }}
             >
               {delayManager.formatDelay(delay)}
-            </Widget>
+            </Box>
           )}
         </Box>
-      </TestBox>
+      </Box>
 
       <Menu
         open={!!anchorEl}
@@ -245,9 +297,3 @@ export const TestItem = ({
     </Box>
   );
 };
-const Widget = styled(Box)(({ theme: { typography } }) => ({
-  padding: "3px 6px",
-  fontSize: 14,
-  fontFamily: typography.fontFamily,
-  borderRadius: "4px",
-}));

@@ -1,14 +1,14 @@
-import { EditRounded } from "@mui/icons-material";
+import {
+  EditRounded,
+  RestartAltOutlined,
+} from "@mui/icons-material";
 import {
   Autocomplete,
   Button,
   InputAdornment,
-  List,
-  ListItem,
-  ListItemText,
-  styled,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import {
@@ -24,7 +24,6 @@ import useSWR, { mutate } from "swr";
 import { getBaseConfig } from "tauri-plugin-mihomo-api";
 
 import { BaseDialog, DialogRef, Switch } from "@/components/base";
-import { BaseFieldset } from "@/components/base/base-fieldset";
 import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { EditorViewer } from "@/components/profile/editor-viewer";
 import { useVerge } from "@/hooks/use-verge";
@@ -38,6 +37,14 @@ import {
 } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
 import getSystem from "@/utils/get-system";
+
+import {
+  EnhancedDialogTitle,
+  EnhancedFormItem,
+  EnhancedInfoCard,
+  EnhancedInfoRow,
+  EnhancedFormGroup,
+} from "./enhanced-dialog-components";
 
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => {
@@ -413,8 +420,8 @@ export const SysproxyViewer = forwardRef<DialogRef>((props, ref) => {
   return (
     <BaseDialog
       open={open}
-      title={t("System Proxy Setting")}
-      contentSx={{ width: 450, maxHeight: 565 }}
+      title=""
+      contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
       okBtn={t("Save")}
       cancelBtn={t("Cancel")}
       onClose={() => setOpen(false)}
@@ -423,40 +430,46 @@ export const SysproxyViewer = forwardRef<DialogRef>((props, ref) => {
       loading={saving}
       disableOk={saving}
     >
-      <List>
-        <BaseFieldset label={t("Current System Proxy")} padding="15px 10px">
-          <FlexBox>
-            <Typography className="label">{t("Enable status")}</Typography>
-            <Typography className="value">
-              {value.pac
-                ? autoproxy?.enable
-                  ? t("Enabled")
-                  : t("Disabled")
-                : sysproxy?.enable
-                  ? t("Enabled")
-                  : t("Disabled")}
-            </Typography>
-          </FlexBox>
-          {!value.pac && (
-            <FlexBox>
-              <Typography className="label">{t("Server Addr")}</Typography>
-              <Typography className="value">{getSystemProxyAddress}</Typography>
-            </FlexBox>
-          )}
-          {value.pac && (
-            <FlexBox>
-              <Typography className="label">{t("PAC URL")}</Typography>
-              <Typography className="value">
-                {getCurrentPacUrl || "-"}
-              </Typography>
-            </FlexBox>
-          )}
-        </BaseFieldset>
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Proxy Host")} />
+      {/* 标题 */}
+      <EnhancedDialogTitle title={t("System Proxy Setting")} />
+
+      {/* 当前系统代理状态 */}
+      <EnhancedInfoCard title={t("Current System Proxy")}>
+        <EnhancedInfoRow
+          label={t("Enable status")}
+          value={
+            value.pac
+              ? autoproxy?.enable
+                ? t("Enabled")
+                : t("Disabled")
+              : sysproxy?.enable
+                ? t("Enabled")
+                : t("Disabled")
+          }
+        />
+        {!value.pac && (
+          <EnhancedInfoRow
+            label={t("Server Addr")}
+            value={getSystemProxyAddress}
+          />
+        )}
+        {value.pac && (
+          <EnhancedInfoRow
+            label={t("PAC URL")}
+            value={getCurrentPacUrl || "-"}
+          />
+        )}
+      </EnhancedInfoCard>
+
+      {/* 代理配置 */}
+      <EnhancedFormGroup>
+        <EnhancedFormItem
+          label={t("Proxy Host")}
+          description={t("The host address for proxy connections")}
+        >
           <Autocomplete
             size="small"
-            sx={{ width: 150 }}
+            sx={{ width: 200 }}
             options={hostOptions}
             value={value.proxy_host}
             freeSolo
@@ -476,39 +489,38 @@ export const SysproxyViewer = forwardRef<DialogRef>((props, ref) => {
               }));
             }}
           />
-        </ListItem>
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Use PAC Mode")} />
+        </EnhancedFormItem>
+
+        <EnhancedFormItem label={t("Use PAC Mode")}>
           <Switch
             edge="end"
             disabled={!enabled}
             checked={value.pac}
             onChange={(_, e) => setValue((v) => ({ ...v, pac: e }))}
           />
-        </ListItem>
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText
-            primary={t("Proxy Guard")}
-            sx={{ maxWidth: "fit-content" }}
-          />
-          <TooltipIcon title={t("Proxy Guard Info")} sx={{ opacity: "0.7" }} />
+      {/* 代理守卫设置 */}
+      <EnhancedFormGroup title={t("Proxy Guard")}>
+        <EnhancedFormItem
+          label={t("Proxy Guard")}
+          description={t("Proxy Guard Info")}
+        >
           <Switch
             edge="end"
             disabled={!enabled}
             checked={value.guard}
             onChange={(_, e) => setValue((v) => ({ ...v, guard: e }))}
-            sx={{ marginLeft: "auto" }}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 2px" }}>
-          <ListItemText primary={t("Guard Duration")} />
+        <EnhancedFormItem label={t("Guard Duration")}>
           <TextField
             disabled={!enabled}
             size="small"
             value={value.duration}
-            sx={{ width: 100 }}
+            sx={{ width: 120 }}
             slotProps={{
               input: {
                 endAdornment: <InputAdornment position="end">s</InputAdornment>,
@@ -521,10 +533,13 @@ export const SysproxyViewer = forwardRef<DialogRef>((props, ref) => {
               }));
             }}
           />
-        </ListItem>
-        {!value.pac && (
-          <ListItem sx={{ padding: "5px 2px" }}>
-            <ListItemText primary={t("Always use Default Bypass")} />
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
+
+      {/* 代理绕过设置 */}
+      {!value.pac && (
+        <EnhancedFormGroup title={t("Bypass Settings")}>
+          <EnhancedFormItem label={t("Always use Default Bypass")}>
             <Switch
               edge="end"
               disabled={!enabled}
@@ -533,92 +548,79 @@ export const SysproxyViewer = forwardRef<DialogRef>((props, ref) => {
                 setValue((v) => ({
                   ...v,
                   use_default: e,
-                  // 当取消选择use_default且当前bypass为空时，填充默认值
                   bypass: !e && !v.bypass ? defaultBypass() : v.bypass,
                 }))
               }
             />
-          </ListItem>
-        )}
+          </EnhancedFormItem>
 
-        {!value.pac && !value.use_default && (
-          <>
-            <ListItemText primary={t("Proxy Bypass")} />
-            <TextField
-              error={value.bypass ? !validReg.test(value.bypass) : false}
-              disabled={!enabled}
-              size="small"
-              multiline
-              rows={4}
-              sx={{ width: "100%" }}
-              value={value.bypass}
-              onChange={(e) => {
-                setValue((v) => ({ ...v, bypass: e.target.value }));
-              }}
-            />
-          </>
-        )}
+          {!value.use_default && (
+            <EnhancedFormItem label={t("Proxy Bypass")} fullWidth>
+              <TextField
+                error={value.bypass ? !validReg.test(value.bypass) : false}
+                disabled={!enabled}
+                size="small"
+                multiline
+                rows={4}
+                fullWidth
+                value={value.bypass}
+                onChange={(e) => {
+                  setValue((v) => ({ ...v, bypass: e.target.value }));
+                }}
+              />
+            </EnhancedFormItem>
+          )}
 
-        {!value.pac && value.use_default && (
-          <>
-            <ListItemText primary={t("Bypass")} />
-            <FlexBox>
+          {value.use_default && (
+            <EnhancedFormItem label={t("Bypass")} fullWidth>
               <TextField
                 disabled={true}
                 size="small"
                 multiline
                 rows={4}
-                sx={{ width: "100%" }}
+                fullWidth
                 value={defaultBypass()}
               />
-            </FlexBox>
-          </>
-        )}
+            </EnhancedFormItem>
+          )}
+        </EnhancedFormGroup>
+      )}
 
-        {value.pac && (
-          <ListItem sx={{ padding: "5px 2px", alignItems: "start" }}>
-            <ListItemText
-              primary={t("PAC Script Content")}
-              sx={{ padding: "3px 0" }}
-            />
+      {/* PAC 脚本编辑 */}
+      {value.pac && (
+        <EnhancedFormGroup title={t("PAC Script")}>
+          <EnhancedFormItem label={t("PAC Script Content")} fullWidth>
             <Button
               startIcon={<EditRounded />}
               variant="outlined"
+              fullWidth
               onClick={() => {
                 setEditorOpen(true);
               }}
             >
               {t("Edit")} PAC
             </Button>
-            {editorOpen && (
-              <EditorViewer
-                open={true}
-                title={`${t("Edit")} PAC`}
-                initialData={Promise.resolve(value.pac_content ?? "")}
-                language="javascript"
-                onSave={(_prev, curr) => {
-                  let pac = DEFAULT_PAC;
-                  if (curr && curr.trim().length > 0) {
-                    pac = curr;
-                  }
-                  setValue((v) => ({ ...v, pac_content: pac }));
-                }}
-                onClose={() => setEditorOpen(false)}
-              />
-            )}
-          </ListItem>
-        )}
-      </List>
+          </EnhancedFormItem>
+        </EnhancedFormGroup>
+      )}
+
+      {/* PAC 编辑器 */}
+      {editorOpen && (
+        <EditorViewer
+          open={true}
+          title={`${t("Edit")} PAC`}
+          initialData={Promise.resolve(value.pac_content ?? "")}
+          language="javascript"
+          onSave={(_prev, curr) => {
+            let pac = DEFAULT_PAC;
+            if (curr && curr.trim().length > 0) {
+              pac = curr;
+            }
+            setValue((v) => ({ ...v, pac_content: pac }));
+          }}
+          onClose={() => setEditorOpen(false)}
+        />
+      )}
     </BaseDialog>
   );
 });
-
-const FlexBox = styled("div")`
-  display: flex;
-  margin-top: 4px;
-
-  .label {
-    flex: none;
-    //width: 85px;
-  }
-`;

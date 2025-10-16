@@ -27,21 +27,25 @@ interface Props {
 }
 
 const Widget = styled(Box)(() => ({
-  padding: "3px 6px",
-  fontSize: 14,
-  borderRadius: "4px",
+  padding: "2px 6px",
+  fontSize: 12,
+  fontWeight: 600,
+  fontFamily: "monospace",
+  borderRadius: "3px",
 }));
 
 const TypeBox = styled("span")(({ theme }) => ({
   display: "inline-block",
-  border: "1px solid #ccc",
-  borderColor: alpha(theme.palette.text.secondary, 0.36),
-  color: alpha(theme.palette.text.secondary, 0.42),
-  borderRadius: 4,
+  border: "1px solid",
+  borderColor: alpha(theme.palette.text.secondary, 0.2),
+  color: alpha(theme.palette.text.secondary, 0.5),
+  borderRadius: 3,
   fontSize: 10,
-  marginRight: "4px",
-  padding: "0 2px",
-  lineHeight: 1.25,
+  fontWeight: 600,
+  padding: "1px 4px",
+  lineHeight: 1.2,
+  textTransform: "uppercase",
+  letterSpacing: "0.3px",
 }));
 
 export const ProxyItem = (props: Props) => {
@@ -78,63 +82,77 @@ export const ProxyItem = (props: Props) => {
   });
 
   return (
-    <ListItem sx={sx}>
+    <ListItem sx={{ px: 0, ...sx }}>
       <ListItemButton
         dense
         selected={selected}
         onClick={() => onClick?.(proxy.name)}
         sx={[
-          { borderRadius: 1 },
           ({ palette: { mode, primary } }) => {
-            const bgcolor = mode === "light" ? "#ffffff" : "#24252f";
             const selectColor = mode === "light" ? primary.main : primary.light;
             const showDelay = delay > 0;
 
             return {
+              px: 2,
+              py: 1,
+              borderBottom: "1px solid",
+              borderColor: "divider",
               "&:hover .the-check": { display: !showDelay ? "block" : "none" },
               "&:hover .the-delay": { display: showDelay ? "block" : "none" },
               "&:hover .the-icon": { display: "none" },
-              "&.Mui-selected": {
-                width: `calc(100% + 3px)`,
-                marginLeft: `-3px`,
-                borderLeft: `3px solid ${selectColor}`,
-                bgcolor:
-                  mode === "light"
-                    ? alpha(primary.main, 0.15)
-                    : alpha(primary.main, 0.35),
+              "&:hover": {
+                bgcolor: "action.hover",
               },
-              backgroundColor: bgcolor,
-              marginBottom: "8px",
-              height: "40px",
+              "&.Mui-selected": {
+                borderLeft: `3px solid ${selectColor}`,
+                bgcolor: alpha(primary.main, mode === "light" ? 0.08 : 0.15),
+                "&:hover": {
+                  bgcolor: alpha(primary.main, mode === "light" ? 0.12 : 0.2),
+                },
+              },
             };
           },
         ]}
       >
         <ListItemText
           title={proxy.name}
+          primary={
+            <Box
+              sx={{
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "text.primary",
+                lineHeight: 1.5,
+              }}
+            >
+              {proxy.name}
+            </Box>
+          }
           secondary={
-            <>
-              <Box
-                sx={{
-                  display: "inline-block",
-                  marginRight: "8px",
-                  fontSize: "14px",
-                  color: "text.primary",
-                }}
-              >
-                {proxy.name}
-                {showType && proxy.now && ` - ${proxy.now}`}
+            showType && (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.25 }}>
+                {!!proxy.provider && (
+                  <TypeBox>{proxy.provider}</TypeBox>
+                )}
+                <TypeBox>{proxy.type}</TypeBox>
+                {proxy.now && (
+                  <Box
+                    component="span"
+                    sx={{
+                      fontSize: "11px",
+                      color: "text.secondary",
+                    }}
+                  >
+                    → {proxy.now}
+                  </Box>
+                )}
+                {proxy.udp && <TypeBox>UDP</TypeBox>}
+                {proxy.xudp && <TypeBox>XUDP</TypeBox>}
+                {proxy.tfo && <TypeBox>TFO</TypeBox>}
+                {proxy.mptcp && <TypeBox>MPTCP</TypeBox>}
+                {proxy.smux && <TypeBox>SMUX</TypeBox>}
               </Box>
-              {showType && !!proxy.provider && (
-                <TypeBox>{proxy.provider}</TypeBox>
-              )}
-              {showType && <TypeBox>{proxy.type}</TypeBox>}
-              {showType && proxy.udp && <TypeBox>UDP</TypeBox>}
-              {showType && proxy.xudp && <TypeBox>XUDP</TypeBox>}
-              {showType && proxy.tfo && <TypeBox>TFO</TypeBox>}
-              {showType && proxy.mptcp && <TypeBox>MPTCP</TypeBox>}
-              {showType && proxy.smux && <TypeBox>SMUX</TypeBox>}
-            </>
+            )
           }
         />
 

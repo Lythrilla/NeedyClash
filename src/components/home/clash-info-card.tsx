@@ -1,5 +1,5 @@
 import { DeveloperBoardOutlined } from "@mui/icons-material";
-import { Divider, Stack, Typography } from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -29,51 +29,124 @@ export const ClashInfoCard = () => {
     if (!clashConfig) return null;
 
     return (
-      <Stack spacing={1.5}>
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
+      <Stack spacing={0}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            py: 0.75,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "10px",
+              color: "text.disabled",
+              opacity: 0.6,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
             {t("Core Version")}
           </Typography>
-          <Typography variant="body2" fontWeight="medium">
+          <Typography
+            variant="body2"
+            sx={{ fontSize: "11px", fontWeight: 500 }}
+          >
             {clashVersion || "-"}
           </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
-            {t("System Proxy Address")}
-          </Typography>
-          <Typography variant="body2" fontWeight="medium">
-            {systemProxyAddress}
-          </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            py: 0.75,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "10px",
+              color: "text.disabled",
+              opacity: 0.6,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
             {t("Mixed Port")}
           </Typography>
-          <Typography variant="body2" fontWeight="medium">
+          <Typography
+            variant="body2"
+            sx={{ fontSize: "11px", fontWeight: 500 }}
+          >
             {clashConfig.mixedPort || "-"}
           </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            py: 0.75,
+            borderBottom: "1px solid",
+            borderColor: "divider",
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "10px",
+              color: "text.disabled",
+              opacity: 0.6,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
             {t("Uptime")}
           </Typography>
-          <Typography variant="body2" fontWeight="medium">
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "11px",
+              fontWeight: 500,
+              fontFamily: "monospace",
+            }}
+          >
             {formattedUptime}
           </Typography>
-        </Stack>
-        <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" color="text.secondary">
-            {t("Rules Count")}
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            py: 0.75,
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "10px",
+              color: "text.disabled",
+              opacity: 0.6,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+            }}
+          >
+            {t("Rules")}
           </Typography>
-          <Typography variant="body2" fontWeight="medium">
+          <Typography
+            variant="body2"
+            sx={{ fontSize: "11px", fontWeight: 500 }}
+          >
             {rules.length}
           </Typography>
-        </Stack>
+        </Box>
       </Stack>
     );
   }, [

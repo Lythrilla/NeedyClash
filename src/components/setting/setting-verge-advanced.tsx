@@ -1,4 +1,4 @@
-import { ContentCopyRounded } from "@mui/icons-material";
+import { ContentCopyRounded, TuneOutlined } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import { check as checkUpdate } from "@tauri-apps/plugin-updater";
 import { useCallback, useRef } from "react";
@@ -68,7 +68,11 @@ const SettingVergeAdvanced = ({ onError: _ }: Props) => {
   }, [t]);
 
   return (
-    <SettingList title={t("Verge Advanced Setting")}>
+    <SettingList
+      title={t("Verge Advanced Setting")}
+      icon={<TuneOutlined />}
+      description={t("Backup, config, updates and diagnostic tools")}
+    >
       <ThemeViewer ref={themeRef} />
       <ConfigViewer ref={configRef} />
       <HotkeyViewer ref={hotkeyRef} />

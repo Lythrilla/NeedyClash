@@ -1,12 +1,12 @@
-// 使用更现代、清晰的图标
-import HomeIcon from "@mui/icons-material/Home";
-import RouterIcon from "@mui/icons-material/Router";
-import LayersIcon from "@mui/icons-material/Layers";
-import HubIcon from "@mui/icons-material/Hub";
-import RuleIcon from "@mui/icons-material/Rule";
-import DescriptionIcon from "@mui/icons-material/Description";
-import VpnKeyIcon from "@mui/icons-material/VpnKey";
-import TuneIcon from "@mui/icons-material/Tune";
+// 使用统一的 Sharp 风格图标，极客硬朗风格
+import DashboardSharpIcon from "@mui/icons-material/DashboardSharp";
+import CableSharpIcon from "@mui/icons-material/CableSharp";
+import DataObjectSharpIcon from "@mui/icons-material/DataObjectSharp";
+import NetworkCheckSharpIcon from "@mui/icons-material/NetworkCheckSharp";
+import FilterListSharpIcon from "@mui/icons-material/FilterListSharp";
+import TerminalSharpIcon from "@mui/icons-material/TerminalSharp";
+import VpnKeySharpIcon from "@mui/icons-material/VpnKeySharp";
+import TuneSharpIcon from "@mui/icons-material/TuneSharp";
 
 import ConnectionsSvg from "@/assets/image/itemicon/connections.svg?react";
 import HomeSvg from "@/assets/image/itemicon/home.svg?react";
@@ -31,49 +31,49 @@ export const routers = [
   {
     label: "Label-Home",
     path: "/home",
-    icon: [<HomeIcon key="mui" />, <HomeSvg key="svg" />],
+    icon: [<DashboardSharpIcon key="mui" />, <HomeSvg key="svg" />],
     element: <HomePage />,
   },
   {
     label: "Label-Proxies",
     path: "/",
-    icon: [<RouterIcon key="mui" />, <ProxiesSvg key="svg" />],
+    icon: [<CableSharpIcon key="mui" />, <ProxiesSvg key="svg" />],
     element: <ProxiesPage />,
   },
   {
     label: "Label-Profiles",
     path: "/profile",
-    icon: [<LayersIcon key="mui" />, <ProfilesSvg key="svg" />],
+    icon: [<DataObjectSharpIcon key="mui" />, <ProfilesSvg key="svg" />],
     element: <ProfilesPage />,
   },
   {
     label: "Label-Connections",
     path: "/connections",
-    icon: [<HubIcon key="mui" />, <ConnectionsSvg key="svg" />],
+    icon: [<NetworkCheckSharpIcon key="mui" />, <ConnectionsSvg key="svg" />],
     element: <ConnectionsPage />,
   },
   {
     label: "Label-Rules",
     path: "/rules",
-    icon: [<RuleIcon key="mui" />, <RulesSvg key="svg" />],
+    icon: [<FilterListSharpIcon key="mui" />, <RulesSvg key="svg" />],
     element: <RulesPage />,
   },
   {
     label: "Label-Logs",
     path: "/logs",
-    icon: [<DescriptionIcon key="mui" />, <LogsSvg key="svg" />],
+    icon: [<TerminalSharpIcon key="mui" />, <LogsSvg key="svg" />],
     element: <LogsPage />,
   },
   {
     label: "Label-Unlock",
     path: "/unlock",
-    icon: [<VpnKeyIcon key="mui" />, <UnlockSvg key="svg" />],
+    icon: [<VpnKeySharpIcon key="mui" />, <UnlockSvg key="svg" />],
     element: <UnlockPage />,
   },
   {
     label: "Label-Settings",
     path: "/settings",
-    icon: [<TuneIcon key="mui" />, <SettingsSvg key="svg" />],
+    icon: [<TuneSharpIcon key="mui" />, <SettingsSvg key="svg" />],
     element: <SettingsPage />,
   },
 ].map((router) => ({

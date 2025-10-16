@@ -27,8 +27,7 @@ pub fn build_new_window() -> Result<WebviewWindow, String> {
     )
     .title("Clash Verge")
     .center()
-    // Using WindowManager::prefer_system_titlebar to control if show system built-in titlebar
-    // .decorations(true)
+    .decorations(false) // 启用无边框窗口
     .fullscreen(false)
     .inner_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
     .min_inner_size(MINIMAL_WIDTH, MINIMAL_HEIGHT)

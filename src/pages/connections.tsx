@@ -155,11 +155,12 @@ const ConnectionsPage = () => {
                   : { ...o, layout: "list" },
               )
             }
+            sx={{ borderRadius: "6px", padding: "6px" }}
           >
             {isTableLayout ? (
-              <TableRowsRounded titleAccess={t("List View")} />
+              <TableRowsRounded titleAccess={t("List View")} fontSize="small" />
             ) : (
-              <TableChartRounded titleAccess={t("Table View")} />
+              <TableChartRounded titleAccess={t("Table View")} fontSize="small" />
             )}
           </IconButton>
           <IconButton
@@ -167,14 +168,15 @@ const ConnectionsPage = () => {
             size="small"
             onClick={handlePauseToggle}
             title={isPaused ? t("Resume") : t("Pause")}
+            sx={{ borderRadius: "6px", padding: "6px" }}
           >
             {isPaused ? (
-              <PlayCircleOutlineRounded />
+              <PlayCircleOutlineRounded fontSize="small" />
             ) : (
-              <PauseCircleOutlineRounded />
+              <PauseCircleOutlineRounded fontSize="small" />
             )}
           </IconButton>
-          <Button size="small" variant="contained" onClick={onCloseAll}>
+          <Button size="small" variant="contained" onClick={onCloseAll} sx={{ minWidth: "80px", padding: "4px 12px", fontSize: "13px" }}>
             <span style={{ whiteSpace: "nowrap" }}>{t("Close All")}</span>
           </Button>
         </Box>

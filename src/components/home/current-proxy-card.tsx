@@ -13,18 +13,13 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Button,
-  Chip,
-  FormControl,
   IconButton,
-  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
   Tooltip,
   Typography,
   alpha,
-  useTheme,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import React from "react";
@@ -711,208 +706,369 @@ export const CurrentProxyCard = () => {
               ? `${signalInfo.text}: ${delayManager.formatDelay(currentDelay)}`
               : "无代理节点"
           }
+          arrow
+          placement="top"
         >
-          <Box sx={{ color: signalInfo.color }}>
+          <Box sx={{ color: signalInfo.color, display: "flex" }}>
             {currentProxy ? signalInfo.icon : <SignalNone color="disabled" />}
           </Box>
         </Tooltip>
       }
       iconColor={currentProxy ? "primary" : undefined}
       action={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Tooltip title={t("Delay check")}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+          <Tooltip title={t("Delay check")} arrow placement="top">
             <span>
               <IconButton
                 size="small"
                 color="inherit"
                 onClick={handleCheckDelay}
                 disabled={isDirectMode}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  "&:hover": { bgcolor: "action.hover" },
+                }}
               >
-                <NetworkCheckRounded />
+                <NetworkCheckRounded sx={{ fontSize: 18 }} />
               </IconButton>
             </span>
           </Tooltip>
-          <Tooltip title={getSortTooltip()}>
+          <Tooltip title={getSortTooltip()} arrow placement="top">
             <IconButton
               size="small"
               color="inherit"
               onClick={handleSortTypeChange}
+              sx={{
+                width: 32,
+                height: 32,
+                "&:hover": { bgcolor: "action.hover" },
+              }}
             >
               {getSortIcon()}
             </IconButton>
           </Tooltip>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={goToProxies}
-            sx={{ borderRadius: 1.5 }}
-            endIcon={<ChevronRight fontSize="small" />}
-          >
-            {t("Label-Proxies")}
-          </Button>
+          <Tooltip title={t("Go to proxies page")} arrow placement="top">
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={goToProxies}
+              sx={{
+                width: 32,
+                height: 32,
+                "&:hover": { bgcolor: "action.hover" },
+              }}
+            >
+              <ChevronRight sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Tooltip>
         </Box>
       }
     >
       {currentProxy ? (
         <Box>
-          {/* 代理节点信息显示 */}
+          {/* 当前节点概览 */}
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 1,
-              mb: 2,
-              borderRadius: 1,
-              bgcolor: alpha(theme.palette.primary.main, 0.05),
-              border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+              alignItems: "flex-start",
+              gap: { xs: 1, sm: 1.5, md: 2 },
+              pb: { xs: 1.5, sm: 2 },
+              mb: { xs: 1.5, sm: 2 },
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              flexWrap: { xs: "wrap", sm: "nowrap" },
             }}
           >
-            <Box>
-              <Typography variant="body1" fontWeight="medium">
+            <Box sx={{ flex: 1, minWidth: 0, width: { xs: "100%", sm: "auto" } }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: { xs: 13, sm: 14 },
+                  fontWeight: 600,
+                  mb: 0.5,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
                 {currentProxy.name}
               </Typography>
 
-              <Box
-                sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}
-              >
+              <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.5, sm: 0.75 }, flexWrap: "wrap" }}>
                 <Typography
                   variant="caption"
-                  color="text.secondary"
-                  sx={{ mr: 1 }}
+                  sx={{
+                    fontSize: { xs: 10, sm: 11 },
+                    color: "text.secondary",
+                    px: { xs: 0.5, sm: 0.75 },
+                    py: 0.25,
+                    borderRadius: "3px",
+                    bgcolor: "action.hover",
+                  }}
                 >
                   {currentProxy.type}
                 </Typography>
+
                 {isGlobalMode && (
-                  <Chip
-                    size="small"
-                    label={t("Global Mode")}
-                    color="primary"
-                    sx={{ mr: 0.5 }}
-                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 11,
+                      color: "primary.main",
+                      px: 0.75,
+                      py: 0.25,
+                      borderRadius: "3px",
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                    }}
+                  >
+                    {t("Global Mode")}
+                  </Typography>
                 )}
                 {isDirectMode && (
-                  <Chip
-                    size="small"
-                    label={t("Direct Mode")}
-                    color="success"
-                    sx={{ mr: 0.5 }}
-                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 11,
+                      color: "success.main",
+                      px: 0.75,
+                      py: 0.25,
+                      borderRadius: "3px",
+                      bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
+                    }}
+                  >
+                    {t("Direct Mode")}
+                  </Typography>
                 )}
-                {/* 节点特性 */}
+
+                {/* 节点特性 - 更简洁 */}
                 {currentProxy.udp && (
-                  <Chip size="small" label="UDP" variant="outlined" />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 10,
+                      color: "text.disabled",
+                      px: 0.5,
+                      py: 0.25,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: "3px",
+                    }}
+                  >
+                    UDP
+                  </Typography>
                 )}
                 {currentProxy.tfo && (
-                  <Chip size="small" label="TFO" variant="outlined" />
-                )}
-                {currentProxy.xudp && (
-                  <Chip size="small" label="XUDP" variant="outlined" />
-                )}
-                {currentProxy.mptcp && (
-                  <Chip size="small" label="MPTCP" variant="outlined" />
-                )}
-                {currentProxy.smux && (
-                  <Chip size="small" label="SMUX" variant="outlined" />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 10,
+                      color: "text.disabled",
+                      px: 0.5,
+                      py: 0.25,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: "3px",
+                    }}
+                  >
+                    TFO
+                  </Typography>
                 )}
               </Box>
             </Box>
 
-            {/* 显示延迟 */}
+            {/* 延迟显示 - 更醒目 */}
             {currentProxy && !isDirectMode && (
-              <Chip
-                size="small"
-                label={delayManager.formatDelay(currentDelay)}
-                color={convertDelayColor(currentDelay)}
-              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "row", sm: "column" },
+                  alignItems: { xs: "center", sm: "flex-end" },
+                  gap: { xs: 1, sm: 0.25 },
+                  width: { xs: "100%", sm: "auto" },
+                  justifyContent: { xs: "space-between", sm: "flex-start" },
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: { xs: 10, sm: 10 },
+                    color: "text.disabled",
+                    order: { xs: 1, sm: 2 },
+                  }}
+                >
+                  {signalInfo.text}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: { xs: 16, sm: 18 },
+                    fontWeight: 600,
+                    color: signalInfo.color,
+                    lineHeight: 1,
+                    order: { xs: 2, sm: 1 },
+                  }}
+                >
+                  {delayManager.formatDelay(currentDelay)}
+                </Typography>
+              </Box>
             )}
           </Box>
-          {/* 代理组选择器 */}
-          <FormControl
-            fullWidth
-            variant="outlined"
-            size="small"
-            sx={{ mb: 1.5 }}
-          >
-            <InputLabel id="proxy-group-select-label">{t("Group")}</InputLabel>
-            <Select
-              labelId="proxy-group-select-label"
-              value={state.selection.group}
-              onChange={handleGroupChange}
-              label={t("Group")}
-              disabled={isGlobalMode || isDirectMode}
-            >
-              {state.proxyData.groups.map((group) => (
-                <MenuItem key={group.name} value={group.name}>
-                  {group.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
 
-          {/* 代理节点选择器 */}
-          <FormControl fullWidth variant="outlined" size="small" sx={{ mb: 0 }}>
-            <InputLabel id="proxy-select-label">{t("Proxy")}</InputLabel>
-            <Select
-              labelId="proxy-select-label"
-              value={state.selection.proxy}
-              onChange={handleProxyChange}
-              label={t("Proxy")}
-              disabled={isDirectMode}
-              renderValue={renderProxyValue}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 500,
+          {/* 选择器 - 更简洁 */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.25, sm: 1.5 } }}>
+            {/* 代理组 */}
+            <Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontSize: { xs: 10, sm: 11 },
+                  color: "text.secondary",
+                  mb: 0.75,
+                  display: "block",
+                }}
+              >
+                {t("Group")}
+              </Typography>
+              <Select
+                value={state.selection.group}
+                onChange={handleGroupChange}
+                disabled={isGlobalMode || isDirectMode}
+                size="small"
+                fullWidth
+                sx={{
+                  fontSize: { xs: 12, sm: 13 },
+                  "& .MuiSelect-select": {
+                    py: { xs: 0.75, sm: 1 },
                   },
-                },
-              }}
-            >
-              {isDirectMode
-                ? null
-                : proxyOptions.map((proxy) => {
-                    const delayValue =
-                      state.proxyData.records[proxy.name] &&
-                      state.selection.group
-                        ? delayManager.getDelayFix(
-                            state.proxyData.records[proxy.name],
-                            state.selection.group,
-                          )
-                        : -1;
-                    return (
-                      <MenuItem
-                        key={proxy.name}
-                        value={proxy.name}
+                }}
+              >
+                {state.proxyData.groups.map((group) => (
+                  <MenuItem key={group.name} value={group.name} sx={{ fontSize: 13 }}>
+                    {group.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+
+            {/* 代理节点 */}
+            <Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontSize: 11,
+                  color: "text.secondary",
+                  mb: 0.75,
+                  display: "block",
+                }}
+              >
+                {t("Proxy")}
+              </Typography>
+              <Select
+                value={state.selection.proxy}
+                onChange={handleProxyChange}
+                disabled={isDirectMode}
+                size="small"
+                fullWidth
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography sx={{ fontSize: 13 }} noWrap>
+                      {selected}
+                    </Typography>
+                    {!isDirectMode && state.proxyData.records[selected] && (
+                      <Typography
                         sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          width: "100%",
-                          pr: 1,
+                          fontSize: 11,
+                          ml: 1,
+                          px: 0.75,
+                          py: 0.25,
+                          borderRadius: "3px",
+                          color: signalInfo.color,
+                          bgcolor: (theme) => alpha(signalInfo.color === "success.main" ? theme.palette.success.main : 
+                                                     signalInfo.color === "warning.main" ? theme.palette.warning.main :
+                                                     signalInfo.color === "error.main" ? theme.palette.error.main : 
+                                                     theme.palette.grey[500], 0.1),
                         }}
                       >
-                        <Typography noWrap sx={{ flex: 1, mr: 1 }}>
-                          {proxy.name}
-                        </Typography>
-                        <Chip
-                          size="small"
-                          label={delayManager.formatDelay(delayValue)}
-                          color={convertDelayColor(delayValue)}
+                        {delayManager.formatDelay(
+                          delayManager.getDelayFix(
+                            state.proxyData.records[selected],
+                            state.selection.group
+                          )
+                        )}
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+                sx={{
+                  fontSize: 13,
+                  "& .MuiSelect-select": {
+                    py: 1,
+                  },
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 400,
+                    },
+                  },
+                }}
+              >
+                {isDirectMode
+                  ? null
+                  : proxyOptions.map((proxy) => {
+                      const delayValue =
+                        state.proxyData.records[proxy.name] &&
+                        state.selection.group
+                          ? delayManager.getDelayFix(
+                              state.proxyData.records[proxy.name],
+                              state.selection.group,
+                            )
+                          : -1;
+                      const color = convertDelayColor(delayValue);
+                      return (
+                        <MenuItem
+                          key={proxy.name}
+                          value={proxy.name}
                           sx={{
-                            minWidth: "60px",
-                            height: "22px",
-                            flexShrink: 0,
+                            fontSize: 13,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            py: 1,
                           }}
-                        />
-                      </MenuItem>
-                    );
-                  })}
-            </Select>
-          </FormControl>
+                        >
+                          <Typography sx={{ fontSize: 13 }} noWrap>
+                            {proxy.name}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: 11,
+                              ml: 2,
+                              px: 0.75,
+                              py: 0.25,
+                              borderRadius: "3px",
+                              color: `${color}.main`,
+                              bgcolor: (theme) => alpha(
+                                color === "success" ? theme.palette.success.main :
+                                color === "warning" ? theme.palette.warning.main :
+                                color === "error" ? theme.palette.error.main :
+                                theme.palette.grey[500], 0.1
+                              ),
+                            }}
+                          >
+                            {delayManager.formatDelay(delayValue)}
+                          </Typography>
+                        </MenuItem>
+                      );
+                    })}
+              </Select>
+            </Box>
+          </Box>
         </Box>
       ) : (
         <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body2" color="text.secondary">
             {t("No active proxy node")}
           </Typography>
         </Box>

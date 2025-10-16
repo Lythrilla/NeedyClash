@@ -47,57 +47,55 @@ export const EnhancedCard = ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        borderRadius: "10px",
-        backgroundColor: isDark ? "#1E293B" : "#FFFFFF",
-        border: `1px solid ${isDark ? "#334155" : "#E2E8F0"}`,
-        overflow: "hidden",
-        transition: "border-color 0.2s ease",
-        "&:hover": {
-          borderColor: isDark ? "#475569" : theme.palette[iconColor].main,
-        },
       }}
     >
-      {/* 卡片头部 - 轻量设计 */}
-      <Box
-        sx={{
-          px: 2,
-          py: 1.5,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          borderBottom: `1px solid ${isDark ? "#334155" : "#F1F5F9"}`,
-        }}
-      >
+      {/* 极简标题栏 */}
+      {(title || action) && (
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            minWidth: 0,
-            flex: 1,
-            overflow: "hidden",
-            gap: 1.5,
+            justifyContent: "space-between",
+            mb: 1.5,
+            pb: 1,
+            borderBottom: `1px solid ${alpha(theme.palette[iconColor].main, 0.2)}`,
           }}
         >
-          {/* 图标 - 小巧简洁 */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              color: theme.palette[iconColor].main,
-              fontSize: "22px",
+              gap: 1,
+              minWidth: 0,
+              flex: 1,
             }}
           >
-            {icon}
-          </Box>
-          <Box sx={{ minWidth: 0, flex: 1 }}>
+            {icon && (
+              <Box
+                sx={{
+                  display: "flex",
+                  color: theme.palette[iconColor].main,
+                  opacity: 0.7,
+                  "& svg": {
+                    fontSize: "14px",
+                  },
+                }}
+              >
+                {icon}
+              </Box>
+            )}
             {typeof title === "string" ? (
               <Typography
-                variant="h6"
-                fontWeight="600"
-                fontSize={15}
-                sx={titleTruncateStyle}
+                variant="subtitle2"
+                sx={{
+                  ...titleTruncateStyle,
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  letterSpacing: "0.8px",
+                  textTransform: "uppercase",
+                  color: "text.secondary",
+                  opacity: 0.7,
+                }}
                 title={title}
               >
                 {title}
@@ -106,16 +104,16 @@ export const EnhancedCard = ({
               <Box sx={titleTruncateStyle}>{title}</Box>
             )}
           </Box>
+          {action && <Box sx={{ ml: 1, flexShrink: 0 }}>{action}</Box>}
         </Box>
-        {action && <Box sx={{ ml: 2, flexShrink: 0 }}>{action}</Box>}
-      </Box>
-      {/* 卡片内容区 */}
+      )}
+      {/* 内容区 - 无装饰 */}
       <Box
         sx={{
           flex: 1,
           display: "flex",
           flexDirection: "column",
-          p: noContentPadding ? 0 : 2,
+          p: noContentPadding ? 0 : 0,
           ...(minHeight && { minHeight }),
         }}
       >
