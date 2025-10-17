@@ -1,6 +1,8 @@
 {
-  "name": "clash-verge",
+  "name": "clash-verge-lythrilla",
   "version": "2.4.3",
+  "description": "Clash Verge Rev - Modified by Lythrilla",
+  "author": "Lythrilla",
   "license": "GPL-3.0-only",
   "scripts": {
     "prepare": "husky || true",

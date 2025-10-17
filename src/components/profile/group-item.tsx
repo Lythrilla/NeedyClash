@@ -88,7 +88,6 @@ export const GroupItem = (props: Props) => {
               : alpha(palette.success.main, 0.3),
         height: "100%",
         margin: "8px 0",
-        borderRadius: "8px",
         transform: CSS.Transform.toString(transform),
         transition,
         zIndex: isDragging ? "calc(infinity)" : undefined,
@@ -100,7 +99,6 @@ export const GroupItem = (props: Props) => {
           width="32px"
           style={{
             marginRight: "12px",
-            borderRadius: "6px",
           }}
         />
       )}
@@ -110,7 +108,6 @@ export const GroupItem = (props: Props) => {
           width="32px"
           style={{
             marginRight: "12px",
-            borderRadius: "6px",
           }}
         />
       )}
@@ -181,7 +178,6 @@ const StyledTypeBox = styled(ListItemTextChild)(({ theme }) => ({
   border: "1px solid #ccc",
   borderColor: alpha(theme.palette.primary.main, 0.5),
   color: alpha(theme.palette.primary.main, 0.8),
-  borderRadius: 4,
   fontSize: 10,
   padding: "0 4px",
   lineHeight: 1.5,

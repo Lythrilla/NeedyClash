@@ -885,6 +885,9 @@ interface IVergeConfig {
     // 设置页面样式
     settings_background_blur?: boolean;
     settings_background_opacity?: number;
+    // 连接表格样式设置
+    connection_table_blur?: number;
+    connection_table_opacity?: number;
     // 组件微调设置
     component_styles?: {
       global?: IComponentStyle;

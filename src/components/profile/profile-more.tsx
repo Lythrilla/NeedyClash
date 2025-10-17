@@ -149,7 +149,6 @@ export const ProfileMore = (props: Props) => {
             WebkitBackdropFilter: "blur(20px) saturate(180%)",
             border: (theme) =>
               `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-            borderRadius: "8px",
             zIndex: 1400,
           },
         }}

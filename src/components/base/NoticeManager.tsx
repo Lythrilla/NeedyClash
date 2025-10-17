@@ -94,7 +94,6 @@ export const NoticeManager: React.FC = () => {
                 width: "100%",
                 px: 2,
                 py: 1.5,
-                borderRadius: 2,
                 border: "1px solid",
                 borderColor: (theme) =>
                   theme.palette.mode === "dark"

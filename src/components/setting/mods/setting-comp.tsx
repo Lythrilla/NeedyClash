@@ -222,7 +222,6 @@ export const SettingList: React.FC<SettingListProps> = ({
                 justifyContent: "center",
                 width: 20,
                 height: 20,
-                borderRadius: "6px",
                 bgcolor: isDark
                   ? "rgba(255, 255, 255, 0.04)"
                   : "rgba(0, 0, 0, 0.04)",

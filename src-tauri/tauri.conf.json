@@ -3,7 +3,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "bundle": {
     "active": true,
-    "longDescription": "Clash Verge Rev",
+    "longDescription": "Clash Verge Rev - Modified by Lythrilla",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -12,12 +12,12 @@
       "icons/icon.ico"
     ],
     "resources": ["resources", "resources/locales/*"],
-    "publisher": "Clash Verge Rev",
+    "publisher": "Lythrilla",
     "externalBin": ["sidecar/verge-mihomo", "sidecar/verge-mihomo-alpha"],
-    "copyright": "GNU General Public License v3.0",
+    "copyright": "Modified by Lythrilla - Based on Clash Verge Rev (GPL-3.0)",
     "category": "DeveloperTool",
-    "shortDescription": "Clash Verge Rev",
-    "createUpdaterArtifacts": true
+    "shortDescription": "Clash Verge Rev - Lythrilla Edition",
+    "createUpdaterArtifacts": false
   },
   "build": {
     "beforeBuildCommand": "pnpm run web:build",

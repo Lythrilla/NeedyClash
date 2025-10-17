@@ -291,7 +291,6 @@ const StyledTypeBox = styled(Box)(({ theme }) => ({
   border: "1px solid #ccc",
   borderColor: alpha(theme.palette.primary.main, 0.5),
   color: alpha(theme.palette.primary.main, 0.8),
-  borderRadius: 0,
   fontSize: 10,
   padding: "0 4px",
   lineHeight: 1.5,

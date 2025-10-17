@@ -68,6 +68,9 @@ export const useCustomTheme = () => {
   const settingsBlur = theme_setting?.settings_background_blur ?? false;
   const settingsOpacity = theme_setting?.settings_background_opacity ?? 0.95;
   
+  // 连接表格样式设置
+  const connectionTableBlur = theme_setting?.connection_table_blur ?? 0;
+  
   // 组件微调样式设置
   const componentStyles = theme_setting?.component_styles || {};
   const globalStyle = componentStyles.global || {};
@@ -306,7 +309,6 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 paper: {
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: 0,
                   boxShadow: mode === "light" 
                     ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
                     : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
@@ -318,7 +320,6 @@ export const useCustomTheme = () => {
                 paper: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: 0,
                 },
                 list: {
                   padding: "4px",
@@ -328,7 +329,6 @@ export const useCustomTheme = () => {
             MuiMenuItem: {
               styleOverrides: {
                 root: {
-                  borderRadius: 0,
                   margin: "2px 4px",
                   padding: "8px 12px",
                   fontSize: "14px",
@@ -366,7 +366,6 @@ export const useCustomTheme = () => {
                         ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
                         : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
                       mt: 0.5,
-                      borderRadius: 0,
                       "& .MuiList-root": {
                         padding: "4px",
                       },
@@ -377,10 +376,8 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 select: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  borderRadius: 0,
                   "&:focus": {
                     backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                    borderRadius: 0,
                   },
                 },
                 icon: {
@@ -392,13 +389,11 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 select: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  borderRadius: 0,
                   padding: "5.5px 32px 5.5px 12px",
                   fontSize: "13px",
                   color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)",
                   "&:focus": {
                     backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                    borderRadius: 0,
                   },
                 },
                 icon: {
@@ -452,7 +447,6 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  borderRadius: 0,
                   transition: "all 0.2s ease",
                   "&:hover .MuiOutlinedInput-notchedOutline": {
                     borderColor: mode === "light" ? "#CBD5E1" : "rgba(255, 255, 255, 0.2)",
@@ -467,7 +461,6 @@ export const useCustomTheme = () => {
                 },
                 notchedOutline: {
                   borderColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
-                  borderRadius: 0,
                   transition: "all 0.2s ease",
                 },
                 input: {
@@ -479,7 +472,6 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   textTransform: "none",
-                  borderRadius: 0,
                   fontWeight: 500,
                 },
                 outlined: {
@@ -502,7 +494,6 @@ export const useCustomTheme = () => {
             MuiIconButton: {
               styleOverrides: {
                 root: {
-                  borderRadius: 0,
                   "&:hover": {
                     backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
                   },
@@ -514,7 +505,6 @@ export const useCustomTheme = () => {
                 root: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: 0,
                   transition: "all 0.2s ease",
                   "&:hover": {
                     borderColor: setting.primary_color || dt.primary_color,
@@ -528,7 +518,6 @@ export const useCustomTheme = () => {
                 paper: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: 0,
                 },
               },
             },
@@ -551,7 +540,6 @@ export const useCustomTheme = () => {
                 tooltip: {
                   backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(50, 50, 50, 0.95)",
                   fontSize: "12px",
-                  borderRadius: 0,
                   padding: "6px 12px",
                 },
                 arrow: {
@@ -562,7 +550,6 @@ export const useCustomTheme = () => {
             MuiListItem: {
               styleOverrides: {
                 root: {
-                  borderRadius: 0,
                   "&:hover": {
                     backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.05)",
                   },
@@ -572,7 +559,6 @@ export const useCustomTheme = () => {
             MuiListItemButton: {
               styleOverrides: {
                 root: {
-                  borderRadius: 0,
                   "&:hover": {
                     backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.05)",
                   },
@@ -582,7 +568,6 @@ export const useCustomTheme = () => {
             MuiChip: {
               styleOverrides: {
                 root: {
-                  borderRadius: 0,
                 },
               },
             },
@@ -609,7 +594,6 @@ export const useCustomTheme = () => {
                   height: 24,
                 },
                 track: {
-                  borderRadius: 0,
                   backgroundColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.2)",
                   opacity: 1,
                 },
@@ -723,7 +707,6 @@ export const useCustomTheme = () => {
         }
         ::-webkit-scrollbar-thumb {
           background-color: var(--scrollbar-thumb);
-          border-radius: 4px;
           transition: background-color 0.2s ease;
         }
         ::-webkit-scrollbar-thumb:hover {
@@ -859,7 +842,6 @@ export const useCustomTheme = () => {
             : `rgba(255, 255, 255, ${settingsOpacity})`} !important;
           backdrop-filter: blur(20px) saturate(180%) !important;
           -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-          border-radius: 8px !important;
           z-index: -1 !important;
           pointer-events: none !important;
         }
@@ -887,7 +869,6 @@ export const useCustomTheme = () => {
             : "rgba(255, 255, 255, 0.7)"} !important;
           backdrop-filter: blur(25px) saturate(180%) !important;
           -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-          border-radius: 8px !important;
           z-index: -1 !important;
           pointer-events: none !important;
         }
@@ -1036,7 +1017,6 @@ export const useCustomTheme = () => {
 
         .MuiTabs-indicator {
           height: 3px;
-          border-radius: 3px 3px 0 0;
         }
 
         /* Divider 优化 */
@@ -1062,7 +1042,6 @@ export const useCustomTheme = () => {
         .MuiSelect-select {
           background-color: ${mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)"} !important;
           color: ${mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)"} !important;
-          border-radius: 8px !important;
         }
 
         /* MUI Select 组件优化 */

@@ -1,5 +1,6 @@
 import {
   InputAdornment,
+  MenuItem,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -11,7 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { BaseDialog, Switch } from "@/components/base";
-import { BaseStyledSelect } from "@/components/base/base-styled-select";
+import { GlassSelect } from "@/components/base";
 import {
   EnhancedDialogTitle,
   EnhancedFormGroup,
@@ -289,19 +290,19 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
             name="group_id"
             control={control}
             render={({ field }) => (
-              <BaseStyledSelect
+              <GlassSelect
                 {...field}
                 size="small"
                 fullWidth
                 displayEmpty
               >
-                <option value="">{t("No Group")}</option>
+                <MenuItem value="">{t("No Group")}</MenuItem>
                 {(profiles?.groups || []).map((group) => (
-                  <option key={group.id} value={group.id}>
+                  <MenuItem key={group.id} value={group.id}>
                     {group.name}
-                  </option>
+                  </MenuItem>
                 ))}
-              </BaseStyledSelect>
+              </GlassSelect>
             )}
           />
         </EnhancedFormItem>

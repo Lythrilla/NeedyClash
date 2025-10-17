@@ -1042,7 +1042,6 @@ const ProfilePage = () => {
                     px: 1.25,
                     py: 0.5,
                     cursor: "pointer",
-                    borderRadius: 1.5,
                     border: "1px solid",
                     borderColor: "divider",
                     transition: "all 0.2s ease",

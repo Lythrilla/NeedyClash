@@ -47,11 +47,10 @@ export const ProfileBox = styled(Box)(({
     display: "block",
     cursor: "pointer",
     textAlign: "left",
-    padding: "10px 14px", /* 更紧凑的 padding */
+    padding: "10px 14px",
     boxSizing: "border-box",
     backgroundColor: mode === "light" ? "#ffffff" : alpha(theme.palette.background.paper, 0.7), /* 暗色模式半透明 */
     ...borderSelect,
-    borderRadius: "7px", /* 更小的圆角 */
     border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(51, 65, 85, 0.5)"}`, /* 添加边框 */
     color,
     transition: "all 0.2s ease",

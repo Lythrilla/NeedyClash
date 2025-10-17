@@ -1,5 +1,4 @@
 import {
-  AddRounded,
   DeleteRounded,
   EditRounded,
   FolderRounded,
@@ -7,11 +6,6 @@ import {
 import {
   alpha,
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
   MenuItem,
   TextField,
@@ -22,7 +16,12 @@ import { useLockFn } from "ahooks";
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { BaseStyledSelect } from "@/components/base/base-styled-select";
+import { BaseDialog, GlassSelect } from "@/components/base";
+import {
+  EnhancedDialogTitle,
+  EnhancedFormGroup,
+  EnhancedFormItem,
+} from "@/components/setting/mods/enhanced-dialog-components";
 import { useProfiles } from "@/hooks/use-profiles";
 import { patchProfile } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
@@ -160,9 +159,9 @@ export const ProfileGroupManager = forwardRef<
           {t("Group")}
         </Typography>
 
-        <BaseStyledSelect
+        <GlassSelect
           value={selectedGroup || "all"}
-          onChange={(e) => handleGroupSelect(e.target.value === "all" ? null : e.target.value)}
+          onChange={(e) => handleGroupSelect((e.target.value as string) === "all" ? null : (e.target.value as string))}
           size="small"
           sx={{
             minWidth: 140,
@@ -183,7 +182,6 @@ export const ProfileGroupManager = forwardRef<
                   sx={{
                     width: 12,
                     height: 12,
-                    borderRadius: "3px",
                     bgcolor: group.color || DEFAULT_COLORS[0],
                   }}
                 />
@@ -191,7 +189,7 @@ export const ProfileGroupManager = forwardRef<
               </Box>
             </MenuItem>
           ))}
-        </BaseStyledSelect>
+        </GlassSelect>
 
         <Tooltip title={t("Manage Groups")} arrow>
           <IconButton
@@ -208,109 +206,101 @@ export const ProfileGroupManager = forwardRef<
         </Tooltip>
       </Box>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingGroup ? t("Edit Group") : t("Manage Groups")}</DialogTitle>
-        <DialogContent>
-          {!editingGroup && groups.length > 0 && (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" sx={{ mb: 1.5, fontSize: 13 }}>
-                {t("Existing Groups")}
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                {groups.map((group) => (
-                  <Box
-                    key={group.id}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      p: 1.5,
-                      borderRadius: 1,
-                      border: (theme) => `1px solid ${theme.palette.divider}`,
-                      "&:hover": { borderColor: "primary.main" },
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                      <Box
-                        sx={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: "4px",
-                          bgcolor: group.color || DEFAULT_COLORS[0],
-                        }}
-                      />
-                      <Box>
-                        <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
-                          {group.name}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
-                          {groupCounts[group.id] || 0} {t("profiles")}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box sx={{ display: "flex", gap: 0.5 }}>
-                      <IconButton size="small" onClick={() => handleEdit(group)}>
-                        <EditRounded sx={{ fontSize: 16 }} />
-                      </IconButton>
-                      <IconButton size="small" onClick={() => handleDelete(group.id)}>
-                        <DeleteRounded sx={{ fontSize: 16 }} />
-                      </IconButton>
+      <BaseDialog
+        open={open}
+        title=""
+        contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
+        okBtn={t("Save")}
+        cancelBtn={t("Cancel")}
+        disableOk={!groupName.trim()}
+        onClose={handleClose}
+        onCancel={handleClose}
+        onOk={handleSave}
+      >
+        <EnhancedDialogTitle title={editingGroup ? t("Edit Group") : t("Manage Groups")} />
+
+        {!editingGroup && groups.length > 0 && (
+          <EnhancedFormGroup title={t("Existing Groups")}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {groups.map((group) => (
+                <Box
+                  key={group.id}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 1.5,
+                    border: (theme) => `1px solid ${theme.palette.divider}`,
+                    "&:hover": { borderColor: "primary.main" },
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                    <Box
+                      sx={{
+                        width: 16,
+                        height: 16,
+                        bgcolor: group.color || DEFAULT_COLORS[0],
+                      }}
+                    />
+                    <Box>
+                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                        {group.name}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
+                        {groupCounts[group.id] || 0} {t("profiles")}
+                      </Typography>
                     </Box>
                   </Box>
-                ))}
-              </Box>
+                  <Box sx={{ display: "flex", gap: 0.5 }}>
+                    <IconButton size="small" onClick={() => handleEdit(group)}>
+                      <EditRounded sx={{ fontSize: 16 }} />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => handleDelete(group.id)}>
+                      <DeleteRounded sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                </Box>
+              ))}
             </Box>
-          )}
+          </EnhancedFormGroup>
+        )}
 
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontSize: 13 }}>
-              {editingGroup ? t("Edit Group") : t("New Group")}
-            </Typography>
-
+        <EnhancedFormGroup title={editingGroup ? t("Edit Group") : t("New Group")}>
+          <EnhancedFormItem label={t("Group Name")} fullWidth>
             <TextField
-              label={t("Group Name")}
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               fullWidth
               size="small"
               autoFocus
+              placeholder={t("Enter group name") as string}
             />
+          </EnhancedFormItem>
 
-            <Box>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: "block" }}>
-                {t("Color")}
-              </Typography>
-              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                {DEFAULT_COLORS.map((color) => (
-                  <Box
-                    key={color}
-                    onClick={() => setGroupColor(color)}
-                    sx={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: "6px",
-                      bgcolor: color,
-                      cursor: "pointer",
-                      border: (theme) =>
-                        groupColor === color
-                          ? `2px solid ${theme.palette.text.primary}`
-                          : `1px solid ${theme.palette.divider}`,
-                      "&:hover": { transform: "scale(1.05)" },
-                      transition: "all 0.2s",
-                    }}
-                  />
-                ))}
-              </Box>
+          <EnhancedFormItem label={t("Color")} fullWidth>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              {DEFAULT_COLORS.map((color) => (
+                <Box
+                  key={color}
+                  onClick={() => setGroupColor(color)}
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    bgcolor: color,
+                    cursor: "pointer",
+                    border: (theme) =>
+                      groupColor === color
+                        ? `2px solid ${theme.palette.text.primary}`
+                        : `1px solid ${theme.palette.divider}`,
+                    "&:hover": { transform: "scale(1.05)" },
+                    transition: "all 0.2s",
+                  }}
+                />
+              ))}
             </Box>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>{t("Cancel")}</Button>
-          <Button onClick={handleSave} variant="contained" disabled={!groupName.trim()}>
-            {t("Save")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+          </EnhancedFormItem>
+        </EnhancedFormGroup>
+      </BaseDialog>
     </>
   );
 });

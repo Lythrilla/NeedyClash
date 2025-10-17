@@ -19,7 +19,6 @@ export const BaseFieldset: React.FC<Props> = ({
   const Fieldset = styled(Box)<{ component?: string }>(() => ({
     position: "relative",
     border: "1px solid #bbb",
-    borderRadius: "5px",
     width: width ?? "auto",
     padding: padding ?? "15px",
   }));

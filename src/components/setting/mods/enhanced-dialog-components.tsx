@@ -43,7 +43,7 @@ export const EnhancedDialogTitle: React.FC<EnhancedDialogTitleProps> = ({
  * 简洁统一的表单项
  */
 interface EnhancedFormItemProps {
-  label: string;
+  label: string | ReactNode;
   description?: string;
   children: ReactNode;
   fullWidth?: boolean;

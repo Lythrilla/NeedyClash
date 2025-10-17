@@ -178,7 +178,6 @@ const ProfileDetails = ({
                 cursor: "pointer",
                 px: 1.5,
                 py: 0.5,
-                borderRadius: 1.5,
                 border: (theme) => `1px solid ${alpha(theme.palette.divider, 0.5)}`,
                 "&:hover": { 
                   borderColor: "primary.main",
@@ -312,10 +311,8 @@ const ProfileDetails = ({
               value={trafficPercentage}
               sx={{
                 height: 8,
-                borderRadius: 4,
                 backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
                 "& .MuiLinearProgress-bar": {
-                  borderRadius: 4,
                   background: (theme) => 
                     trafficPercentage > 90
                       ? `linear-gradient(90deg, ${theme.palette.error.main}, ${theme.palette.error.dark})`
@@ -346,7 +343,6 @@ const EmptyProfile = ({ onClick }: { onClick: () => void }) => {
         py: 2.4,
         cursor: "pointer",
         "&:hover": { bgcolor: "action.hover" },
-        borderRadius: 2,
       }}
       onClick={onClick}
     >
@@ -449,7 +445,6 @@ export const HomeProfileCard = ({
         size="small"
         onClick={goToProfiles}
         endIcon={<StorageOutlined fontSize="small" />}
-        sx={{ borderRadius: 1.5 }}
       >
         {t("Label-Profiles")}
       </Button>

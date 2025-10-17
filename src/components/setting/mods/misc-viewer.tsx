@@ -1,8 +1,5 @@
 import {
   InputAdornment,
-  List,
-  ListItem,
-  ListItemText,
   MenuItem,
   Select,
   TextField,
@@ -15,6 +12,12 @@ import { BaseDialog, DialogRef, Switch } from "@/components/base";
 import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { useVerge } from "@/hooks/use-verge";
 import { showNotice } from "@/services/noticeService";
+
+import {
+  EnhancedDialogTitle,
+  EnhancedFormItem,
+  EnhancedFormGroup,
+} from "./enhanced-dialog-components";
 
 export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
   const { t } = useTranslation();
@@ -77,20 +80,21 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
   return (
     <BaseDialog
       open={open}
-      title={t("Miscellaneous")}
-      contentSx={{ width: 450 }}
+      title=""
+      contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
       okBtn={t("Save")}
       cancelBtn={t("Cancel")}
       onClose={() => setOpen(false)}
       onCancel={() => setOpen(false)}
       onOk={onSave}
     >
-      <List>
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText primary={t("App Log Level")} />
+      <EnhancedDialogTitle title={t("Miscellaneous")} />
+
+      <EnhancedFormGroup title={t("Application Settings")}>
+        <EnhancedFormItem label={t("App Log Level")}>
           <Select
             size="small"
-            sx={{ width: 100, "> div": { py: "5.5px", fontSize: "13px" } }}
+            sx={{ width: 140 }}
             value={values.appLogLevel}
             onChange={(e) =>
               setValues((v) => ({
@@ -105,13 +109,9 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
               </MenuItem>
             ))}
           </Select>
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText
-            primary={t("App Log Max Size")}
-            sx={{ maxWidth: "fit-content" }}
-          />
+        <EnhancedFormItem label={t("App Log Max Size")}>
           <TextField
             autoComplete="new-password"
             size="small"
@@ -119,7 +119,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            sx={{ width: 140, marginLeft: "auto" }}
+            sx={{ width: 140 }}
             value={values.appLogMaxSize}
             onChange={(e) =>
               setValues((v) => ({
@@ -135,13 +135,9 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
               },
             }}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText
-            primary={t("App Log Max Count")}
-            sx={{ maxWidth: "fit-content" }}
-          />
+        <EnhancedFormItem label={t("App Log Max Count")}>
           <TextField
             autoComplete="new-password"
             size="small"
@@ -149,7 +145,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            sx={{ width: 140, marginLeft: "auto" }}
+            sx={{ width: 140 }}
             value={values.appLogMaxCount}
             onChange={(e) =>
               setValues((v) => ({
@@ -165,29 +161,55 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
               },
             }}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText
-            primary={t("Auto Close Connections")}
-            sx={{ maxWidth: "fit-content" }}
-          />
-          <TooltipIcon
-            title={t("Auto Close Connections Info")}
-            sx={{ opacity: "0.7" }}
-          />
+        <EnhancedFormItem label={t("Auto Log Clean")}>
+          <Select
+            size="small"
+            sx={{ width: 160 }}
+            value={values.autoLogClean}
+            onChange={(e) =>
+              setValues((v) => ({
+                ...v,
+                autoLogClean: e.target.value as number,
+              }))
+            }
+          >
+            {[
+              { key: t("Never Clean"), value: 0 },
+              { key: t("Retain _n Days", { n: 1 }), value: 1 },
+              { key: t("Retain _n Days", { n: 7 }), value: 2 },
+              { key: t("Retain _n Days", { n: 30 }), value: 3 },
+              { key: t("Retain _n Days", { n: 90 }), value: 4 },
+            ].map((i) => (
+              <MenuItem key={i.value} value={i.value}>
+                {i.key}
+              </MenuItem>
+            ))}
+          </Select>
+        </EnhancedFormItem>
+
+        <EnhancedFormItem
+          label={
+            <>
+              {t("Auto Close Connections")}
+              <TooltipIcon
+                title={t("Auto Close Connections Info")}
+                sx={{ opacity: "0.7", ml: 0.5 }}
+              />
+            </>
+          }
+        >
           <Switch
             edge="end"
             checked={values.autoCloseConnection}
             onChange={(_, c) =>
               setValues((v) => ({ ...v, autoCloseConnection: c }))
             }
-            sx={{ marginLeft: "auto" }}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText primary={t("Auto Check Update")} />
+        <EnhancedFormItem label={t("Auto Check Update")}>
           <Switch
             edge="end"
             checked={values.autoCheckUpdate}
@@ -195,32 +217,34 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
               setValues((v) => ({ ...v, autoCheckUpdate: c }))
             }
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText
-            primary={t("Enable Builtin Enhanced")}
-            sx={{ maxWidth: "fit-content" }}
-          />
-          <TooltipIcon
-            title={t("Enable Builtin Enhanced Info")}
-            sx={{ opacity: "0.7" }}
-          />
+        <EnhancedFormItem
+          label={
+            <>
+              {t("Enable Builtin Enhanced")}
+              <TooltipIcon
+                title={t("Enable Builtin Enhanced Info")}
+                sx={{ opacity: "0.7", ml: 0.5 }}
+              />
+            </>
+          }
+        >
           <Switch
             edge="end"
             checked={values.enableBuiltinEnhanced}
             onChange={(_, c) =>
               setValues((v) => ({ ...v, enableBuiltinEnhanced: c }))
             }
-            sx={{ marginLeft: "auto" }}
           />
-        </ListItem>
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText primary={t("Proxy Layout Columns")} />
+      <EnhancedFormGroup title={t("Proxy Settings")}>
+        <EnhancedFormItem label={t("Proxy Layout Columns")}>
           <Select
             size="small"
-            sx={{ width: 160, "> div": { py: "5.5px", fontSize: "13px" } }}
+            sx={{ width: 160 }}
             value={values.proxyLayoutColumn}
             onChange={(e) =>
               setValues((v) => ({
@@ -238,81 +262,56 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
               </MenuItem>
             ))}
           </Select>
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText primary={t("Auto Log Clean")} />
-          <Select
-            size="small"
-            sx={{ width: 160, "> div": { py: "5.5px", fontSize: "13px" } }}
-            value={values.autoLogClean}
-            onChange={(e) =>
-              setValues((v) => ({
-                ...v,
-                autoLogClean: e.target.value as number,
-              }))
-            }
-          >
-            {/* 1: 1天, 2: 7天, 3: 30天, 4: 90天*/}
-            {[
-              { key: t("Never Clean"), value: 0 },
-              { key: t("Retain _n Days", { n: 1 }), value: 1 },
-              { key: t("Retain _n Days", { n: 7 }), value: 2 },
-              { key: t("Retain _n Days", { n: 30 }), value: 3 },
-              { key: t("Retain _n Days", { n: 90 }), value: 4 },
-            ].map((i) => (
-              <MenuItem key={i.value} value={i.value}>
-                {i.key}
-              </MenuItem>
-            ))}
-          </Select>
-        </ListItem>
-
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText
-            primary={t("Auto Delay Detection")}
-            sx={{ maxWidth: "fit-content" }}
-          />
-          <TooltipIcon
-            title={t("Auto Delay Detection Info")}
-            sx={{ opacity: "0.7" }}
-          />
+        <EnhancedFormItem
+          label={
+            <>
+              {t("Auto Delay Detection")}
+              <TooltipIcon
+                title={t("Auto Delay Detection Info")}
+                sx={{ opacity: "0.7", ml: 0.5 }}
+              />
+            </>
+          }
+        >
           <Switch
             edge="end"
             checked={values.enableAutoDelayDetection}
             onChange={(_, c) =>
               setValues((v) => ({ ...v, enableAutoDelayDetection: c }))
             }
-            sx={{ marginLeft: "auto" }}
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText
-            primary={t("Default Latency Test")}
-            sx={{ maxWidth: "fit-content" }}
-          />
-          <TooltipIcon
-            title={t("Default Latency Test Info")}
-            sx={{ opacity: "0.7" }}
-          />
+        <EnhancedFormItem
+          label={
+            <>
+              {t("Default Latency Test")}
+              <TooltipIcon
+                title={t("Default Latency Test Info")}
+                sx={{ opacity: "0.7", ml: 0.5 }}
+              />
+            </>
+          }
+          fullWidth
+        >
           <TextField
             autoComplete="new-password"
             size="small"
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            sx={{ width: 250, marginLeft: "auto" }}
+            fullWidth
             value={values.defaultLatencyTest}
             placeholder="https://cp.cloudflare.com/generate_204"
             onChange={(e) =>
               setValues((v) => ({ ...v, defaultLatencyTest: e.target.value }))
             }
           />
-        </ListItem>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "5px 16px" }}>
-          <ListItemText primary={t("Default Latency Timeout")} />
+        <EnhancedFormItem label={t("Default Latency Timeout")}>
           <TextField
             autoComplete="new-password"
             size="small"
@@ -320,7 +319,7 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck="false"
-            sx={{ width: 250 }}
+            sx={{ width: 140 }}
             value={values.defaultLatencyTimeout}
             placeholder="10000"
             onChange={(e) =>
@@ -337,8 +336,8 @@ export const MiscViewer = forwardRef<DialogRef>((props, ref) => {
               },
             }}
           />
-        </ListItem>
-      </List>
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
     </BaseDialog>
   );
 });

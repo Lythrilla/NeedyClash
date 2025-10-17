@@ -36,7 +36,6 @@ const ScrollBox = styled(Box)(({ theme }) => ({
   },
   "&::-webkit-scrollbar-thumb": {
     backgroundColor: alpha(theme.palette.text.secondary, 0.3),
-    borderRadius: "2px",
   },
 }));
 

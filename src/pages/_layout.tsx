@@ -667,10 +667,6 @@ const Layout = () => {
           square
           elevation={0}
           className={`${OS} layout`}
-          style={{
-            borderTopLeftRadius: "0px",
-            borderTopRightRadius: "0px",
-          }}
           onContextMenu={(e) => {
             if (
               OS === "windows" &&
@@ -689,7 +685,6 @@ const Layout = () => {
             }),
             OS === "linux"
               ? {
-                  borderRadius: "8px",
                   width: "100vw",
                   height: "100vh",
                 }

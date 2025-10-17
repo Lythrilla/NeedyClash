@@ -77,6 +77,10 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     const saved = localStorage.getItem(CUSTOM_THEMES_KEY);
     return saved ? JSON.parse(saved) : { light: [], dark: [] };
   });
+  
+  // 批量设置 state
+  const [batchBlur, setBatchBlur] = useState(0);
+  const [batchOpacity, setBatchOpacity] = useState(1);
 
   useImperativeHandle(ref, () => ({
     open: () => {
@@ -168,12 +172,26 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     setTheme(newTheme);
     showNotice("success", t("Background settings reset"));
   };
+  const applyBatchSettings = useLockFn(async () => {
+    const newTheme = {
+      ...theme,
+      sidebar_blur: batchBlur,
+      sidebar_opacity: batchOpacity,
+      header_blur: batchBlur,
+      header_opacity: batchOpacity,
+      connection_table_blur: batchBlur,
+      connection_table_opacity: batchOpacity,
+    };
+    setTheme(newTheme);
+    await patchVerge({ theme_setting: newTheme });
+    showNotice("success", t("Batch settings applied successfully"), 1500);
+  });
 
   // 组件样式管理函数
   const componentStyles = theme.component_styles || {};
   const globalStyle = componentStyles.global || {};
 
-  const updateComponentStyle = (key: ComponentKey | "global", style: Partial<IComponentStyle>) => {
+  const updateComponentStyle = (key: ComponentKey, style: Partial<IComponentStyle>) => {
     const newComponentStyles = {
       ...componentStyles,
       [key]: {
@@ -190,7 +208,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     patchVerge({ theme_setting: newTheme });
   };
 
-  const resetComponentStyle = async (key: ComponentKey | "global") => {
+  const resetComponentStyle = async (key: ComponentKey) => {
     const newComponentStyles = { ...componentStyles };
     delete newComponentStyles[key];
     const newTheme = {
@@ -212,124 +230,82 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     showNotice("success", t("All component styles reset"));
   };
 
-  // 获取组件的实际样式值（考虑全局默认值）
-  const getComponentActualStyle = (key: ComponentKey | "global") => {
-    const style = key === "global" ? globalStyle : (componentStyles[key] || {});
-    
-    if (key === "global") {
-      return {
-        background_color: style.background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff"),
-        blur: style.blur ?? 25,
-        opacity: style.opacity ?? 0.7,
-      };
-    }
-    
-    // 非全局组件：使用组件自己的值，如果没有则使用全局默认值
-    return {
-      background_color: style.background_color || globalStyle.background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff"),
-      blur: style.blur ?? globalStyle.blur ?? 25,
-      opacity: style.opacity ?? globalStyle.opacity ?? 0.7,
-    };
-  };
 
   // 渲染组件样式控制器
-  const renderComponentStyleControls = (key: ComponentKey | "global") => {
-    const style = key === "global" ? globalStyle : (componentStyles[key] || {});
-    const isEnabled = style.enabled ?? (key === "global" ? true : false);
-    const actualStyle = getComponentActualStyle(key);
+  const renderComponentStyleControls = (key: ComponentKey) => {
+    const style = componentStyles[key] || {};
+    const defaultBgColor = currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff";
+    const bgColor = style.background_color || defaultBgColor;
+    const blur = style.blur ?? 25;
+    const opacity = style.opacity ?? 0.7;
 
     return (
       <Stack spacing={2}>
-        {key !== "global" && (
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Typography variant="body2">{t("Enable Custom Style")}</Typography>
-            <Switch
-              edge="end"
-              checked={isEnabled}
-              onChange={(e) => updateComponentStyle(key, { enabled: e.target.checked })}
+        <Box>
+          <Typography variant="body2" gutterBottom>
+            {t("Background Color")}
+          </Typography>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <input
+              type="color"
+              value={bgColor}
+              onChange={(e) => updateComponentStyle(key, { background_color: e.target.value })}
+              style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
+            />
+            <TextField
+              size="small"
+              value={style.background_color || ""}
+              onChange={(e) => updateComponentStyle(key, { background_color: e.target.value })}
+              placeholder={defaultBgColor}
+              fullWidth
             />
           </Box>
-        )}
+        </Box>
 
-        {(key === "global" || isEnabled) && (
-          <>
-            <Box>
-              <Typography variant="body2" gutterBottom>
-                {t("Background Color")}
-              </Typography>
-              <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                <input
-                  type="color"
-                  value={actualStyle.background_color}
-                  onChange={(e) => updateComponentStyle(key, { background_color: e.target.value })}
-                  style={{ width: 50, height: 40, border: "none", borderRadius: 4, cursor: "pointer" }}
-                />
-                <TextField
-                  size="small"
-                  value={style.background_color || ""}
-                  onChange={(e) => updateComponentStyle(key, { background_color: e.target.value })}
-                  placeholder={actualStyle.background_color}
-                  fullWidth
-                />
-              </Box>
-            </Box>
+        <Box>
+          <Typography variant="body2" gutterBottom>
+            {t("Blur")}
+          </Typography>
+          <TextField
+            size="small"
+            type="number"
+            value={style.blur ?? ""}
+            onChange={(e) => {
+              const value = parseInt(e.target.value) || 0;
+              updateComponentStyle(key, { blur: Math.max(0, Math.min(100, value)) });
+            }}
+            placeholder="25"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">px</InputAdornment>,
+            }}
+            fullWidth
+          />
+        </Box>
 
-            <Box>
-              <Typography variant="body2" gutterBottom>
-                {t("Blur")}
-              </Typography>
-              <TextField
-                size="small"
-                type="number"
-                value={style.blur ?? ""}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value) || 0;
-                  updateComponentStyle(key, { blur: Math.max(0, Math.min(100, value)) });
-                }}
-                placeholder={String(actualStyle.blur)}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">px</InputAdornment>,
-                }}
-                fullWidth
-              />
-              {key !== "global" && !style.blur && (
-                <Typography variant="caption" color="text.secondary">
-                  {t("Using global default")}: {actualStyle.blur}px
-                </Typography>
-              )}
-            </Box>
+        <Box>
+          <Typography variant="body2" gutterBottom>
+            {t("Opacity")}: {Math.round(opacity * 100)}%
+          </Typography>
+          <Slider
+            value={style.opacity ?? 0.7}
+            onChange={(_, value) => updateComponentStyle(key, { opacity: value as number })}
+            min={0}
+            max={1}
+            step={0.01}
+            size="small"
+          />
+        </Box>
 
-            <Box>
-              <Typography variant="body2" gutterBottom>
-                {t("Opacity")}: {Math.round(actualStyle.opacity * 100)}%
-              </Typography>
-              <Slider
-                value={style.opacity ?? (key === "global" ? 0.7 : null) ?? actualStyle.opacity}
-                onChange={(_, value) => updateComponentStyle(key, { opacity: value as number })}
-                min={0}
-                max={1}
-                step={0.01}
-                size="small"
-              />
-              {key !== "global" && style.opacity === undefined && (
-                <Typography variant="caption" color="text.secondary">
-                  {t("Using global default")}: {Math.round(actualStyle.opacity * 100)}%
-                </Typography>
-              )}
-            </Box>
-
-            <Button
-              variant="outlined"
-              color="warning"
-              size="small"
-              startIcon={<RestartAlt />}
-              onClick={() => resetComponentStyle(key)}
-              fullWidth
-            >
-              {t("Reset to Default")}
-            </Button>
-          </>
-        )}
+        <Button
+          variant="outlined"
+          color="warning"
+          size="small"
+          startIcon={<RestartAlt />}
+          onClick={() => resetComponentStyle(key)}
+          fullWidth
+        >
+          {t("Reset to Default")}
+        </Button>
       </Stack>
     );
   };
@@ -437,7 +413,6 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
           sx={{
             width: 36,
             height: 36,
-            borderRadius: 1,
             background: currentColor,
             cursor: "pointer",
             position: "relative",
@@ -497,7 +472,6 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
           },
           "&::-webkit-scrollbar-thumb": {
             background: "rgba(128, 128, 128, 0.2)",
-            borderRadius: "3px",
           },
         }}
         onClose={() => setOpen(false)}
@@ -638,7 +612,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                     type="color"
                     value={theme.background_color || "#000000"}
                     onChange={(e) => handleBackgroundChange("background_color", e.target.value)}
-                    style={{ width: 50, height: 40, border: "none", borderRadius: 4, cursor: "pointer" }}
+                    style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
                   />
                   <TextField
                     size="small"
@@ -666,6 +640,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                     <FormControl size="small" fullWidth>
                       <InputLabel>{t("Size")}</InputLabel>
                       <Select
+                        size="small"
                         value={theme.background_size || "cover"}
                         label={t("Size")}
                         onChange={(e) => handleBackgroundChange("background_size", e.target.value)}
@@ -678,6 +653,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                     <FormControl size="small" fullWidth>
                       <InputLabel>{t("Position")}</InputLabel>
                       <Select
+                        size="small"
                         value={theme.background_position || "center"}
                         label={t("Position")}
                         onChange={(e) => handleBackgroundChange("background_position", e.target.value)}
@@ -754,6 +730,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                   <FormControl size="small" fullWidth>
                     <InputLabel>{t("Blend Mode")}</InputLabel>
                     <Select
+                      size="small"
                       value={theme.background_blend_mode || "normal"}
                       label={t("Blend Mode")}
                       onChange={(e) => handleBackgroundChange("background_blend_mode", e.target.value)}
@@ -774,60 +751,71 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
 
           {tabValue === 3 && (
             <Box>
-              <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  {t("Fine-tune component blur and colors")}
-                </Typography>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  size="small"
-                  startIcon={<RestartAlt />}
-                  onClick={resetAllComponentStyles}
-                >
-                  {t("Reset All")}
-                </Button>
-              </Box>
-
-              {/* 全局设置 */}
-              <Accordion defaultExpanded>
+              {/* 批量设置区域 */}
+              <Accordion defaultExpanded sx={{ mb: 2 }}>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                   <Box>
                     <Typography variant="subtitle2" fontWeight={600}>
-                      {t("Global Default")}
+                      {t("Batch Settings")}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {t("Default style for all components")}
+                      {t("Batch apply blur and opacity to all layout elements")}
                     </Typography>
                   </Box>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {renderComponentStyleControls("global")}
+                  <Stack spacing={2}>
+                    <Box>
+                      <Typography variant="body2" gutterBottom>
+                        {t("Blur")}: {batchBlur}px
+                      </Typography>
+                      <TextField
+                        size="small"
+                        type="number"
+                        value={batchBlur}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 0;
+                          setBatchBlur(Math.max(0, Math.min(100, value)));
+                        }}
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">px</InputAdornment>,
+                        }}
+                        fullWidth
+                      />
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" gutterBottom>
+                        {t("Opacity")}: {Math.round(batchOpacity * 100)}%
+                      </Typography>
+                      <Slider
+                        value={batchOpacity}
+                        onChange={(_, value) => setBatchOpacity(value as number)}
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        size="small"
+                      />
+                    </Box>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={applyBatchSettings}
+                    >
+                      {t("Apply to All")}
+                    </Button>
+                    <Typography variant="caption" color="text.secondary" sx={{ textAlign: "center" }}>
+                      {t("Apply blur and opacity to all elements below")}
+                    </Typography>
+                  </Stack>
                 </AccordionDetails>
               </Accordion>
 
-              {/* 各个组件的独立设置 */}
-              {componentConfigs.map((config) => (
-                <Accordion key={config.key}>
-                  <AccordionSummary expandIcon={<ExpandMore />}>
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={600}>
-                        {t(config.label)}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {t(config.description)}
-                      </Typography>
-                    </Box>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {renderComponentStyleControls(config.key)}
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-
               <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 2 }}>
+                {t("Layout Elements Style")}
+              </Typography>
 
-              {/* Sidebar 和 Header 设置保留 */}
+              {/* Sidebar、Header、连接表格设置 */}
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                   <Box>
@@ -850,7 +838,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                           type="color"
                           value={theme.sidebar_background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff")}
                           onChange={(e) => handleBackgroundChange("sidebar_background_color", e.target.value)}
-                          style={{ width: 50, height: 40, border: "none", borderRadius: 4, cursor: "pointer" }}
+                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
                         />
                         <TextField
                           size="small"
@@ -914,7 +902,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                           type="color"
                           value={theme.header_background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff")}
                           onChange={(e) => handleBackgroundChange("header_background_color", e.target.value)}
-                          style={{ width: 50, height: 40, border: "none", borderRadius: 4, cursor: "pointer" }}
+                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
                         />
                         <TextField
                           size="small"
@@ -955,6 +943,86 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                   </Stack>
                 </AccordionDetails>
               </Accordion>
+
+              <Accordion>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      {t("Connection Table Style")}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t("Connection table view style")}
+                    </Typography>
+                  </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Stack spacing={2}>
+                    <Box>
+                      <Typography variant="body2" gutterBottom>{t("Opacity")}: {Math.round((theme.connection_table_opacity ?? 1) * 100)}%</Typography>
+                      <Slider
+                        value={theme.connection_table_opacity ?? 1}
+                        onChange={(_, value) => handleBackgroundChange("connection_table_opacity", value)}
+                        min={0} max={1} step={0.01}
+                        size="small"
+                      />
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" gutterBottom>
+                        {t("Blur")}
+                      </Typography>
+                      <TextField
+                        size="small"
+                        type="number"
+                        value={theme.connection_table_blur ?? 0}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 0;
+                          handleBackgroundChange("connection_table_blur", Math.max(0, Math.min(100, value)));
+                        }}
+                        InputProps={{
+                          endAdornment: <InputAdornment position="end">px</InputAdornment>,
+                        }}
+                        fullWidth
+                      />
+                    </Box>
+                  </Stack>
+                </AccordionDetails>
+              </Accordion>
+
+              <Divider sx={{ my: 2 }} />
+
+              {/* 组件样式设置 */}
+              <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  {t("Component Styles")}
+                </Typography>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  startIcon={<RestartAlt />}
+                  onClick={resetAllComponentStyles}
+                >
+                  {t("Reset All")}
+                </Button>
+              </Box>
+
+              {componentConfigs.map((config) => (
+                <Accordion key={config.key}>
+                  <AccordionSummary expandIcon={<ExpandMore />}>
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        {t(config.label)}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {t(config.description)}
+                      </Typography>
+                    </Box>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {renderComponentStyleControls(config.key)}
+                  </AccordionDetails>
+                </Accordion>
+              ))}
             </Box>
           )}
         </Box>

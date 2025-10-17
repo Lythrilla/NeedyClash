@@ -2,10 +2,6 @@ import { RefreshRounded, StorageOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   IconButton,
   List,
@@ -21,6 +17,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { updateRuleProvider } from "tauri-plugin-mihomo-api";
 
+import { BaseDialog } from "@/components/base";
+import { EnhancedDialogTitle } from "@/components/setting/mods/enhanced-dialog-components";
 import { useAppData } from "@/providers/app-data-context";
 import { showNotice } from "@/services/noticeService";
 
@@ -30,7 +28,6 @@ const TypeBox = styled(Box)<{ component?: React.ElementType }>(({ theme }) => ({
   border: "1px solid #ccc",
   borderColor: alpha(theme.palette.secondary.main, 0.5),
   color: alpha(theme.palette.secondary.main, 0.8),
-  borderRadius: 4,
   fontSize: 10,
   marginRight: "4px",
   padding: "0 2px",
@@ -132,14 +129,16 @@ export const ProviderButton = () => {
         {t("Rule Provider")}
       </Button>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h6">{t("Rule Providers")}</Typography>
+      <BaseDialog
+        open={open}
+        title=""
+        contentSx={{ width: 600, maxHeight: 680, px: 3, py: 3 }}
+        disableFooter
+        onClose={handleClose}
+      >
+        <EnhancedDialogTitle
+          title={t("Rule Providers")}
+          action={
             <Button
               variant="contained"
               size="small"
@@ -147,10 +146,10 @@ export const ProviderButton = () => {
             >
               {t("Update All")}
             </Button>
-          </Box>
-        </DialogTitle>
+          }
+        />
 
-        <DialogContent>
+        <Box>
           <List sx={{ py: 0, minHeight: 250 }}>
             {Object.entries(ruleProviders || {})
               .sort()
@@ -166,7 +165,6 @@ export const ProviderButton = () => {
                       {
                         p: 0,
                         mb: "8px",
-                        borderRadius: 2,
                         overflow: "hidden",
                         transition: "all 0.2s",
                       },
@@ -264,14 +262,8 @@ export const ProviderButton = () => {
                 );
               })}
           </List>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined">
-            {t("Close")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        </Box>
+      </BaseDialog>
     </>
   );
 };

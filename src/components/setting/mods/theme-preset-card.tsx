@@ -22,7 +22,6 @@ export const ThemePresetCard = ({ preset, isActive, onApply, onDelete }: Props) 
       onClick={() => onApply(preset)}
       sx={{
         position: "relative",
-        borderRadius: 1.5,
         overflow: "hidden",
         cursor: "pointer",
         border: 1,
@@ -75,7 +74,6 @@ export const ThemePresetCard = ({ preset, isActive, onApply, onDelete }: Props) 
             right: 4,
             width: 18,
             height: 18,
-            borderRadius: "50%",
             backgroundColor: "primary.main",
             display: "flex",
             alignItems: "center",
@@ -93,7 +91,6 @@ export const ThemePresetCard = ({ preset, isActive, onApply, onDelete }: Props) 
         <Box
           sx={{
             height: 40,
-            borderRadius: 1,
             background: `linear-gradient(135deg, ${preset.primary_color} 0%, ${preset.secondary_color} 100%)`,
             mb: 0.5,
           }}
@@ -107,7 +104,6 @@ export const ThemePresetCard = ({ preset, isActive, onApply, onDelete }: Props) 
               sx={{
                 flex: 1,
                 height: 4,
-                borderRadius: 0.5,
                 backgroundColor: color,
               }}
             />

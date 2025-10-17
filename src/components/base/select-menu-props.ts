@@ -21,7 +21,6 @@ export const getSelectMenuProps = (maxHeight?: number): Partial<MenuProps> => ({
       WebkitBackdropFilter: "blur(20px) saturate(180%)",
       border: (theme) =>
         `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-      borderRadius: "8px",
       maxHeight: maxHeight || 300,
       zIndex: 1400,
       '& .MuiList-root': {

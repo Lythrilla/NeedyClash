@@ -14,7 +14,6 @@ const Tag = styled("span")(({ theme }) => ({
   padding: "0 4px",
   lineHeight: 1.375,
   border: "1px solid",
-  borderRadius: 4,
   borderColor: alpha(theme.palette.text.secondary, 0.35),
   marginTop: "4px",
   marginRight: "4px",
@@ -69,7 +68,6 @@ const LogItem = ({ value, searchState }: Props) => {
             key={`highlight-${start}`}
             style={{
               backgroundColor: "#ffeb3b40",
-              borderRadius: 2,
               padding: "0 2px",
             }}
           >

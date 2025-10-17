@@ -805,7 +805,6 @@ export const CurrentProxyCard = () => {
                     color: "text.secondary",
                     px: { xs: 0.5, sm: 0.75 },
                     py: 0.25,
-                    borderRadius: "3px",
                     bgcolor: "action.hover",
                   }}
                 >
@@ -820,7 +819,6 @@ export const CurrentProxyCard = () => {
                       color: "primary.main",
                       px: 0.75,
                       py: 0.25,
-                      borderRadius: "3px",
                       bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
                     }}
                   >
@@ -835,7 +833,6 @@ export const CurrentProxyCard = () => {
                       color: "success.main",
                       px: 0.75,
                       py: 0.25,
-                      borderRadius: "3px",
                       bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
                     }}
                   >
@@ -854,7 +851,6 @@ export const CurrentProxyCard = () => {
                       py: 0.25,
                       border: "1px solid",
                       borderColor: "divider",
-                      borderRadius: "3px",
                     }}
                   >
                     UDP
@@ -870,7 +866,6 @@ export const CurrentProxyCard = () => {
                       py: 0.25,
                       border: "1px solid",
                       borderColor: "divider",
-                      borderRadius: "3px",
                     }}
                   >
                     TFO
@@ -984,7 +979,6 @@ export const CurrentProxyCard = () => {
                           ml: 1,
                           px: 0.75,
                           py: 0.25,
-                          borderRadius: "3px",
                           color: signalInfo.color,
                           bgcolor: (theme) => alpha(signalInfo.color === "success.main" ? theme.palette.success.main : 
                                                      signalInfo.color === "warning.main" ? theme.palette.warning.main :
@@ -1049,7 +1043,6 @@ export const CurrentProxyCard = () => {
                               ml: 2,
                               px: 0.75,
                               py: 0.25,
-                              borderRadius: "3px",
                               color: `${color}.main`,
                               bgcolor: (theme) => alpha(
                                 color === "success" ? theme.palette.success.main :

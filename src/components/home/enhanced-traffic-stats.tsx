@@ -213,7 +213,6 @@ export const EnhancedTrafficStats = () => {
           cursor: "pointer",
           border: "1px solid",
           borderColor: "divider",
-          borderRadius: "4px",
           overflow: "hidden",
           backgroundColor: "transparent",
           transition: "border-color 0.15s",

@@ -446,7 +446,6 @@ const UnlockPage = () => {
         }}
         PaperProps={{
           sx: {
-            borderRadius: "12px",
             minWidth: 500,
             maxWidth: 600,
           },
@@ -499,7 +498,6 @@ const UnlockPage = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     fontSize: "13px",
-                    borderRadius: "8px",
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark"
                         ? "rgba(255, 255, 255, 0.02)"
@@ -537,7 +535,6 @@ const UnlockPage = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     fontSize: "13px",
-                    borderRadius: "8px",
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark"
                         ? "rgba(255, 255, 255, 0.02)"
@@ -575,7 +572,6 @@ const UnlockPage = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     fontSize: "13px",
-                    borderRadius: "8px",
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark"
                         ? "rgba(255, 255, 255, 0.02)"
@@ -611,7 +607,6 @@ const UnlockPage = () => {
                 }
                 sx={{
                   fontSize: "13px",
-                  borderRadius: "8px",
                   backgroundColor: (theme) =>
                     theme.palette.mode === "dark"
                       ? "rgba(255, 255, 255, 0.02)"
@@ -656,7 +651,6 @@ const UnlockPage = () => {
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     fontSize: "13px",
-                    borderRadius: "8px",
                     backgroundColor: (theme) =>
                       theme.palette.mode === "dark"
                         ? "rgba(255, 255, 255, 0.02)"

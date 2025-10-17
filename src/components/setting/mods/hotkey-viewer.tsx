@@ -1,4 +1,3 @@
-import { styled, Typography } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,14 +6,12 @@ import { BaseDialog, DialogRef, Switch } from "@/components/base";
 import { useVerge } from "@/hooks/use-verge";
 import { showNotice } from "@/services/noticeService";
 
+import {
+  EnhancedDialogTitle,
+  EnhancedFormItem,
+  EnhancedFormGroup,
+} from "./enhanced-dialog-components";
 import { HotkeyInput } from "./hotkey-input";
-
-const ItemWrapper = styled("div")`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-`;
 
 const HOTKEY_FUNC = [
   "open_or_close_dashboard",
@@ -89,32 +86,36 @@ export const HotkeyViewer = forwardRef<DialogRef>((props, ref) => {
   return (
     <BaseDialog
       open={open}
-      title={t("Hotkey Setting")}
-      contentSx={{ width: 450, maxHeight: 380 }}
+      title=""
+      contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
       okBtn={t("Save")}
       cancelBtn={t("Cancel")}
       onClose={() => setOpen(false)}
       onCancel={() => setOpen(false)}
       onOk={onSave}
     >
-      <ItemWrapper style={{ marginBottom: 16 }}>
-        <Typography>{t("Enable Global Hotkey")}</Typography>
-        <Switch
-          edge="end"
-          checked={enableGlobalHotkey}
-          onChange={(e) => setEnableGlobalHotkey(e.target.checked)}
-        />
-      </ItemWrapper>
+      <EnhancedDialogTitle title={t("Hotkey Setting")} />
 
-      {HOTKEY_FUNC.map((func) => (
-        <ItemWrapper key={func}>
-          <Typography>{t(func)}</Typography>
-          <HotkeyInput
-            value={hotkeyMap[func] ?? []}
-            onChange={(v) => setHotkeyMap((m) => ({ ...m, [func]: v }))}
+      <EnhancedFormGroup>
+        <EnhancedFormItem label={t("Enable Global Hotkey")}>
+          <Switch
+            edge="end"
+            checked={enableGlobalHotkey}
+            onChange={(e) => setEnableGlobalHotkey(e.target.checked)}
           />
-        </ItemWrapper>
-      ))}
+        </EnhancedFormItem>
+      </EnhancedFormGroup>
+
+      <EnhancedFormGroup title={t("Hotkey Bindings")}>
+        {HOTKEY_FUNC.map((func) => (
+          <EnhancedFormItem key={func} label={t(func)}>
+            <HotkeyInput
+              value={hotkeyMap[func] ?? []}
+              onChange={(v) => setHotkeyMap((m) => ({ ...m, [func]: v }))}
+            />
+          </EnhancedFormItem>
+        ))}
+      </EnhancedFormGroup>
     </BaseDialog>
   );
 });

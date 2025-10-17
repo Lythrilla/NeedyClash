@@ -1,10 +1,8 @@
 import { Shuffle } from "@mui/icons-material";
 import {
+  Box,
   CircularProgress,
   IconButton,
-  List,
-  ListItem,
-  ListItemText,
   Stack,
   TextField,
 } from "@mui/material";
@@ -17,6 +15,12 @@ import { useClashInfo } from "@/hooks/use-clash";
 import { useVerge } from "@/hooks/use-verge";
 import { showNotice } from "@/services/noticeService";
 import getSystem from "@/utils/get-system";
+
+import {
+  EnhancedDialogTitle,
+  EnhancedFormItem,
+  EnhancedFormGroup,
+} from "./enhanced-dialog-components";
 
 const OS = getSystem();
 
@@ -149,10 +153,8 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
   return (
     <BaseDialog
       open={open}
-      title={t("Port Config")}
-      contentSx={{
-        width: 400,
-      }}
+      title=""
+      contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
       okBtn={
         loading ? (
           <Stack direction="row" alignItems="center" spacing={1}>
@@ -168,27 +170,23 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
       onCancel={() => setOpen(false)}
       onOk={onSave}
     >
-      <List sx={{ width: "100%" }}>
-        <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
-          <ListItemText
-            primary={t("Mixed Port")}
-            slotProps={{ primary: { sx: { fontSize: 12 } } }}
-          />
-          <div style={{ display: "flex", alignItems: "center" }}>
+      <EnhancedDialogTitle title={t("Port Config")} />
+
+      <EnhancedFormGroup title={t("Port Settings")}>
+        <EnhancedFormItem label={t("Mixed Port")}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <TextField
               size="small"
-              sx={{ width: 80, mr: 0.5, fontSize: 12 }}
+              sx={{ width: 80 }}
               value={mixedPort}
               onChange={(e) =>
                 setMixedPort(+e.target.value?.replace(/\D+/, "").slice(0, 5))
               }
-              slotProps={{ htmlInput: { style: { fontSize: 12 } } }}
             />
             <IconButton
               size="small"
               onClick={() => setMixedPort(generateRandomPort())}
               title={t("Random Port")}
-              sx={{ mr: 0.5 }}
             >
               <Shuffle fontSize="small" />
             </IconButton>
@@ -196,33 +194,27 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
               size="small"
               checked={true}
               disabled={true}
-              sx={{ ml: 0.5, opacity: 0.7 }}
+              sx={{ opacity: 0.7 }}
             />
-          </div>
-        </ListItem>
+          </Box>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
-          <ListItemText
-            primary={t("Socks Port")}
-            slotProps={{ primary: { sx: { fontSize: 12 } } }}
-          />
-          <div style={{ display: "flex", alignItems: "center" }}>
+        <EnhancedFormItem label={t("Socks Port")}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <TextField
               size="small"
-              sx={{ width: 80, mr: 0.5, fontSize: 12 }}
+              sx={{ width: 80 }}
               value={socksPort}
               onChange={(e) =>
                 setSocksPort(+e.target.value?.replace(/\D+/, "").slice(0, 5))
               }
               disabled={!socksEnabled}
-              slotProps={{ htmlInput: { style: { fontSize: 12 } } }}
             />
             <IconButton
               size="small"
               onClick={() => setSocksPort(generateRandomPort())}
               title={t("Random Port")}
               disabled={!socksEnabled}
-              sx={{ mr: 0.5 }}
             >
               <Shuffle fontSize="small" />
             </IconButton>
@@ -230,33 +222,26 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
               size="small"
               checked={socksEnabled}
               onChange={(_, c) => setSocksEnabled(c)}
-              sx={{ ml: 0.5 }}
             />
-          </div>
-        </ListItem>
+          </Box>
+        </EnhancedFormItem>
 
-        <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
-          <ListItemText
-            primary={t("Http Port")}
-            slotProps={{ primary: { sx: { fontSize: 12 } } }}
-          />
-          <div style={{ display: "flex", alignItems: "center" }}>
+        <EnhancedFormItem label={t("Http Port")}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <TextField
               size="small"
-              sx={{ width: 80, mr: 0.5, fontSize: 12 }}
+              sx={{ width: 80 }}
               value={httpPort}
               onChange={(e) =>
                 setHttpPort(+e.target.value?.replace(/\D+/, "").slice(0, 5))
               }
               disabled={!httpEnabled}
-              slotProps={{ htmlInput: { style: { fontSize: 12 } } }}
             />
             <IconButton
               size="small"
               onClick={() => setHttpPort(generateRandomPort())}
               title={t("Random Port")}
               disabled={!httpEnabled}
-              sx={{ mr: 0.5 }}
             >
               <Shuffle fontSize="small" />
             </IconButton>
@@ -264,34 +249,27 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
               size="small"
               checked={httpEnabled}
               onChange={(_, c) => setHttpEnabled(c)}
-              sx={{ ml: 0.5 }}
             />
-          </div>
-        </ListItem>
+          </Box>
+        </EnhancedFormItem>
 
         {OS !== "windows" && (
-          <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
-            <ListItemText
-              primary={t("Redir Port")}
-              slotProps={{ primary: { sx: { fontSize: 12 } } }}
-            />
-            <div style={{ display: "flex", alignItems: "center" }}>
+          <EnhancedFormItem label={t("Redir Port")}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               <TextField
                 size="small"
-                sx={{ width: 80, mr: 0.5, fontSize: 12 }}
+                sx={{ width: 80 }}
                 value={redirPort}
                 onChange={(e) =>
                   setRedirPort(+e.target.value?.replace(/\D+/, "").slice(0, 5))
                 }
                 disabled={!redirEnabled}
-                slotProps={{ htmlInput: { style: { fontSize: 12 } } }}
               />
               <IconButton
                 size="small"
                 onClick={() => setRedirPort(generateRandomPort())}
                 title={t("Random Port")}
                 disabled={!redirEnabled}
-                sx={{ mr: 0.5 }}
               >
                 <Shuffle fontSize="small" />
               </IconButton>
@@ -299,35 +277,28 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
                 size="small"
                 checked={redirEnabled}
                 onChange={(_, c) => setRedirEnabled(c)}
-                sx={{ ml: 0.5 }}
               />
-            </div>
-          </ListItem>
+            </Box>
+          </EnhancedFormItem>
         )}
 
         {OS === "linux" && (
-          <ListItem sx={{ padding: "4px 16px", minHeight: 36 }}>
-            <ListItemText
-              primary={t("Tproxy Port")}
-              slotProps={{ primary: { sx: { fontSize: 12 } } }}
-            />
-            <div style={{ display: "flex", alignItems: "center" }}>
+          <EnhancedFormItem label={t("Tproxy Port")}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
               <TextField
                 size="small"
-                sx={{ width: 80, mr: 0.5, fontSize: 12 }}
+                sx={{ width: 80 }}
                 value={tproxyPort}
                 onChange={(e) =>
                   setTproxyPort(+e.target.value?.replace(/\D+/, "").slice(0, 5))
                 }
                 disabled={!tproxyEnabled}
-                slotProps={{ htmlInput: { style: { fontSize: 12 } } }}
               />
               <IconButton
                 size="small"
                 onClick={() => setTproxyPort(generateRandomPort())}
                 title={t("Random Port")}
                 disabled={!tproxyEnabled}
-                sx={{ mr: 0.5 }}
               >
                 <Shuffle fontSize="small" />
               </IconButton>
@@ -335,12 +306,11 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
                 size="small"
                 checked={tproxyEnabled}
                 onChange={(_, c) => setTproxyEnabled(c)}
-                sx={{ ml: 0.5 }}
               />
-            </div>
-          </ListItem>
+            </Box>
+          </EnhancedFormItem>
         )}
-      </List>
+      </EnhancedFormGroup>
     </BaseDialog>
   );
 });

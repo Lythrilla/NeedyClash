@@ -43,7 +43,6 @@ export function ConnectionDetail({ ref }: { ref?: Ref<ConnectionDetailRef> }) {
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: "12px",
         },
       }}
     >
@@ -111,7 +110,6 @@ const InnerConnectionDetail = ({ data, onClose }: InnerProps) => {
               : "rgba(0, 0, 0, 0.02)",
           px: 1,
           py: 0.5,
-          borderRadius: "4px",
         }}
       >
         {value}

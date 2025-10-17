@@ -102,7 +102,6 @@ const SortableItem = ({ proxy, index, onRemove }: SortableItemProps) => {
         backgroundColor: isDragging
           ? theme.palette.action.selected
           : theme.palette.background.default,
-        borderRadius: 0,
         border: `1px solid ${theme.palette.divider}`,
         boxShadow: isDragging ? theme.shadows[4] : theme.shadows[1],
         transition: "box-shadow 0.2s, background-color 0.2s",
@@ -558,7 +557,6 @@ export const ProxyChain = ({
             >
               <Box
                 sx={{
-                  borderRadius: 0,
                   minHeight: 60,
                   p: 1,
                 }}

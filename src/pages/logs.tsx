@@ -11,7 +11,7 @@ import { Virtuoso } from "react-virtuoso";
 import { BaseEmpty, BasePage } from "@/components/base";
 import { BaseSearchBox } from "@/components/base/base-search-box";
 import { SearchState } from "@/components/base/base-search-box";
-import { BaseStyledSelect } from "@/components/base/base-styled-select";
+import { GlassSelect } from "@/components/base";
 import LogItem from "@/components/log/log-item";
 import { useLogData } from "@/hooks/use-log-data-new";
 import { toggleLogEnabled } from "@/services/global-log-service";
@@ -138,7 +138,7 @@ const LogPage = () => {
             }`,
         }}
       >
-        <BaseStyledSelect
+        <GlassSelect
           value={logState}
           onChange={(e) => handleLogLevelChange(e.target.value as LogFilter)}
           sx={{ minWidth: 100 }}
@@ -148,7 +148,7 @@ const LogPage = () => {
           <MenuItem value="info">INFO</MenuItem>
           <MenuItem value="warn">WARN</MenuItem>
           <MenuItem value="err">ERROR</MenuItem>
-        </BaseStyledSelect>
+        </GlassSelect>
         <BaseSearchBox
           onSearch={(matcher, state) => {
             setMatch(() => matcher);

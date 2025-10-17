@@ -217,7 +217,6 @@ const ProxyControlSwitches = ({
                   px: 1,
                   fontSize: "11px",
                   fontWeight: 500,
-                  borderRadius: "4px",
                   textTransform: "none",
                   color: "primary.main",
                   backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),

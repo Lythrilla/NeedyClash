@@ -46,7 +46,6 @@ export const CustomTitlebar: FC = () => {
           size="small"
           onClick={minimize}
           sx={{
-            borderRadius: 0,
             width: "40px",
             height: "28px",
             fontSize: "11px",
@@ -64,7 +63,6 @@ export const CustomTitlebar: FC = () => {
           size="small"
           onClick={toggleMaximize}
           sx={{
-            borderRadius: 0,
             width: "40px",
             height: "28px",
             fontSize: "11px",
@@ -86,7 +84,6 @@ export const CustomTitlebar: FC = () => {
           size="small"
           onClick={close}
           sx={{
-            borderRadius: 0,
             width: "40px",
             height: "28px",
             fontSize: "11px",

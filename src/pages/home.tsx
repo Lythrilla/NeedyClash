@@ -8,25 +8,21 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
-  FormGroup,
   Grid,
-  IconButton,
   Skeleton,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { Suspense, lazy, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { BasePage } from "@/components/base";
+import { BasePage, BaseIconButton, ToolbarButtonGroup, BaseDialog } from "@/components/base";
+import {
+  EnhancedDialogTitle,
+  EnhancedFormGroup,
+} from "@/components/setting/mods/enhanced-dialog-components";
 import { ClashModeCard } from "@/components/home/clash-mode-card";
 import { CurrentProxyCard } from "@/components/home/current-proxy-card";
 import { EnhancedCard } from "@/components/home/enhanced-card";
@@ -107,10 +103,20 @@ const HomeSettingsDialog = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>{t("Home Settings")}</DialogTitle>
-      <DialogContent>
-        <FormGroup>
+    <BaseDialog
+      open={open}
+      title=""
+      contentSx={{ width: 520, maxHeight: 680, px: 3, py: 3 }}
+      okBtn={t("Save")}
+      cancelBtn={t("Cancel")}
+      onClose={onClose}
+      onCancel={onClose}
+      onOk={handleSave}
+    >
+      <EnhancedDialogTitle title={t("Home Settings")} />
+
+      <EnhancedFormGroup>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
           <FormControlLabel
             control={
               <Checkbox
@@ -192,15 +198,9 @@ const HomeSettingsDialog = ({
             }
             label={t("System Info Cards")}
           />
-        </FormGroup>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>{t("Cancel")}</Button>
-        <Button onClick={handleSave} color="primary">
-          {t("Save")}
-        </Button>
-      </DialogActions>
-    </Dialog>
+        </Box>
+      </EnhancedFormGroup>
+    </BaseDialog>
   );
 };
 
@@ -332,62 +332,23 @@ const HomePage = () => {
       title={t("Label-Home")}
       contentStyle={{ padding: 0, height: "100%" }}
       header={
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-          {/* 操作按钮组 - 统一风格 */}
-          <Typography
-            sx={{
-              fontSize: 11,
-              fontWeight: 600,
-              color: "text.disabled",
-              textTransform: "uppercase",
-              letterSpacing: "0.5px",
-            }}
-          >
-            TOOLS
-          </Typography>
-
-          <Box sx={{ display: "flex", gap: 0.75 }}>
-            <Tooltip title={t("LightWeight Mode")} arrow>
-              <IconButton
-                onClick={async () => await entry_lightweight_mode()}
-                size="small"
-                sx={{
-                  width: 28,
-                  height: 28,
-                  "&:hover": { bgcolor: "action.hover" },
-                }}
-              >
-                <HistoryEduOutlined sx={{ fontSize: 18 }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t("Manual")} arrow>
-              <IconButton
-                onClick={toGithubDoc}
-                size="small"
-                sx={{
-                  width: 28,
-                  height: 28,
-                  "&:hover": { bgcolor: "action.hover" },
-                }}
-              >
-                <HelpOutlineRounded sx={{ fontSize: 18 }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t("Home Settings")} arrow>
-              <IconButton
-                onClick={openSettings}
-                size="small"
-                sx={{
-                  width: 28,
-                  height: 28,
-                  "&:hover": { bgcolor: "action.hover" },
-                }}
-              >
-                <SettingsOutlined sx={{ fontSize: 18 }} />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Box>
+        <ToolbarButtonGroup label="TOOLS">
+          <BaseIconButton
+            icon={<HistoryEduOutlined sx={{ fontSize: 18 }} />}
+            tooltip={t("LightWeight Mode")}
+            onClick={async () => await entry_lightweight_mode()}
+          />
+          <BaseIconButton
+            icon={<HelpOutlineRounded sx={{ fontSize: 18 }} />}
+            tooltip={t("Manual")}
+            onClick={toGithubDoc}
+          />
+          <BaseIconButton
+            icon={<SettingsOutlined sx={{ fontSize: 18 }} />}
+            tooltip={t("Home Settings")}
+            onClick={openSettings}
+          />
+        </ToolbarButtonGroup>
       }
     >
       {/* Flexbox 布局 */}

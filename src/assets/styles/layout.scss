@@ -2,60 +2,50 @@
   width: 100%;
   height: 100vh;
   display: flex;
-  flex-direction: row; /* 横向布局：侧边栏 + 右侧区域 */
+  flex-direction: row;
   overflow: hidden;
-  position: relative; 
+  position: relative;
 
-  /* 侧边栏 - 固定定位从顶部开始 */
   .layout-content__left {
     position: fixed;
     left: 0;
     top: 0;
-    width: 180px;
+    width: var(--sidebar-width);
     height: 100vh;
     display: flex;
-    padding: 16px 35px;
+    padding: calc(var(--spacing-unit) * 2) 35px;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-unit);
     box-sizing: border-box;
     background: transparent;
     border-right: 1px solid var(--border-color);
     overflow: hidden;
-    transition: border-color 0.2s ease;
-    z-index: 10; /* 低于弹出层，确保菜单不被遮挡 */
+    transition: border-color var(--transition-fast);
+    z-index: 10;
 
     .the-logo {
-      /* 现代Logo区域 */
-      position: relative;
       flex: 0 0 auto;
       display: flex;
-      height: auto;
-      padding: 8px;
-      margin-bottom: 8px;
+      padding: var(--spacing-unit);
+      margin-bottom: var(--spacing-unit);
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      border-radius: 8px;
-      transition: background-color 0.2s ease;
-
-      &:hover {
-        background-color: var(--background-color-alpha);
-      }
+      gap: var(--spacing-unit);
 
       .logo-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
+        gap: var(--spacing-unit);
       }
 
       img,
       svg {
-        width: 28px;
-        height: 28px;
+        width: calc(var(--spacing-unit) * 3.5);
+        height: calc(var(--spacing-unit) * 3.5);
         pointer-events: none;
         opacity: 0.9;
-        transition: opacity 0.2s ease;
+        transition: opacity var(--transition-fast);
       }
 
       .logo-text {
@@ -67,34 +57,24 @@
     }
 
     .the-menu {
-      /* 可滚动菜单列表 */
-      flex: 1 1 auto; /* 允许弹性增长和滚动 */
-      overflow-y: auto; /* 启用垂直滚动 */
+      flex: 1 1 auto;
+      overflow-y: auto;
       overflow-x: hidden;
       margin: 0;
       padding: 0;
-      
-      /* 隐藏滚动条但保持滚动功能 */
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
       
       &::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+        display: none;
       }
     }
 
     .the-traffic {
-      /* 现代流量显示 */
       flex: 0 0 auto;
-      padding: 12px 8px;
+      padding: calc(var(--spacing-unit) * 1.5) var(--spacing-unit);
       margin-top: auto;
       border-top: 1px solid var(--border-color);
-      border-radius: 8px;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background-color: transparent;
-      }
 
       > div {
         margin: 0;
@@ -104,67 +84,59 @@
   }
 
   .layout-content {
-    /* 右侧区域：标题栏 + 主内容 */
     display: flex;
     flex-direction: column;
     flex: 1;
     overflow: hidden;
 
     &__right {
-      /* 主内容区域 */
       position: relative;
       flex: 1 1 100%;
-      height: 100%;
       overflow: hidden;
       display: flex;
       flex-direction: column;
 
       .the-content {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         overflow: auto;
       }
     }
   }
 }
 
+/* 平台标题栏样式 */
 .linux,
 .windows,
-.unknown {
-  &.layout {
-    .the_titlebar {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      padding: 10px;
-      box-sizing: border-box;
-      height: 36px;
-      border-bottom: 1px solid var(--divider-color);
-    }
-
-    .layout-content__right .the-content {
-      top: 5px;
-    }
-  }
-}
-
+.unknown,
 .macos {
   &.layout {
     .the_titlebar {
       width: 100%;
       display: flex;
-      justify-content: flex-start;
-      padding: 10px;
+      padding: calc(var(--spacing-unit) * 1.25);
       box-sizing: border-box;
-      height: 36px;
+      height: var(--titlebar-height);
       border-bottom: 1px solid var(--divider-color);
     }
 
     .layout-content__right .the-content {
-      top: 5px;
+      top: calc(var(--spacing-unit) * 0.625);
     }
+  }
+}
+
+/* 平台特定的标题栏对齐方式 */
+.linux,
+.windows,
+.unknown {
+  &.layout .the_titlebar {
+    justify-content: flex-end;
+  }
+}
+
+.macos {
+  &.layout .the_titlebar {
+    justify-content: flex-start;
   }
 }

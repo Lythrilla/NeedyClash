@@ -1,10 +1,10 @@
 import { ContentCopyRounded, PaletteOutlined } from "@mui/icons-material";
-import { Button, Input, MenuItem, Select } from "@mui/material";
+import { Box, Button, Input, MenuItem } from "@mui/material";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
-import { DialogRef, Switch } from "@/components/base";
+import { DialogRef, Switch, GlassSelect } from "@/components/base";
 import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { useVerge } from "@/hooks/use-verge";
 import { routers } from "@/pages/_routers";
@@ -109,34 +109,13 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ language: e })}
           onGuard={(e) => patchVerge({ language: e })}
         >
-          <Select 
-            className="custom-select"
-            size="small" 
-            sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
-            MenuProps={{
-              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-              transformOrigin: { vertical: 'top', horizontal: 'left' },
-              PaperProps: {
-                sx: {
-                  position: 'fixed',
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
-                  backdropFilter: "blur(20px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                  border: (theme) =>
-                    `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: "8px",
-                  zIndex: 1400,
-                },
-              },
-            }}
-          >
+          <GlassSelect>
             {languageOptions.map(({ code, label}) => (
               <MenuItem key={code} value={code}>
                 {label}
               </MenuItem>
             ))}
-          </Select>
+          </GlassSelect>
         </GuardState>
       </SettingItem>
 
@@ -149,34 +128,13 @@ const SettingVergeBasic = ({ onError }: Props) => {
             onChange={(e) => onChangeData({ tray_event: e })}
             onGuard={(e) => patchVerge({ tray_event: e })}
           >
-            <Select 
-              className="custom-select"
-              size="small" 
-              sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
-              MenuProps={{
-                anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-                transformOrigin: { vertical: 'top', horizontal: 'left' },
-                PaperProps: {
-                  sx: {
-                    position: 'fixed',
-                    backgroundColor: (theme) =>
-                      theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
-                    backdropFilter: "blur(20px) saturate(180%)",
-                    WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                    border: (theme) =>
-                      `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                    borderRadius: "8px",
-                    zIndex: 1400,
-                  },
-                },
-              }}
-            >
+            <GlassSelect>
               <MenuItem value="main_window">{t("Show Main Window")}</MenuItem>
               <MenuItem value="tray_menu">{t("Show Tray Menu")}</MenuItem>
               <MenuItem value="system_proxy">{t("System Proxy")}</MenuItem>
               <MenuItem value="tun_mode">{t("Tun Mode")}</MenuItem>
               <MenuItem value="disable">{t("Disable")}</MenuItem>
-            </Select>
+            </GlassSelect>
           </GuardState>
         </SettingItem>
       )}
@@ -194,34 +152,13 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ env_type: e })}
           onGuard={(e) => patchVerge({ env_type: e })}
         >
-          <Select 
-            className="custom-select"
-            size="small" 
-            sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
-            MenuProps={{
-              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-              transformOrigin: { vertical: 'top', horizontal: 'left' },
-              PaperProps: {
-                sx: {
-                  position: 'fixed',
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
-                  backdropFilter: "blur(20px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                  border: (theme) =>
-                    `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: "8px",
-                  zIndex: 1400,
-                },
-              },
-            }}
-          >
+          <GlassSelect>
             <MenuItem value="bash">Bash</MenuItem>
             <MenuItem value="fish">Fish</MenuItem>
             <MenuItem value="nushell">Nushell</MenuItem>
             <MenuItem value="cmd">CMD</MenuItem>
             <MenuItem value="powershell">PowerShell</MenuItem>
-          </Select>
+          </GlassSelect>
         </GuardState>
       </SettingItem>
 
@@ -233,28 +170,7 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ start_page: e })}
           onGuard={(e) => patchVerge({ start_page: e })}
         >
-          <Select 
-            className="custom-select"
-            size="small" 
-            sx={{ width: 140, "> div": { py: "5.5px", fontSize: "13px" } }}
-            MenuProps={{
-              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-              transformOrigin: { vertical: 'top', horizontal: 'left' },
-              PaperProps: {
-                sx: {
-                  position: 'fixed',
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
-                  backdropFilter: "blur(20px) saturate(180%)",
-                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
-                  border: (theme) =>
-                    `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  borderRadius: "8px",
-                  zIndex: 1400,
-                },
-              },
-            }}
-          >
+          <GlassSelect>
             {routers.map((page: { label: string; path: string }) => {
               return (
                 <MenuItem key={page.path} value={page.path}>
@@ -262,7 +178,7 @@ const SettingVergeBasic = ({ onError }: Props) => {
                 </MenuItem>
               );
             })}
-          </Select>
+          </GlassSelect>
         </GuardState>
       </SettingItem>
 
@@ -274,46 +190,52 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ startup_script: e })}
           onGuard={(e) => patchVerge({ startup_script: e })}
         >
-          <Input
-            value={startup_script}
-            disabled
-            disableUnderline
-            sx={{ width: 230 }}
-            endAdornment={
-              <>
-                <Button
-                  onClick={async () => {
-                    const selected = await open({
-                      directory: false,
-                      multiple: false,
-                      filters: [
-                        {
-                          name: "Shell Script",
-                          extensions: ["sh", "bat", "ps1"],
-                        },
-                      ],
-                    });
-                    if (selected) {
-                      onChangeData({ startup_script: `${selected}` });
-                      patchVerge({ startup_script: `${selected}` });
-                    }
-                  }}
-                >
-                  {t("Browse")}
-                </Button>
-                {startup_script && (
-                  <Button
-                    onClick={async () => {
-                      onChangeData({ startup_script: "" });
-                      patchVerge({ startup_script: "" });
-                    }}
-                  >
-                    {t("Clear")}
-                  </Button>
-                )}
-              </>
-            }
-          ></Input>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexWrap: "nowrap" }}>
+            <Input
+              value={startup_script}
+              disabled
+              disableUnderline
+              sx={{ 
+                minWidth: 80, 
+                maxWidth: 180,
+                fontSize: "13px",
+              }}
+            />
+            <Button
+              size="small"
+              sx={{ minWidth: "auto", px: 1, fontSize: "12px" }}
+              onClick={async () => {
+                const selected = await open({
+                  directory: false,
+                  multiple: false,
+                  filters: [
+                    {
+                      name: "Shell Script",
+                      extensions: ["sh", "bat", "ps1"],
+                    },
+                  ],
+                });
+                if (selected) {
+                  onChangeData({ startup_script: `${selected}` });
+                  patchVerge({ startup_script: `${selected}` });
+                }
+              }}
+            >
+              {t("Browse")}
+            </Button>
+            {startup_script && (
+              <Button
+                size="small"
+                sx={{ minWidth: "auto", px: 1, fontSize: "12px" }}
+                onClick={async () => {
+                  onChangeData({ startup_script: "" });
+                  patchVerge({ startup_script: "" });
+                }}
+              >
+                {t("Clear")}
+              </Button>
+            )}
+          </Box>
         </GuardState>
       </SettingItem>
 
@@ -385,12 +307,12 @@ const SettingVergeBasic = ({ onError }: Props) => {
               }
             })}
           >
-            <Select className="custom-select" size="small" sx={{ width: 85, "> div": { py: "5.5px", fontSize: "13px" } }}>
+            <GlassSelect sx={{ width: 85 }}>
               <MenuItem value={70}>70%</MenuItem>
               <MenuItem value={80}>80%</MenuItem>
               <MenuItem value={90}>90%</MenuItem>
               <MenuItem value={95}>95%</MenuItem>
-            </Select>
+            </GlassSelect>
           </GuardState>
         </SettingItem>
       )}

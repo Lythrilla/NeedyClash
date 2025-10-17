@@ -1,8 +1,8 @@
 [package]
 name = "clash-verge"
 version = "2.4.3"
-description = "clash verge"
-authors = ["zzzgydi", "Tunglies", "wonfen", "MystiPanda"]
+description = "Clash Verge Rev - Modified by Lythrilla"
+authors = ["Lythrilla", "Based on: zzzgydi, Tunglies, wonfen, MystiPanda"]
 license = "GPL-3.0-only"
 repository = "https://github.com/clash-verge-rev/clash-verge-rev.git"
 default-run = "clash-verge"

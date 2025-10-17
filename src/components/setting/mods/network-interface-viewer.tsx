@@ -122,7 +122,6 @@ const AddressDisplay = ({
       <Box>{label}</Box>
       <Box
         sx={({ palette }) => ({
-          borderRadius: "8px",
           padding: "2px 2px 2px 8px",
           background:
             palette.mode === "dark"

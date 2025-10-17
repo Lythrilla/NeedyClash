@@ -4,14 +4,14 @@ import {
   LinkRounded,
   MultipleStopRounded,
 } from "@mui/icons-material";
-import { Box, Typography, alpha } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import { closeAllConnections, getBaseConfig } from "tauri-plugin-mihomo-api";
 
-import { BasePage } from "@/components/base";
+import { BasePage, BaseModeSelector, ToolbarButtonGroup } from "@/components/base";
 import { ProviderButton } from "@/components/proxy/provider-button";
 import { ProxyGroups } from "@/components/proxy/proxy-groups";
 import { useVerge } from "@/hooks/use-verge";
@@ -56,12 +56,34 @@ const ProxyPage = () => {
 
   const { verge } = useVerge();
 
-  const modeList = useMemo(() => ["rule", "global", "direct"], []);
+  const curMode = clashConfig?.mode?.toLowerCase() || "rule";
 
-  const curMode = clashConfig?.mode?.toLowerCase();
+  // 模式选项配置
+  const modeOptions = useMemo(
+    () => [
+      {
+        value: "rule",
+        label: t("rule"),
+        icon: <MultipleStopRounded sx={{ fontSize: 16 }} />,
+        description: t("Rule Mode Description"),
+      },
+      {
+        value: "global",
+        label: t("global"),
+        icon: <LanguageRounded sx={{ fontSize: 16 }} />,
+        description: t("Global Mode Description"),
+      },
+      {
+        value: "direct",
+        label: t("direct"),
+        icon: <DirectionsRounded sx={{ fontSize: 16 }} />,
+        description: t("Direct Mode Description"),
+      },
+    ],
+    [t],
+  );
 
   const onChangeMode = useLockFn(async (mode: string) => {
-    // 断开连接
     if (mode !== curMode && verge?.auto_close_connection) {
       closeAllConnections();
     }
@@ -129,21 +151,6 @@ const ProxyPage = () => {
     };
   }, [isChainMode, updateChainConfigData]);
 
-  useEffect(() => {
-    if (curMode && !modeList.includes(curMode)) {
-      onChangeMode("rule");
-    }
-  }, [curMode, modeList, onChangeMode]);
-
-  const modeIcons = useMemo(
-    () => ({
-      rule: <MultipleStopRounded sx={{ fontSize: 16 }} />,
-      global: <LanguageRounded sx={{ fontSize: 16 }} />,
-      direct: <DirectionsRounded sx={{ fontSize: 16 }} />,
-    }),
-    [],
-  );
-
   return (
     <BasePage
       full
@@ -153,123 +160,37 @@ const ProxyPage = () => {
         <Box display="flex" alignItems="center" gap={1.5}>
           <ProviderButton />
 
-          {/* 代理模式选择 - 与首页风格统一 */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: 11,
-                fontWeight: 600,
-                color: "text.disabled",
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
-              MODE
-            </Typography>
-            <Box sx={{ display: "flex", gap: 0.75 }}>
-              {modeList.map((mode) => {
-                const isActive = mode === curMode;
-                return (
-                  <Box
-                    key={mode}
-                    onClick={() => onChangeMode(mode)}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 0.5,
-                      px: 1.25,
-                      py: 0.5,
-                      cursor: "pointer",
-                      borderRadius: 1.5,
-                      border: "1px solid",
-                      borderColor: isActive ? "primary.main" : "divider",
-                      backgroundColor: isActive
-                        ? (theme) => alpha(theme.palette.primary.main, 0.08)
-                        : "transparent",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        borderColor: "primary.main",
-                        backgroundColor: isActive
-                          ? (theme) => alpha(theme.palette.primary.main, 0.12)
-                          : (theme) => alpha(theme.palette.primary.main, 0.04),
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        color: isActive ? "primary.main" : "text.secondary",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      {modeIcons[mode as keyof typeof modeIcons]}
-                    </Box>
-                    <Typography
-                      sx={{
-                        fontSize: 12,
-                        fontWeight: isActive ? 600 : 500,
-                        color: isActive ? "primary.main" : "text.secondary",
-                        textTransform: "capitalize",
-                      }}
-                    >
-                      {t(mode)}
-                    </Typography>
-                  </Box>
-                );
-              })}
-            </Box>
-          </Box>
+          {/* 使用统一的模式选择器 */}
+          <BaseModeSelector
+            value={curMode}
+            options={modeOptions}
+            onChange={onChangeMode}
+            label="MODE"
+          />
 
-          {/* 链式代理按钮 - 统一设计风格 */}
-          <Box
-            onClick={onToggleChainMode}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              px: 1.25,
-              py: 0.5,
-              cursor: "pointer",
-              borderRadius: 1.5,
-              border: "1px solid",
-              borderColor: isChainMode ? "primary.main" : "divider",
-              backgroundColor: isChainMode
-                ? (theme) => alpha(theme.palette.primary.main, 0.08)
-                : "transparent",
-              transition: "all 0.2s ease",
-              "&:hover": {
-                borderColor: "primary.main",
-                backgroundColor: isChainMode
-                  ? (theme) => alpha(theme.palette.primary.main, 0.12)
-                  : (theme) => alpha(theme.palette.primary.main, 0.04),
+          {/* 链式代理按钮 */}
+          <BaseModeSelector
+            value={isChainMode ? "chain" : "normal"}
+            options={[
+              {
+                value: "chain",
+                label: t("Chain Proxy"),
+                icon: <LinkRounded sx={{ fontSize: 16 }} />,
+                description: t("Enable chain proxy mode"),
               },
+              {
+                value: "normal",
+                label: t("Normal"),
+                icon: <LinkRounded sx={{ fontSize: 16 }} />,
+                description: t("Normal proxy mode"),
+              },
+            ]}
+            onChange={(value) => {
+              if ((value === "chain") !== isChainMode) {
+                onToggleChainMode();
+              }
             }}
-          >
-            <Box
-              sx={{
-                color: isChainMode ? "primary.main" : "text.secondary",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <LinkRounded sx={{ fontSize: 16 }} />
-            </Box>
-            <Typography
-              sx={{
-                fontSize: 12,
-                fontWeight: isChainMode ? 600 : 500,
-                color: isChainMode ? "primary.main" : "text.secondary",
-              }}
-            >
-              {t("Chain Proxy")}
-            </Typography>
-          </Box>
+          />
         </Box>
       }
     >

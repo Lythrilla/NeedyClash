@@ -20,7 +20,7 @@ import { closeAllConnections } from "tauri-plugin-mihomo-api";
 
 import { BaseEmpty, BasePage } from "@/components/base";
 import { BaseSearchBox } from "@/components/base/base-search-box";
-import { BaseStyledSelect } from "@/components/base/base-styled-select";
+import { GlassSelect } from "@/components/base";
 import {
   ConnectionDetail,
   ConnectionDetailRef,
@@ -260,9 +260,9 @@ const ConnectionsPage = () => {
         }}
       >
         {!isTableLayout && (
-          <BaseStyledSelect
+          <GlassSelect
             value={curOrderOpt}
-            onChange={(e) => setCurOrderOpt(e.target.value)}
+            onChange={(e) => setCurOrderOpt(e.target.value as string)}
             sx={{ minWidth: 120 }}
           >
             {Object.keys(orderOpts).map((opt) => (
@@ -270,7 +270,7 @@ const ConnectionsPage = () => {
                 <span style={{ fontSize: 14 }}>{t(opt)}</span>
               </MenuItem>
             ))}
-          </BaseStyledSelect>
+          </GlassSelect>
         )}
         <BaseSearchBox onSearch={handleSearch} />
       </Box>

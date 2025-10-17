@@ -32,7 +32,6 @@ const KeyWrapper = styled("div")(({ theme }) => ({
     boxSizing: "border-box",
     padding: "3px 4px",
     border: "1px solid",
-    borderRadius: 4,
     borderColor: alpha(theme.palette.text.secondary, 0.15),
     "&:last-child": {
       marginRight: 0,
@@ -42,7 +41,6 @@ const KeyWrapper = styled("div")(({ theme }) => ({
     color: theme.palette.text.primary,
     border: "1px solid",
     borderColor: alpha(theme.palette.text.secondary, 0.2),
-    borderRadius: "2px",
     padding: "1px 5px",
     margin: "2px 0",
   },

@@ -2,10 +2,6 @@ import { RefreshRounded, StorageOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   IconButton,
   LinearProgress,
@@ -22,6 +18,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { updateProxyProvider } from "tauri-plugin-mihomo-api";
 
+import { BaseDialog } from "@/components/base";
+import { EnhancedDialogTitle } from "@/components/setting/mods/enhanced-dialog-components";
 import { useAppData } from "@/providers/app-data-context";
 import { showNotice } from "@/services/noticeService";
 import parseTraffic from "@/utils/parse-traffic";
@@ -32,7 +30,6 @@ const TypeBox = styled(Box)<{ component?: React.ElementType }>(({ theme }) => ({
   border: "1px solid #ccc",
   borderColor: alpha(theme.palette.secondary.main, 0.5),
   color: alpha(theme.palette.secondary.main, 0.8),
-  borderRadius: 0,
   fontSize: 10,
   marginRight: "4px",
   padding: "0 2px",
@@ -141,27 +138,27 @@ export const ProviderButton = () => {
         {t("Proxy Provider")}
       </Button>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h6">{t("Proxy Provider")}</Typography>
-            <Box>
-              <Button
-                variant="contained"
-                size="small"
-                onClick={updateAllProviders}
-              >
-                {t("Update All")}
-              </Button>
-            </Box>
-          </Box>
-        </DialogTitle>
+      <BaseDialog
+        open={open}
+        title=""
+        contentSx={{ width: 600, maxHeight: 680, px: 3, py: 3 }}
+        disableFooter
+        onClose={handleClose}
+      >
+        <EnhancedDialogTitle
+          title={t("Proxy Provider")}
+          action={
+            <Button
+              variant="contained"
+              size="small"
+              onClick={updateAllProviders}
+            >
+              {t("Update All")}
+            </Button>
+          }
+        />
 
-        <DialogContent>
+        <Box>
           <List sx={{ py: 0, minHeight: 250 }}>
             {Object.entries(proxyProviders || {})
               .sort()
@@ -194,7 +191,6 @@ export const ProviderButton = () => {
                       {
                         p: 0,
                         mb: "8px",
-                        borderRadius: 0,
                         overflow: "hidden",
                         transition: "all 0.2s",
                       },
@@ -279,7 +275,6 @@ export const ProviderButton = () => {
                                 value={progress}
                                 sx={{
                                   height: 6,
-                                  borderRadius: 0,
                                   opacity: total > 0 ? 1 : 0,
                                 }}
                               />
@@ -322,14 +317,8 @@ export const ProviderButton = () => {
                 );
               })}
           </List>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleClose} variant="outlined">
-            {t("Close")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        </Box>
+      </BaseDialog>
     </>
   );
 };

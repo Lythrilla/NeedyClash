@@ -182,10 +182,10 @@ const TrafficAnalyticsPage = () => {
         key={name}
         sx={{
           p: 1.5,
-          borderRadius: 1,
           border: "1px solid",
           borderColor: "divider",
           backgroundColor: "transparent",
+          borderRadius: 1,
           transition: "all 0.2s ease",
           "&:hover": {
             borderColor: "primary.main",
@@ -221,7 +221,6 @@ const TrafficAnalyticsPage = () => {
           sx={{
             position: "relative",
             height: 4,
-            borderRadius: 2,
             bgcolor: (theme) =>
               theme.palette.mode === "dark"
                 ? "rgba(255, 255, 255, 0.05)"
@@ -238,7 +237,6 @@ const TrafficAnalyticsPage = () => {
               height: "100%",
               width: `${percentage}%`,
               bgcolor: "primary.main",
-              borderRadius: 2,
               transition: "width 0.3s ease",
             }}
           />
@@ -400,7 +398,6 @@ const TrafficAnalyticsPage = () => {
               sx={{
                 border: "1px solid",
                 borderColor: "divider",
-                borderRadius: "4px",
                 overflow: "hidden",
               }}
             >
@@ -438,7 +435,6 @@ const TrafficAnalyticsPage = () => {
                     contentStyle={{
                       backgroundColor: "rgba(0, 0, 0, 0.8)",
                       border: "none",
-                      borderRadius: "4px",
                       fontSize: "11px",
                     }}
                     labelStyle={{ color: "#fff" }}
@@ -469,7 +465,6 @@ const TrafficAnalyticsPage = () => {
               sx={{
                 border: "1px solid",
                 borderColor: "divider",
-                borderRadius: "4px",
                 py: 5,
                 textAlign: "center",
               }}
@@ -533,7 +528,7 @@ const TrafficAnalyticsPage = () => {
                 </Typography>
               </Box>
             ) : (
-              <Box sx={{ display: "grid", gap: 1.5 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 {domainStats.slice(0, 20).map((stat, index) =>
                   renderStatCard(stat, index, maxDomainTraffic),
                 )}
@@ -575,7 +570,7 @@ const TrafficAnalyticsPage = () => {
                 </Typography>
               </Box>
             ) : (
-              <Box sx={{ display: "grid", gap: 1.5 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 {processStats.slice(0, 20).map((stat, index) =>
                   renderStatCard(stat, index, maxProcessTraffic),
                 )}

@@ -33,7 +33,6 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-root": {
     height: 32,
     fontSize: "13px",
-    borderRadius: "8px",
     backgroundColor:
       theme.palette.mode === "dark"
         ? "rgba(255, 255, 255, 0.02)"
@@ -196,7 +195,6 @@ export const BaseSearchBox = ({
                       justifyContent: "center",
                       width: 24,
                       height: 24,
-                      borderRadius: "4px",
                       cursor: "pointer",
                       transition: "all 0.2s",
                       "&:hover": {
@@ -220,7 +218,6 @@ export const BaseSearchBox = ({
                       justifyContent: "center",
                       width: 24,
                       height: 24,
-                      borderRadius: "4px",
                       cursor: "pointer",
                       transition: "all 0.2s",
                       "&:hover": {
@@ -244,7 +241,6 @@ export const BaseSearchBox = ({
                       justifyContent: "center",
                       width: 24,
                       height: 24,
-                      borderRadius: "4px",
                       cursor: "pointer",
                       transition: "all 0.2s",
                       "&:hover": {

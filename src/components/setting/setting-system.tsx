@@ -143,7 +143,6 @@ const SettingSystem = ({ onError }: Props) => {
               px: 1.5,
               fontSize: "12px",
               fontWeight: 500,
-              borderRadius: "6px",
               textTransform: "none",
               color: "primary.main",
               backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),

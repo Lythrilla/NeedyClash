@@ -136,7 +136,6 @@ export const TestItem = ({
         sx={{
           position: "relative",
           padding: "6px",
-          borderRadius: "4px",
           border: "1px solid",
           borderColor: "divider",
           backgroundColor: "transparent",
@@ -231,7 +230,6 @@ export const TestItem = ({
               sx={{
                 fontSize: "8px",
                 padding: "2px 4px",
-                borderRadius: "2px",
                 cursor: "pointer",
                 color: "primary.main",
                 opacity: 0.6,
@@ -256,7 +254,6 @@ export const TestItem = ({
                 fontSize: "8px",
                 fontWeight: 500,
                 padding: "2px 4px",
-                borderRadius: "2px",
                 cursor: "pointer",
                 color: delayManager.formatDelayColor(delay),
                 "&:hover": {
@@ -287,7 +284,6 @@ export const TestItem = ({
             WebkitBackdropFilter: "blur(20px) saturate(180%)",
             border: (theme) =>
               `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-            borderRadius: "8px",
             zIndex: 1400,
           },
         }}

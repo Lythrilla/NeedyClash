@@ -27,8 +27,6 @@ export const LayoutItem = (props: Props) => {
         selected={!!match}
         sx={[
           {
-            /* 紧凑居中设计 */
-            borderRadius: "6px",
             padding: "8px 10px",
             minHeight: "36px",
             transition: "all 0.2s ease",

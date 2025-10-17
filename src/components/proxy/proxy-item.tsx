@@ -33,7 +33,6 @@ const Widget = styled(Box)(() => ({
   fontSize: 12,
   fontWeight: 600,
   fontFamily: "monospace",
-  borderRadius: 0,
 }));
 
 const TypeBox = styled("span")(({ theme }) => ({
@@ -41,7 +40,6 @@ const TypeBox = styled("span")(({ theme }) => ({
   border: "1px solid",
   borderColor: alpha(theme.palette.text.secondary, 0.2),
   color: alpha(theme.palette.text.secondary, 0.5),
-  borderRadius: 0,
   fontSize: 10,
   fontWeight: 600,
   padding: "1px 4px",

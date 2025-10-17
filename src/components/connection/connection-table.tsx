@@ -9,6 +9,7 @@ import { useLocalStorage } from "foxact/use-local-storage";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useVerge } from "@/hooks/use-verge";
 import parseTraffic from "@/utils/parse-traffic";
 import { truncateStr } from "@/utils/truncate-str";
 
@@ -20,7 +21,10 @@ interface Props {
 export const ConnectionTable = (props: Props) => {
   const { connections, onShowDetail } = props;
   const { t } = useTranslation();
+  const { verge } = useVerge();
   const apiRef = useGridApiRef();
+  
+  const connectionTableBlur = verge?.theme_setting?.connection_table_blur ?? 0;
   useEffect(() => {
     const PATCH_FLAG_KEY = "__clashPatchedPublishEvent" as const;
     const ORIGINAL_KEY = "__clashOriginalPublishEvent" as const;
@@ -295,6 +299,21 @@ export const ConnectionTable = (props: Props) => {
         "& .MuiDataGrid-columnHeader": {
           userSelect: "none",
         },
+        ...(connectionTableBlur > 0 && {
+          position: "relative",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backdropFilter: `blur(${connectionTableBlur}px)`,
+            WebkitBackdropFilter: `blur(${connectionTableBlur}px)`,
+            pointerEvents: "none",
+            zIndex: -1,
+          },
+        }),
       }}
       columnVisibilityModel={columnVisible}
       onColumnVisibilityModelChange={(e) => setColumnVisible(e)}

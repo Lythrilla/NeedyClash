@@ -33,7 +33,6 @@ const filterBaseOriginsForUI = (origins: string[]) => {
 
 // 统一使用的按钮样式
 const buttonStyle = {
-  borderRadius: "8px",
   textTransform: "none",
   boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   transition: "all 0.3s ease",
@@ -264,7 +263,6 @@ export const HeaderConfiguration = forwardRef<ClashHeaderConfigingRef>(
                   marginTop: 12,
                   padding: 8,
                   backgroundColor: "#f5f5f5",
-                  borderRadius: 4,
                 }}
               >
                 <div
