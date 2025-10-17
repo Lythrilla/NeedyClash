@@ -1,7 +1,4 @@
 # Clash Verge Rev - 多平台自动构建
-# 作者: Lythrilla
-# 此工作流会在推送时自动构建 Windows、macOS 和 Linux 版本
-
 name: 多平台构建
 
 on:
