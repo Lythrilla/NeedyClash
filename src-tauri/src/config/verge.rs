@@ -255,31 +255,31 @@ pub struct IVergeTheme {
 
     pub font_family: Option<String>,
     pub css_injection: Option<String>,
-    
+
     // 窗口背景设置
     pub background_type: Option<String>, // "color" | "image" | "video" | "none"
     pub background_color: Option<String>, // 纯色背景
     pub background_image: Option<String>, // 图片URL
     pub background_video: Option<String>, // 视频URL
     pub background_opacity: Option<f32>, // 背景不透明度 0.0-1.0
-    pub background_blur: Option<f32>, // 背景模糊度 0-100
+    pub background_blur: Option<f32>,    // 背景模糊度 0-100
     pub background_brightness: Option<f32>, // 背景亮度 0-200
     pub background_blend_mode: Option<String>, // CSS混合模式
     pub background_size: Option<String>, // cover | contain | auto
     pub background_position: Option<String>, // center | top | bottom | left | right
     pub background_repeat: Option<String>, // no-repeat | repeat | repeat-x | repeat-y
-    pub background_scale: Option<f32>, // 背景缩放 1.0-1.5
-    
+    pub background_scale: Option<f32>,   // 背景缩放 1.0-1.5
+
     // 侧边栏样式设置
     pub sidebar_background_color: Option<String>, // 侧边栏背景色
-    pub sidebar_opacity: Option<f32>, // 侧边栏不透明度 0.0-1.0
-    pub sidebar_blur: Option<f32>, // 侧边栏模糊度 0-50
-    
+    pub sidebar_opacity: Option<f32>,             // 侧边栏不透明度 0.0-1.0
+    pub sidebar_blur: Option<f32>,                // 侧边栏模糊度 0-50
+
     // Header样式设置
     pub header_background_color: Option<String>, // Header背景色
-    pub header_opacity: Option<f32>, // Header不透明度 0.0-1.0
-    pub header_blur: Option<f32>, // Header模糊度 0-50
-    
+    pub header_opacity: Option<f32>,             // Header不透明度 0.0-1.0
+    pub header_blur: Option<f32>,                // Header模糊度 0-50
+
     // 组件微调设置
     #[serde(skip_serializing_if = "Option::is_none")]
     pub component_styles: Option<serde_json::Value>, // 组件样式配置(JSON)
