@@ -931,6 +931,7 @@ export const EnhancedCanvasTrafficGraph = memo(
                 sx={{
                   width: 8,
                   height: 8,
+                  borderRadius: "var(--cv-border-radius-xs)",
                   bgcolor: colors.up,
                   opacity: 0.7,
                 }}
@@ -949,6 +950,7 @@ export const EnhancedCanvasTrafficGraph = memo(
                 sx={{
                   width: 8,
                   height: 8,
+                  borderRadius: "var(--cv-border-radius-xs)",
                   bgcolor: colors.down,
                   opacity: 0.7,
                 }}
@@ -974,6 +976,7 @@ export const EnhancedCanvasTrafficGraph = memo(
                 bgcolor: theme.palette.background.paper,
                 border: 1,
                 borderColor: "divider",
+                borderRadius: "var(--cv-border-radius-sm)",
                 px: 1,
                 py: 0.5,
                 fontSize: "10px",

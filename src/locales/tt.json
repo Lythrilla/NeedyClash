@@ -215,7 +215,7 @@
   "uninstall": "Урнаштырылмаган",
   "active": "Актив",
   "unknown": "Билгесез",
-  "Information: Please make sure that the Clash Verge Service is installed and enabled": "Игътибар: Clash Verge сервисы урнаштырылган һәм активлаштырылган булырга тиеш",
+  "Information: Please make sure that the Clash Verge Service is installed and enabled": "Игътибар: NeedyClash сервисы урнаштырылган һәм активлаштырылган булырга тиеш",
   "Install": "Урнаштыру",
   "Uninstall": "Салдыру",
   "Disable Service Mode": "Сервис режимын сүндерү",
@@ -354,7 +354,7 @@
   "Break Change Update Error": "Бу зур яңарту, ул кушымта эчендә яңартылмый. Борып алып ташлап, яңадан урнаштыру сорала.",
   "Open Dev Tools": "Разработчик коралларын ачу",
   "Exit": "Чыгу",
-  "Verge Version": "Verge версиясе",
+  "Verge Version": "NeedyClash версиясе",
   "ReadOnly": "Уку режимы гына",
   "ReadOnlyMessage": "Уку режимында үзгәртү мөмкин түгел",
   "Filter": "Фильтр",
@@ -455,5 +455,5 @@
   "TUN requires Service Mode": "TUN режимы хезмәт күрсәтүне таләп итә",
   "Install Service": "Хезмәтне урнаштыру",
   "Installing Service...": "Хезмәт урнаштырыла...",
-  "Service Administrator Prompt": "Clash Verge система хезмәтен яңадан урнаштыру өчен администратор хокукларын таләп итә"
+  "Service Administrator Prompt": "NeedyClash система хезмәтен яңадан урнаштыру өчен администратор хокукларын таләп итә"
 }

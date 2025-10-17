@@ -43,21 +43,17 @@ export const GlassSelect = ({ children, ...props }: GlassSelectProps) => {
       sx={{
         width: 140,
         fontSize: "13px",
-        "& .MuiSelect-select": {
-          py: "8.5px",
-          fontSize: "13px",
-        },
         "& .MuiOutlinedInput-notchedOutline": {
           borderColor: (theme) => 
             theme.palette.mode === "light" 
-              ? "rgba(0, 0, 0, 0.23)" 
-              : "rgba(255, 255, 255, 0.23)",
+              ? "#E2E8F0" 
+              : "rgba(255, 255, 255, 0.12)",
         },
         "&:hover .MuiOutlinedInput-notchedOutline": {
           borderColor: (theme) => 
             theme.palette.mode === "light" 
-              ? "rgba(0, 0, 0, 0.87)" 
-              : "rgba(255, 255, 255, 0.87)",
+              ? "#CBD5E1" 
+              : "rgba(255, 255, 255, 0.2)",
         },
         "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
           borderColor: "primary.main",

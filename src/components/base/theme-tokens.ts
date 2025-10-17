@@ -14,13 +14,14 @@ export const spacing = {
   xl: 3,
 } as const;
 
-// 圆角系统
+// 圆角系统 - 与 CSS 变量保持一致
 export const borderRadius = {
-  sm: "4px",
-  md: "6px",
-  lg: "8px",
-  xl: "12px",
-  full: "9999px",
+  xs: "var(--cv-border-radius-xs)",
+  sm: "var(--cv-border-radius-sm)",
+  md: "var(--cv-border-radius-md)",
+  lg: "var(--cv-border-radius-lg)",
+  xl: "var(--cv-border-radius-xl)",
+  full: "var(--cv-border-radius-full)",
 } as const;
 
 // 字体大小系统

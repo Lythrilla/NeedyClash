@@ -149,6 +149,8 @@ const ProxyControlSwitches = ({
   const onInstallService = useLockFn(async () => {
     try {
       await installServiceAndRestartCore();
+      // 等待一小段时间确保服务状态完全更新
+      await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
     } catch (err) {
@@ -218,6 +220,7 @@ const ProxyControlSwitches = ({
                   fontSize: "11px",
                   fontWeight: 500,
                   textTransform: "none",
+                  borderRadius: "var(--cv-border-radius-sm)",
                   color: "primary.main",
                   backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),
                   transition: "all 0.2s",

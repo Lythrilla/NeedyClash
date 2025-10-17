@@ -23,21 +23,21 @@ export const CustomTitlebar: FC = () => {
     <Box
       data-tauri-drag-region
       sx={{
-        height: "28px",
+        height: "36px",
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-end",
         backgroundColor: "transparent",
-        px: 0,
+        px: 1,
         WebkitAppRegion: "drag",
         userSelect: "none",
       }}
     >
-      {/* 窗口控制按钮 - 极简风格 */}
+      {/* 窗口控制按钮 - 轻量圆润风格 */}
       <Box
         sx={{
           display: "flex",
-          gap: 0,
+          gap: 0.5,
           alignItems: "center",
           WebkitAppRegion: "no-drag",
         }}
@@ -46,57 +46,80 @@ export const CustomTitlebar: FC = () => {
           size="small"
           onClick={minimize}
           sx={{
-            width: "40px",
-            height: "28px",
-            fontSize: "11px",
-            color: "text.disabled",
-            opacity: 0.6,
+            width: "32px",
+            height: "32px",
+            borderRadius: "var(--cv-border-radius-sm)",
+            fontSize: "18px",
+            color: isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             "&:hover": {
-              backgroundColor: "transparent",
-              opacity: 1,
+              backgroundColor: isDark 
+                ? alpha(theme.palette.common.white, 0.06)
+                : alpha(theme.palette.common.black, 0.04),
+              color: isDark ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.85)",
+              transform: "scale(1.05)",
+            },
+            "&:active": {
+              transform: "scale(0.95)",
             },
           }}
         >
-          <Minimize fontSize="inherit" />
+          <Minimize sx={{ 
+            fontSize: "16px", 
+            strokeWidth: 0.5,
+            transform: "translateY(-3px)",
+          }} />
         </IconButton>
         <IconButton
           size="small"
           onClick={toggleMaximize}
           sx={{
-            width: "40px",
-            height: "28px",
-            fontSize: "11px",
-            color: "text.disabled",
-            opacity: 0.6,
+            width: "32px",
+            height: "32px",
+            borderRadius: "var(--cv-border-radius-sm)",
+            fontSize: "16px",
+            color: isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             "&:hover": {
-              backgroundColor: "transparent",
-              opacity: 1,
+              backgroundColor: isDark 
+                ? alpha(theme.palette.common.white, 0.06)
+                : alpha(theme.palette.common.black, 0.04),
+              color: isDark ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.85)",
+              transform: "scale(1.05)",
+            },
+            "&:active": {
+              transform: "scale(0.95)",
             },
           }}
         >
           {maximized ? (
-            <FilterNone fontSize="inherit" />
+            <FilterNone sx={{ fontSize: "13px" }} />
           ) : (
-            <CropSquare fontSize="inherit" />
+            <CropSquare sx={{ fontSize: "13px" }} />
           )}
         </IconButton>
         <IconButton
           size="small"
           onClick={close}
           sx={{
-            width: "40px",
-            height: "28px",
-            fontSize: "11px",
-            color: "text.disabled",
-            opacity: 0.6,
+            width: "32px",
+            height: "32px",
+            borderRadius: "var(--cv-border-radius-sm)",
+            fontSize: "18px",
+            color: isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             "&:hover": {
-              backgroundColor: "transparent",
-              color: "#E81123",
-              opacity: 1,
+              backgroundColor: alpha("#FF5555", 0.15),
+              color: "#FF5555",
+              transform: "scale(1.05)",
+            },
+            "&:active": {
+              transform: "scale(0.95)",
+              backgroundColor: alpha("#FF5555", 0.25),
             },
           }}
         >
-          <Close fontSize="inherit" />
+          <Close sx={{ fontSize: "16px" }} />
         </IconButton>
       </Box>
     </Box>

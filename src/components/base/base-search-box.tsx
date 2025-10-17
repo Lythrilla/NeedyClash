@@ -31,12 +31,7 @@ type SearchProps = {
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& .MuiInputBase-root": {
-    height: 32,
     fontSize: "13px",
-    backgroundColor:
-      theme.palette.mode === "dark"
-        ? "rgba(255, 255, 255, 0.02)"
-        : "rgba(0, 0, 0, 0.02)",
     paddingRight: "4px",
   },
   "& .MuiInputBase-root svg[aria-label='active'] path": {
@@ -179,7 +174,7 @@ export const BaseSearchBox = ({
         variant="outlined"
         spellCheck="false"
         placeholder={placeholder ?? t("Filter conditions")}
-        sx={{ input: { py: 0.65, px: 1.25 } }}
+        sx={{}}
         onChange={onChange}
         error={!!errorMessage}
         slotProps={{
@@ -196,6 +191,7 @@ export const BaseSearchBox = ({
                       width: 24,
                       height: 24,
                       cursor: "pointer",
+                      borderRadius: "var(--cv-border-radius-xs)",
                       transition: "all 0.2s",
                       "&:hover": {
                         bgcolor: "action.hover",
@@ -219,6 +215,7 @@ export const BaseSearchBox = ({
                       width: 24,
                       height: 24,
                       cursor: "pointer",
+                      borderRadius: "var(--cv-border-radius-xs)",
                       transition: "all 0.2s",
                       "&:hover": {
                         bgcolor: "action.hover",
@@ -242,6 +239,7 @@ export const BaseSearchBox = ({
                       width: 24,
                       height: 24,
                       cursor: "pointer",
+                      borderRadius: "var(--cv-border-radius-xs)",
                       transition: "all 0.2s",
                       "&:hover": {
                         bgcolor: "action.hover",

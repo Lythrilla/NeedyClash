@@ -3,7 +3,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "bundle": {
     "active": true,
-    "longDescription": "Clash Verge Rev - Modified by Lythrilla",
+    "longDescription": "NeedyClash - A secondary development version based on Clash Verge Rev",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -14,9 +14,9 @@
     "resources": ["resources", "resources/locales/*"],
     "publisher": "Lythrilla",
     "externalBin": ["sidecar/verge-mihomo", "sidecar/verge-mihomo-alpha"],
-    "copyright": "Modified by Lythrilla - Based on Clash Verge Rev (GPL-3.0)",
+    "copyright": "NeedyClash by Lythrilla - Based on Clash Verge Rev (GPL-3.0)",
     "category": "DeveloperTool",
-    "shortDescription": "Clash Verge Rev - Lythrilla Edition",
+    "shortDescription": "NeedyClash - Secondary development of Clash Verge Rev",
     "createUpdaterArtifacts": false
   },
   "build": {
@@ -25,8 +25,8 @@
     "beforeDevCommand": "pnpm run web:dev",
     "devUrl": "http://localhost:3000/"
   },
-  "productName": "Clash Verge",
-  "identifier": "io.github.clash-verge-rev.clash-verge-rev",
+  "productName": "NeedyClash",
+  "identifier": "com.lythrilla.needyclash",
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEQyOEMyRjBCQkVGOUJEREYKUldUZnZmbStDeStNMHU5Mmo1N24xQXZwSVRYbXA2NUpzZE5oVzlqeS9Bc0t6RVV4MmtwVjBZaHgK",

@@ -13,12 +13,10 @@ export const BaseStyledTextField = styled((props: TextFieldProps) => {
       variant="outlined"
       spellCheck="false"
       placeholder={t("Filter conditions")}
-      sx={{ input: { py: 0.65, px: 1.25 } }}
+      sx={{}}
       {...props}
     />
   );
 })(({ theme }) => ({
-  "& .MuiInputBase-root": {
-    background: theme.palette.mode === "light" ? "#fff" : undefined,
-  },
+  // 使用MUI主题的全局配置
 }));

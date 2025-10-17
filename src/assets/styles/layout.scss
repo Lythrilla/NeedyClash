@@ -1,3 +1,7 @@
+/* ========================================
+   主布局容器
+   ======================================== */
+
 .layout {
   width: 100%;
   height: 100vh;
@@ -5,47 +9,52 @@
   flex-direction: row;
   overflow: hidden;
   position: relative;
+  /* 确保初始渲染时布局稳定 */
+  min-height: 100vh;
 
+  /* ========================================
+     左侧边栏
+     ======================================== */
+  
   .layout-content__left {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: var(--sidebar-width);
+    flex: 0 0 var(--cv-sidebar-width);
+    width: var(--cv-sidebar-width);
     height: 100vh;
     display: flex;
-    padding: calc(var(--spacing-unit) * 2) 35px;
+    padding: calc(var(--cv-spacing-unit) * 2) 35px;
     flex-direction: column;
-    gap: var(--spacing-unit);
+    gap: var(--cv-spacing-unit);
     box-sizing: border-box;
     background: transparent;
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
     overflow: hidden;
-    transition: border-color var(--transition-fast);
-    z-index: 10;
+    transition: border-color var(--cv-transition-fast);
+    z-index: var(--cv-z-sidebar);
 
+    /* Logo 区域 */
     .the-logo {
       flex: 0 0 auto;
       display: flex;
-      padding: var(--spacing-unit);
-      margin-bottom: var(--spacing-unit);
+      padding: var(--cv-spacing-unit);
+      margin-bottom: var(--cv-spacing-unit);
       flex-direction: column;
       align-items: center;
-      gap: var(--spacing-unit);
+      gap: var(--cv-spacing-unit);
 
       .logo-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: var(--spacing-unit);
+        gap: var(--cv-spacing-unit);
       }
 
       img,
       svg {
-        width: calc(var(--spacing-unit) * 3.5);
-        height: calc(var(--spacing-unit) * 3.5);
+        width: calc(var(--cv-spacing-unit) * 3.5);
+        height: calc(var(--cv-spacing-unit) * 3.5);
         pointer-events: none;
         opacity: 0.9;
-        transition: opacity var(--transition-fast);
+        transition: opacity var(--cv-transition-fast);
       }
 
       .logo-text {
@@ -56,25 +65,23 @@
       }
     }
 
+    /* 导航菜单 */
     .the-menu {
       flex: 1 1 auto;
       overflow-y: auto;
       overflow-x: hidden;
       margin: 0;
       padding: 0;
-      scrollbar-width: none;
+      scrollbar-width: thin;
       -ms-overflow-style: none;
-      
-      &::-webkit-scrollbar {
-        display: none;
-      }
     }
 
+    /* 流量统计 */
     .the-traffic {
       flex: 0 0 auto;
-      padding: calc(var(--spacing-unit) * 1.5) var(--spacing-unit);
+      padding: calc(var(--cv-spacing-unit) * 1.5) var(--cv-spacing-unit);
       margin-top: auto;
-      border-top: 1px solid var(--border-color);
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
 
       > div {
         margin: 0;
@@ -82,12 +89,30 @@
       }
     }
   }
+  
+  /* 暗色模式下的柔和分割线 */
+  @media (prefers-color-scheme: dark) {
+    .layout-content__left {
+      border-right-color: rgba(255, 255, 255, 0.04);
+      
+      .the-traffic {
+        border-top-color: rgba(255, 255, 255, 0.04);
+      }
+    }
+  }
+
+  /* ========================================
+     主内容区域
+     ======================================== */
 
   .layout-content {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 1 1 auto;
     overflow: hidden;
+    /* 防止 flex 项目超出容器 */
+    min-width: 0;
+    min-height: 0;
 
     &__right {
       position: relative;
@@ -95,17 +120,27 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      /* 确保高度填满 */
+      height: 100%;
+      min-height: 0;
 
       .the-content {
         position: absolute;
         inset: 0;
         overflow: auto;
+        scrollbar-gutter: stable;
+        /* 优化滚动性能 */
+        will-change: scroll-position;
       }
     }
   }
 }
 
-/* 平台标题栏样式 */
+/* ========================================
+   平台特定样式
+   ======================================== */
+
+/* Windows/Linux/Unknown 平台 */
 .linux,
 .windows,
 .unknown,
@@ -114,29 +149,36 @@
     .the_titlebar {
       width: 100%;
       display: flex;
-      padding: calc(var(--spacing-unit) * 1.25);
+      padding: 0;
       box-sizing: border-box;
-      height: var(--titlebar-height);
-      border-bottom: 1px solid var(--divider-color);
+      height: 36px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      z-index: var(--cv-z-header);
+      align-items: center;
+      backdrop-filter: blur(10px);
     }
 
     .layout-content__right .the-content {
-      top: calc(var(--spacing-unit) * 0.625);
+      top: 0;
+    }
+  }
+  
+  /* 暗色模式下的标题栏分割线 */
+  @media (prefers-color-scheme: dark) {
+    &.layout .the_titlebar {
+      border-bottom-color: rgba(255, 255, 255, 0.04);
     }
   }
 }
 
-/* 平台特定的标题栏对齐方式 */
-.linux,
-.windows,
-.unknown {
-  &.layout .the_titlebar {
-    justify-content: flex-end;
-  }
+/* 标题栏按钮对齐 */
+.linux.layout .the_titlebar,
+.windows.layout .the_titlebar,
+.unknown.layout .the_titlebar {
+  justify-content: flex-end;
 }
 
-.macos {
-  &.layout .the_titlebar {
-    justify-content: flex-start;
-  }
+.macos.layout .the_titlebar {
+  justify-content: flex-start;
 }
+

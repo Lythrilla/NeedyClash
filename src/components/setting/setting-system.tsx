@@ -62,6 +62,8 @@ const SettingSystem = ({ onError }: Props) => {
   const onInstallService = useLockFn(async () => {
     try {
       await installServiceAndRestartCore();
+      // 等待一小段时间确保服务状态完全更新
+      await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
     } catch (err) {

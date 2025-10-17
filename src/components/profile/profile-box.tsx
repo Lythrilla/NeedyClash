@@ -52,6 +52,7 @@ export const ProfileBox = styled(Box)(({
     backgroundColor: mode === "light" ? "#ffffff" : alpha(theme.palette.background.paper, 0.7), /* 暗色模式半透明 */
     ...borderSelect,
     border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(51, 65, 85, 0.5)"}`, /* 添加边框 */
+    borderRadius: "var(--cv-border-radius-md)", /* 添加圆角 */
     color,
     transition: "all 0.2s ease",
     "&:hover": {

@@ -86,6 +86,13 @@ export const ProfileGroupManager = forwardRef<
       return;
     }
 
+    // 验证颜色格式
+    const colorRegex = /^#[0-9A-Fa-f]{6}$/;
+    if (!colorRegex.test(groupColor)) {
+      showNotice("error", t("Invalid color format. Please use #RRGGBB format"));
+      return;
+    }
+
     try {
       const newGroups = [...groups];
       if (editingGroup) {
@@ -94,14 +101,14 @@ export const ProfileGroupManager = forwardRef<
           newGroups[index] = {
             ...editingGroup,
             name: groupName.trim(),
-            color: groupColor,
+            color: groupColor.toUpperCase(),
           };
         }
       } else {
         newGroups.push({
           id: `g_${Date.now()}`,
           name: groupName.trim(),
-          color: groupColor,
+          color: groupColor.toUpperCase(),
         });
       }
 
@@ -182,6 +189,7 @@ export const ProfileGroupManager = forwardRef<
                   sx={{
                     width: 12,
                     height: 12,
+                    borderRadius: "var(--cv-border-radius-xs)",
                     bgcolor: group.color || DEFAULT_COLORS[0],
                   }}
                 />
@@ -230,8 +238,13 @@ export const ProfileGroupManager = forwardRef<
                     alignItems: "center",
                     justifyContent: "space-between",
                     p: 1.5,
+                    borderRadius: "var(--cv-border-radius-sm)",
                     border: (theme) => `1px solid ${theme.palette.divider}`,
-                    "&:hover": { borderColor: "primary.main" },
+                    transition: "all 0.15s ease",
+                    "&:hover": { 
+                      borderColor: "primary.main",
+                      bgcolor: "action.hover",
+                    },
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -239,11 +252,12 @@ export const ProfileGroupManager = forwardRef<
                       sx={{
                         width: 16,
                         height: 16,
+                        borderRadius: "var(--cv-border-radius-xs)",
                         bgcolor: group.color || DEFAULT_COLORS[0],
                       }}
                     />
                     <Box>
-                      <Typography sx={{ fontSize: 14, fontWeight: 600 }}>
+                      <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
                         {group.name}
                       </Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
@@ -252,10 +266,18 @@ export const ProfileGroupManager = forwardRef<
                     </Box>
                   </Box>
                   <Box sx={{ display: "flex", gap: 0.5 }}>
-                    <IconButton size="small" onClick={() => handleEdit(group)}>
+                    <IconButton 
+                      size="small" 
+                      onClick={() => handleEdit(group)}
+                      sx={{ width: 24, height: 24 }}
+                    >
                       <EditRounded sx={{ fontSize: 16 }} />
                     </IconButton>
-                    <IconButton size="small" onClick={() => handleDelete(group.id)}>
+                    <IconButton 
+                      size="small" 
+                      onClick={() => handleDelete(group.id)}
+                      sx={{ width: 24, height: 24 }}
+                    >
                       <DeleteRounded sx={{ fontSize: 16 }} />
                     </IconButton>
                   </Box>
@@ -278,25 +300,93 @@ export const ProfileGroupManager = forwardRef<
           </EnhancedFormItem>
 
           <EnhancedFormItem label={t("Color")} fullWidth>
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              {DEFAULT_COLORS.map((color) => (
-                <Box
-                  key={color}
-                  onClick={() => setGroupColor(color)}
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    bgcolor: color,
-                    cursor: "pointer",
-                    border: (theme) =>
-                      groupColor === color
-                        ? `2px solid ${theme.palette.text.primary}`
-                        : `1px solid ${theme.palette.divider}`,
-                    "&:hover": { transform: "scale(1.05)" },
-                    transition: "all 0.2s",
-                  }}
-                />
-              ))}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {/* 预设颜色 */}
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {DEFAULT_COLORS.map((color) => (
+                  <Box
+                    key={color}
+                    onClick={() => setGroupColor(color)}
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: "var(--cv-border-radius-sm)",
+                      bgcolor: color,
+                      cursor: "pointer",
+                      border: (theme) =>
+                        groupColor === color
+                          ? `2px solid ${theme.palette.text.primary}`
+                          : `1px solid ${theme.palette.divider}`,
+                      "&:hover": { 
+                        opacity: 0.8,
+                      },
+                      transition: "all 0.15s ease",
+                    }}
+                  />
+                ))}
+              </Box>
+              
+              {/* 自定义颜色 */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ minWidth: 80 }}>
+                  {t("Custom")}:
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Box
+                    component="input"
+                    type="color"
+                    value={groupColor}
+                    onChange={(e: any) => setGroupColor(e.target.value)}
+                    sx={{
+                      width: 50,
+                      height: 32,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: "var(--cv-border-radius-sm)",
+                      cursor: "pointer",
+                      bgcolor: "transparent",
+                      "&::-webkit-color-swatch-wrapper": {
+                        padding: 0,
+                      },
+                      "&::-webkit-color-swatch": {
+                        border: "none",
+                        borderRadius: "var(--cv-border-radius-xs)",
+                      },
+                    }}
+                  />
+                  <TextField
+                    size="small"
+                    value={groupColor.toUpperCase()}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      // 自动添加 # 前缀
+                      if (!value.startsWith('#')) {
+                        value = '#' + value.replace(/[^0-9A-Fa-f]/g, '');
+                      }
+                      // 验证格式并限制长度
+                      if (/^#[0-9A-Fa-f]{0,6}$/.test(value)) {
+                        setGroupColor(value);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // 失去焦点时补全为6位
+                      const value = e.target.value.replace('#', '');
+                      if (value.length > 0 && value.length < 6) {
+                        setGroupColor('#' + value.padEnd(6, '0'));
+                      }
+                    }}
+                    placeholder="#7C3AED"
+                    sx={{
+                      width: 100,
+                      "& .MuiOutlinedInput-root": {
+                        height: 32,
+                        fontSize: 13,
+                        fontFamily: "monospace",
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
             </Box>
           </EnhancedFormItem>
         </EnhancedFormGroup>

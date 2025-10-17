@@ -1,16 +1,16 @@
 [package]
-name = "clash-verge"
+name = "needyclash"
 version = "2.4.3"
-description = "Clash Verge Rev - Modified by Lythrilla"
-authors = ["Lythrilla", "Based on: zzzgydi, Tunglies, wonfen, MystiPanda"]
+description = "NeedyClash - A secondary development version based on Clash Verge Rev"
+authors = ["Lythrilla", "Based on: Clash Verge Rev by zzzgydi, Tunglies, wonfen, MystiPanda"]
 license = "GPL-3.0-only"
 repository = "https://github.com/clash-verge-rev/clash-verge-rev.git"
-default-run = "clash-verge"
+default-run = "needyclash"
 edition = "2024"
 build = "build.rs"
 
 [package.metadata.bundle]
-identifier = "io.github.clash-verge-rev.clash-verge-rev"
+identifier = "com.lythrilla.needyclash"
 
 [build-dependencies]
 tauri-build = { version = "2.4.1", features = [] }

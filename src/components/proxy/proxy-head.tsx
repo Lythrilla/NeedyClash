@@ -83,6 +83,7 @@ export const ProxyHead = ({
           sx={{
             width: 32,
             height: 32,
+            borderRadius: "var(--cv-border-radius-sm)",
             "&:hover": { bgcolor: "action.hover" },
           }}
         >
@@ -105,6 +106,7 @@ export const ProxyHead = ({
           sx={{
             width: 32,
             height: 32,
+            borderRadius: "var(--cv-border-radius-sm)",
             "&:hover": { bgcolor: "action.hover" },
           }}
         >
@@ -130,6 +132,7 @@ export const ProxyHead = ({
           sx={{
             width: 32,
             height: 32,
+            borderRadius: "var(--cv-border-radius-sm)",
             "&:hover": { bgcolor: "action.hover" },
           }}
         >
@@ -149,6 +152,7 @@ export const ProxyHead = ({
           sx={{
             width: 32,
             height: 32,
+            borderRadius: "var(--cv-border-radius-sm)",
             "&:hover": { bgcolor: "action.hover" },
           }}
         >
@@ -172,6 +176,7 @@ export const ProxyHead = ({
           sx={{
             width: 32,
             height: 32,
+            borderRadius: "var(--cv-border-radius-sm)",
             "&:hover": { bgcolor: "action.hover" },
           }}
         >
@@ -193,6 +198,7 @@ export const ProxyHead = ({
           sx={{
             width: 32,
             height: 32,
+            borderRadius: "var(--cv-border-radius-sm)",
             "&:hover": { bgcolor: "action.hover" },
           }}
         >

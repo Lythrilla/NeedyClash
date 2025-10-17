@@ -9,8 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useRoutes, useMatch, useResolvedPath } from "react-router-dom";
 import { SWRConfig, mutate } from "swr";
 
-import iconDark from "@/assets/image/icon_dark.svg?react";
-import iconLight from "@/assets/image/icon_light.svg?react";
+import logoPng from "@/assets/image/logo.png";
 import LogoSvg from "@/assets/image/logo.svg?react";
 import { NoticeManager } from "@/components/base/NoticeManager";
 import { CustomTitlebar } from "@/components/layout/custom-titlebar";
@@ -194,14 +193,15 @@ const Layout = () => {
   const windowControls = useRef<any>(null);
   const { decorated } = useWindowDecorations();
 
-  // 始终显示自定义标题栏（仅 Windows）
+  // 只在非系统标题栏模式下显示自定义标题栏（仅 Windows）
   const customTitlebar = useMemo(() => {
     const OS = getSystem();
-    if (OS === "windows") {
+    // 如果使用系统标题栏 (decorated = true)，则不显示自定义标题栏
+    if (OS === "windows" && !decorated) {
       return <CustomTitlebar />;
     }
     return null;
-  }, []);
+  }, [decorated]);
 
   useEffect(() => {
     if (!themeReady || overlayRemovedRef.current) {
@@ -696,10 +696,15 @@ const Layout = () => {
             {/* Logo区域 */}
             <div className="the-logo" data-tauri-drag-region="false">
               <div className="logo-wrapper">
-                <SvgIcon
-                  component={isDark ? iconDark : iconLight}
-                  sx={{ fontSize: 32 }}
-                  inheritViewBox
+                <img
+                  src={logoPng}
+                  alt="Logo"
+                  style={{
+                    height: "32px",
+                    width: "auto",
+                    filter: isDark ? "brightness(0) invert(1)" : "brightness(0) invert(0)",
+                    transition: "filter 0.2s ease"
+                  }}
                 />
                 <LogoSvg
                   fill={isDark ? "white" : "black"}

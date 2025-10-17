@@ -29,6 +29,7 @@ export const LayoutItem = (props: Props) => {
           {
             padding: "8px 10px",
             minHeight: "36px",
+            borderRadius: "var(--cv-border-radius-md)",
             transition: "all 0.2s ease",
             display: "flex",
             justifyContent: "center",

@@ -56,7 +56,7 @@ interface Props {
   onDelete: () => void;
   batchMode?: boolean;
   isSelected?: boolean;
-  onSelectionChange?: () => void;
+  onSelectionChange?: (event: React.MouseEvent) => void;
 }
 
 export const ProfileItem = (props: Props) => {
@@ -394,7 +394,8 @@ export const ProfileItem = (props: Props) => {
         if (batchMode) {
           // If in batch mode, just toggle selection instead of showing delete confirmation
           if (onSelectionChange) {
-            onSelectionChange();
+            // 菜单调用不传事件对象，表示普通点击
+            onSelectionChange({} as React.MouseEvent);
           }
         } else {
           setConfirmOpen(true);
@@ -440,7 +441,8 @@ export const ProfileItem = (props: Props) => {
         if (batchMode) {
           // If in batch mode, just toggle selection instead of showing delete confirmation
           if (onSelectionChange) {
-            onSelectionChange();
+            // 菜单调用不传事件对象，表示普通点击
+            onSelectionChange({} as React.MouseEvent);
           }
         } else {
           setConfirmOpen(true);
@@ -449,13 +451,6 @@ export const ProfileItem = (props: Props) => {
       disabled: false,
     },
   ];
-
-  const boxStyle = {
-    height: 26,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  };
 
   // 监听自动更新事件
   useEffect(() => {
@@ -504,6 +499,20 @@ export const ProfileItem = (props: Props) => {
         className="custom-profile-card"
         aria-selected={selected}
         onClick={(e) => {
+          // 批量模式下，点击整个卡片进行选择
+          if (batchMode) {
+            // 检查是否点击了内部的交互元素（拖拽手柄、刷新按钮等）
+            const target = e.target as HTMLElement;
+            const isInteractiveElement = 
+              target.closest('[data-draggable="true"]') ||
+              target.closest('.MuiIconButton-root');
+            
+            if (!isInteractiveElement && onSelectionChange) {
+              onSelectionChange(e);
+            }
+            return;
+          }
+
           // 如果正在激活中，阻止重复点击
           if (activating) {
             e.preventDefault();
@@ -517,6 +526,16 @@ export const ProfileItem = (props: Props) => {
           setPosition({ top: clientY, left: clientX });
           setAnchorEl(event.currentTarget as HTMLElement);
           event.preventDefault();
+        }}
+        sx={{
+          ...(batchMode && isSelected && {
+            backgroundColor: (theme) => 
+              theme.palette.mode === "light" 
+                ? "rgba(25, 118, 210, 0.08)" 
+                : "rgba(144, 202, 249, 0.12)",
+            borderColor: "primary.main",
+            borderWidth: "2px",
+          }),
         }}
       >
         {activating && (
@@ -545,15 +564,20 @@ export const ProfileItem = (props: Props) => {
           </Box>
         )}
         <Box position="relative">
-          <Box sx={{ display: "flex", justifyContent: "start" }}>
+          {/* 第一行：标题栏 */}
+          <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
             {batchMode && (
               <IconButton
                 size="small"
-                sx={{ padding: "2px", marginRight: "4px", marginLeft: "-8px" }}
+                sx={{ 
+                  p: "2px",
+                  mr: "4px",
+                  ml: "-8px",
+                }}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onSelectionChange) {
-                    onSelectionChange();
+                    onSelectionChange(e);
                   }
                 }}
               >
@@ -566,6 +590,7 @@ export const ProfileItem = (props: Props) => {
             )}
             <Box
               ref={setNodeRef}
+              data-draggable="true"
               sx={{
                 display: "flex",
                 margin: "auto 0",
@@ -575,18 +600,16 @@ export const ProfileItem = (props: Props) => {
               {...listeners}
             >
               <DragIndicatorRounded
-                sx={[
-                  { cursor: "move", marginLeft: "-6px" },
-                  ({ palette: { text } }) => {
-                    return { color: text.primary };
-                  },
-                ]}
+                sx={{
+                  cursor: "move",
+                  marginLeft: "-6px",
+                  color: "text.primary",
+                }}
               />
             </Box>
 
             <Typography
               width={batchMode ? "calc(100% - 56px)" : "calc(100% - 36px)"}
-              sx={{ fontSize: "15px", fontWeight: "600", lineHeight: "22px" }} /* 更小的字号 */
               variant="h6"
               component="h2"
               noWrap
@@ -596,7 +619,83 @@ export const ProfileItem = (props: Props) => {
             </Typography>
           </Box>
 
-          {/* only if has url can it be updated */}
+          {/* 第二行：描述或来源 */}
+          <Box sx={{ height: 26, display: "flex", alignItems: "center" }}>
+            {description ? (
+              <Typography noWrap title={description} sx={{ fontSize: "14px" }}>
+                {description}
+              </Typography>
+            ) : (
+              hasUrl && (
+                <Typography noWrap title={`${t("From")} ${from}`}>
+                  {from}
+                </Typography>
+              )
+            )}
+          </Box>
+
+          {/* 第三行：流量信息或更新时间 */}
+          {hasExtra ? (
+            <Box sx={{ 
+              height: 26, 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "space-between",
+              fontSize: 14,
+            }}>
+              <span title={t("Used / Total")}>
+                {parseTraffic(upload + download)} / {parseTraffic(total)}
+              </span>
+              <span title={t("Expire Time")}>{expire}</span>
+            </Box>
+          ) : (
+            <Box sx={{ 
+              height: 26, 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: hasUrl ? "space-between" : "flex-end",
+              fontSize: 14,
+            }}>
+              {hasUrl && (
+                <Typography
+                  noWrap
+                  component="span"
+                  fontSize={14}
+                  title={
+                    showNextUpdate
+                      ? t("Click to show last update time")
+                      : `${t("Update Time")}: ${parseExpire(updated)}\n${t("Click to show next update")}`
+                  }
+                  sx={{
+                    cursor: "pointer",
+                    borderBottom: "1px dashed transparent",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      borderBottomColor: "primary.main",
+                      color: "primary.main",
+                    },
+                  }}
+                  onClick={toggleUpdateTimeDisplay}
+                >
+                  {showNextUpdate
+                    ? nextUpdateTime
+                    : updated > 0
+                      ? dayjs(updated * 1000).fromNow()
+                      : ""}
+                </Typography>
+              )}
+              <span title={t("Update Time")}>{parseExpire(updated)}</span>
+            </Box>
+          )}
+
+          {/* 进度条 */}
+          <LinearProgress
+            variant="determinate"
+            value={progress}
+            style={{ opacity: total > 0 ? 1 : 0 }}
+          />
+
+          {/* 刷新按钮 */}
           {hasUrl && (
             <IconButton
               title={t("Refresh")}
@@ -612,7 +711,6 @@ export const ProfileItem = (props: Props) => {
               disabled={loading}
               onClick={(e) => {
                 e.stopPropagation();
-                // 如果正在激活或加载中，阻止更新操作
                 if (activating || loading) {
                   return;
                 }
@@ -623,84 +721,6 @@ export const ProfileItem = (props: Props) => {
             </IconButton>
           )}
         </Box>
-        {/* the second line show url's info or description */}
-        <Box sx={boxStyle}>
-          {
-            <>
-              {description ? (
-                <Typography
-                  noWrap
-                  title={description}
-                  sx={{ fontSize: "14px" }}
-                >
-                  {description}
-                </Typography>
-              ) : (
-                hasUrl && (
-                  <Typography noWrap title={`${t("From")} ${from}`}>
-                    {from}
-                  </Typography>
-                )
-              )}
-              {hasUrl && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    ml: "auto",
-                  }}
-                >
-                  <Typography
-                    noWrap
-                    component="span"
-                    fontSize={14}
-                    textAlign="right"
-                    title={
-                      showNextUpdate
-                        ? t("Click to show last update time")
-                        : `${t("Update Time")}: ${parseExpire(updated)}\n${t("Click to show next update")}`
-                    }
-                    sx={{
-                      cursor: "pointer",
-                      display: "inline-block",
-                      borderBottom: "1px dashed transparent",
-                      transition: "all 0.2s",
-                      "&:hover": {
-                        borderBottomColor: "primary.main",
-                        color: "primary.main",
-                      },
-                    }}
-                    onClick={toggleUpdateTimeDisplay}
-                  >
-                    {showNextUpdate
-                      ? nextUpdateTime
-                      : updated > 0
-                        ? dayjs(updated * 1000).fromNow()
-                        : ""}
-                  </Typography>
-                </Box>
-              )}
-            </>
-          }
-        </Box>
-        {/* the third line show extra info or last updated time */}
-        {hasExtra ? (
-          <Box sx={{ ...boxStyle, fontSize: 14 }}>
-            <span title={t("Used / Total")}>
-              {parseTraffic(upload + download)} / {parseTraffic(total)}
-            </span>
-            <span title={t("Expire Time")}>{expire}</span>
-          </Box>
-        ) : (
-          <Box sx={{ ...boxStyle, fontSize: 12, justifyContent: "flex-end" }}>
-            <span title={t("Update Time")}>{parseExpire(updated)}</span>
-          </Box>
-        )}
-        <LinearProgress
-          variant="determinate"
-          value={progress}
-          style={{ opacity: total > 0 ? 1 : 0 }}
-        />
       </ProfileBox>
 
       <Menu

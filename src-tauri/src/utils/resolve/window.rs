@@ -1,6 +1,7 @@
 use tauri::WebviewWindow;
 
 use crate::{
+    config::Config,
     core::handle,
     logging_error,
     utils::{
@@ -16,22 +17,28 @@ const DEFAULT_HEIGHT: f64 = 700.0;
 const MINIMAL_WIDTH: f64 = 520.0;
 const MINIMAL_HEIGHT: f64 = 520.0;
 
-/// 构建新的 WebView 窗口
-pub fn build_new_window() -> Result<WebviewWindow, String> {
+pub async fn build_new_window() -> Result<WebviewWindow, String> {
     let app_handle = handle::Handle::app_handle();
+
+    // 读取配置以确定是否使用系统标题栏
+    let use_system_titlebar = Config::verge()
+        .await
+        .latest_ref()
+        .window_use_system_titlebar
+        .unwrap_or(false);
 
     match tauri::WebviewWindowBuilder::new(
         app_handle,
         "main", /* the unique window label */
         tauri::WebviewUrl::App("index.html".into()),
     )
-    .title("Clash Verge")
+    .title("NeedyClash")
     .center()
-    .decorations(false) // 启用无边框窗口
+    .decorations(use_system_titlebar) // 根据配置决定是否使用系统标题栏
     .fullscreen(false)
     .inner_size(DEFAULT_WIDTH, DEFAULT_HEIGHT)
     .min_inner_size(MINIMAL_WIDTH, MINIMAL_HEIGHT)
-    .visible(true) // 立即显示窗口，避免用户等待
+    .visible(true)
     .initialization_script(WINDOW_INITIAL_SCRIPT)
     .build()
     {

@@ -64,6 +64,7 @@ export const BaseModeSelector = <T extends string = string>({
               title={option.description}
               sx={{
                 ...getButtonStyles(isActive, theme),
+                borderRadius: "var(--cv-border-radius-sm)",
                 ...(fullWidth && { flex: 1, justifyContent: "center" }),
                 ...(size === "medium" && {
                   px: 1.5,
@@ -133,6 +134,7 @@ export const CompactModeSelector = <T extends string = string>({
               width: 32,
               height: 32,
               cursor: "pointer",
+              borderRadius: "var(--cv-border-radius-sm)",
               border: "1px solid",
               borderColor: isActive ? "primary.main" : "divider",
               backgroundColor: isActive

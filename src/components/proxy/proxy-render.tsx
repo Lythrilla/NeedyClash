@@ -207,7 +207,7 @@ export const ProxyRender = (props: RenderProps) => {
   if (type === 1) {
     return (
       <ProxyHead
-        sx={{ pl: 2, pr: 3, mt: indent ? 1 : 0.5, mb: 1 }}
+        sx={{ pl: 2, pr: 3, mt: indent ? 1 : 0.5, mb: 2 }}
         url={group.testUrl}
         groupName={group.name}
         headState={headState!}
@@ -225,7 +225,7 @@ export const ProxyRender = (props: RenderProps) => {
         proxy={proxy!}
         selected={group.now === proxy?.name}
         showType={headState?.showType}
-        sx={{ py: 0, pl: 2 }}
+        sx={{ pl: 2 }}
         onClick={() => onChangeProxy(group, proxy!)}
       />
     );
@@ -253,7 +253,6 @@ export const ProxyRender = (props: RenderProps) => {
     return (
       <Box
         sx={{
-          height: 56,
           display: "grid",
           gap: 1,
           pl: 2,

@@ -1,6 +1,6 @@
 use crate::utils::dirs::get_encryption_key;
 use aes_gcm::{
-    Aes256Gcm, Key,
+    Aes256Gcm,
     aead::{Aead, KeyInit},
 };
 use base64::{Engine, engine::general_purpose::STANDARD};
@@ -11,8 +11,7 @@ const NONCE_LENGTH: usize = 12;
 /// Encrypt data
 pub fn encrypt_data(data: &str) -> Result<String, Box<dyn std::error::Error>> {
     let encryption_key = get_encryption_key()?;
-    let key = Key::<Aes256Gcm>::from_slice(&encryption_key);
-    let cipher = Aes256Gcm::new(key);
+    let cipher = Aes256Gcm::new_from_slice(encryption_key.as_slice())?;
 
     // Generate random nonce
     let mut nonce = vec![0u8; NONCE_LENGTH];
@@ -32,8 +31,7 @@ pub fn encrypt_data(data: &str) -> Result<String, Box<dyn std::error::Error>> {
 /// Decrypt data
 pub fn decrypt_data(encrypted: &str) -> Result<String, Box<dyn std::error::Error>> {
     let encryption_key = get_encryption_key()?;
-    let key = Key::<Aes256Gcm>::from_slice(&encryption_key);
-    let cipher = Aes256Gcm::new(key);
+    let cipher = Aes256Gcm::new_from_slice(encryption_key.as_slice())?;
     // Decode from base64
     let data = STANDARD.decode(encrypted)?;
     if data.len() < NONCE_LENGTH {

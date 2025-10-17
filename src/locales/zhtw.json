@@ -359,7 +359,7 @@
   "Open Dev Tools": "開發者工具",
   "Export Diagnostic Info": "導出診斷信息",
   "Exit": "退出",
-  "Verge Version": "Verge 版本",
+  "Verge Version": "NeedyClash 版本",
   "ReadOnly": "只讀",
   "ReadOnlyMessage": "無法在只讀模式下編輯",
   "Filter": "過濾節點",
@@ -467,7 +467,7 @@
   "Merge File Mapping Error": "覆寫文件映射錯誤，變更已撤銷",
   "Merge File Key Error": "覆寫文件鍵錯誤，變更已撤銷",
   "Merge File Error": "覆寫文件錯誤，變更已撤銷",
-  "Service Administrator Prompt": "Clash Verge 需要管理員權限安裝系統服務",
+  "Service Administrator Prompt": "NeedyClash 需要管理員權限安裝系統服務",
   "DNS Settings": "DNS 設置",
   "DNS settings saved": "DNS 設置已保存",
   "DNS Overwrite": "DNS 覆寫",
@@ -579,5 +579,7 @@
   "Copy to clipboard": "點擊我複製",
   "Port Config": "端口設置",
   "Configuration saved successfully": "配置保存完成",
-  "Enable one-click random API port and key. Click to randomize the port and key": "開啟一鍵隨機 API 端口和密鑰，點進去就可以隨機端口和密鑰"
+  "Enable one-click random API port and key. Click to randomize the port and key": "開啟一鍵隨機 API 端口和密鑰，點進去就可以隨機端口和密鑰",
+  "Custom": "自訂",
+  "Invalid color format. Please use #RRGGBB format": "顏色格式無效，請使用 #RRGGBB 格式"
 }

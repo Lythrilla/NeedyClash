@@ -39,6 +39,20 @@ export default defineConfig({
       globalAPI: false,
     }),
   ],
+  css: {
+    preprocessorOptions: {
+      scss: {
+
+        api: 'modern-compiler',
+
+        sourceMap: true,
+      },
+    },
+    devSourcemap: true,
+    modules: {
+      localsConvention: 'camelCase',
+    },
+  },
   build: {
     outDir: "../dist",
     emptyOutDir: true,

@@ -710,24 +710,58 @@ const ProfilePage = () => {
   });
 
   // Batch selection functions
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(-1);
+
   const toggleBatchMode = () => {
     setBatchMode(!batchMode);
     if (!batchMode) {
       // Entering batch mode - clear previous selections
       setSelectedProfiles(new Set());
+      setLastSelectedIndex(-1);
     }
   };
 
-  const toggleProfileSelection = (uid: string) => {
-    setSelectedProfiles((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(uid)) {
-        newSet.delete(uid);
-      } else {
-        newSet.add(uid);
-      }
-      return newSet;
-    });
+  const toggleProfileSelection = (uid: string, event?: React.MouseEvent) => {
+    const currentIndex = profileItems.findIndex((item) => item.uid === uid);
+    
+    // Shift 键范围多选
+    if (event?.shiftKey && lastSelectedIndex !== -1 && currentIndex !== -1) {
+      const start = Math.min(lastSelectedIndex, currentIndex);
+      const end = Math.max(lastSelectedIndex, currentIndex);
+      const rangeUids = profileItems.slice(start, end + 1).map((item) => item.uid);
+      
+      setSelectedProfiles((prev) => {
+        const newSet = new Set(prev);
+        rangeUids.forEach((id) => newSet.add(id));
+        return newSet;
+      });
+    } 
+    // Ctrl/Cmd 键单个切换
+    else if (event?.ctrlKey || event?.metaKey) {
+      setSelectedProfiles((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(uid)) {
+          newSet.delete(uid);
+        } else {
+          newSet.add(uid);
+        }
+        return newSet;
+      });
+    }
+    // 普通点击：切换单个
+    else {
+      setSelectedProfiles((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(uid)) {
+          newSet.delete(uid);
+        } else {
+          newSet.add(uid);
+        }
+        return newSet;
+      });
+    }
+    
+    setLastSelectedIndex(currentIndex);
   };
 
   const selectAllProfiles = () => {
@@ -1044,6 +1078,7 @@ const ProfilePage = () => {
                     cursor: "pointer",
                     border: "1px solid",
                     borderColor: "divider",
+                    borderRadius: "var(--cv-border-radius-sm)",
                     transition: "all 0.2s ease",
                     "&:hover": {
                       borderColor: "primary.main",
@@ -1080,25 +1115,25 @@ const ProfilePage = () => {
       }
     >
       {/* 配置列表区域 */}
-      <Box sx={{ flex: 1, overflow: "auto" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={onDragEnd}
         >
-          {/* 顶部工具栏区域 */}
+          {/* 顶部工具栏区域 - 横向布局 */}
           <Box
             sx={{
               borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
-              px: 2,
-              py: 1.5,
               display: "flex",
-              flexDirection: "column",
-              gap: 1.5,
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "stretch", md: "center" },
+              gap: { xs: 1.5, md: 2 },
+              p: 2,
             }}
           >
             {/* 导入订阅 */}
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center", flex: 1 }}>
               <TextField
                 fullWidth
                 size="small"
@@ -1150,119 +1185,123 @@ const ProfilePage = () => {
             </Box>
 
             {/* 分组筛选 */}
-            <ProfileGroupManager onGroupChange={setSelectedGroupId} />
+            <Box sx={{ minWidth: { md: 200 } }}>
+              <ProfileGroupManager onGroupChange={setSelectedGroupId} />
+            </Box>
           </Box>
 
           {profileItems.length > 0 ? (
-            <Box sx={{ p: 2 }}>
-              {/* Subscriptions */}
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    display: "block",
-                    mb: 1.5,
-                    fontWeight: 600,
-                    fontSize: "11px",
-                    letterSpacing: "0.5px",
-                    textTransform: "uppercase",
-                    color: "text.secondary",
-                  }}
-                >
-                  {t("Subscriptions")}
-                </Typography>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: {
-                      xs: "1fr",
-                      sm: "repeat(2, 1fr)",
-                      md: "repeat(3, 1fr)",
-                      lg: "repeat(4, 1fr)",
-                      xl: "repeat(5, 1fr)",
-                    },
-                    gap: { xs: 1.5, sm: 2 },
-                  }}
-                >
-                  <SortableContext items={profileItems.map((x) => x.uid)}>
-                    {profileItems.map((item) => (
-                      <ProfileItem
-                        key={item.uid}
-                        id={item.uid}
-                        selected={profiles.current === item.uid}
-                        activating={activatings.includes(item.uid)}
-                        itemData={item}
-                        onSelect={(f) => onSelect(item.uid, f)}
-                        onEdit={() => viewerRef.current?.edit(item)}
-                        onSave={async (prev, curr) => {
-                          if (prev !== curr && profiles.current === item.uid) {
-                            await onEnhance(false);
+            <Box sx={{ flex: 1, overflow: "auto" }}>
+              <Box sx={{ p: 2 }}>
+                {/* Subscriptions */}
+                <Box sx={{ mb: 3 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: "block",
+                      mb: 1.5,
+                      fontWeight: 600,
+                      fontSize: "11px",
+                      letterSpacing: "0.5px",
+                      textTransform: "uppercase",
+                      color: "text.secondary",
+                    }}
+                  >
+                    {t("Subscriptions")}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(2, 1fr)",
+                        md: "repeat(3, 1fr)",
+                        lg: "repeat(4, 1fr)",
+                        xl: "repeat(5, 1fr)",
+                      },
+                      gap: { xs: 1.5, sm: 2 },
+                    }}
+                  >
+                    <SortableContext items={profileItems.map((x) => x.uid)}>
+                      {profileItems.map((item) => (
+                        <ProfileItem
+                          key={item.uid}
+                          id={item.uid}
+                          selected={profiles.current === item.uid}
+                          activating={activatings.includes(item.uid)}
+                          itemData={item}
+                          onSelect={(f) => onSelect(item.uid, f)}
+                          onEdit={() => viewerRef.current?.edit(item)}
+                          onSave={async (prev, curr) => {
+                            if (prev !== curr && profiles.current === item.uid) {
+                              await onEnhance(false);
+                            }
+                          }}
+                          onDelete={() => {
+                            if (batchMode) {
+                              toggleProfileSelection(item.uid);
+                            } else {
+                              onDelete(item.uid);
+                            }
+                          }}
+                          batchMode={batchMode}
+                          isSelected={selectedProfiles.has(item.uid)}
+                          onSelectionChange={(e: React.MouseEvent) =>
+                            toggleProfileSelection(item.uid, e)
                           }
-                        }}
-                        onDelete={() => {
-                          if (batchMode) {
-                            toggleProfileSelection(item.uid);
-                          } else {
-                            onDelete(item.uid);
-                          }
-                        }}
-                        batchMode={batchMode}
-                        isSelected={selectedProfiles.has(item.uid)}
-                        onSelectionChange={() =>
-                          toggleProfileSelection(item.uid)
-                        }
-                      />
-                    ))}
-                  </SortableContext>
+                        />
+                      ))}
+                    </SortableContext>
+                  </Box>
                 </Box>
-              </Box>
 
-              {/* Enhanced */}
-              <Box>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    display: "block",
-                    mb: 1.5,
-                    fontWeight: 600,
-                    fontSize: "11px",
-                    letterSpacing: "0.5px",
-                    textTransform: "uppercase",
-                    color: "text.secondary",
-                  }}
-                >
-                  {t("Enhanced")}
-                </Typography>
-                <Box
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: {
-                      xs: "1fr",
-                      sm: "repeat(2, 1fr)",
-                      md: "repeat(3, 1fr)",
-                      lg: "repeat(4, 1fr)",
-                      xl: "repeat(5, 1fr)",
-                    },
-                    gap: 2,
-                  }}
-                >
-                  <ProfileMore
-                    id="Merge"
-                    onSave={async (prev, curr) => {
-                      if (prev !== curr) {
-                        await onEnhance(false);
-                      }
+                {/* Enhanced */}
+                <Box>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: "block",
+                      mb: 1.5,
+                      fontWeight: 600,
+                      fontSize: "11px",
+                      letterSpacing: "0.5px",
+                      textTransform: "uppercase",
+                      color: "text.secondary",
                     }}
-                  />
-                  <ProfileMore
-                    id="Script"
-                    logInfo={chainLogs["Script"]}
-                    onSave={async (prev, curr) => {
-                      if (prev !== curr) {
-                        await onEnhance(false);
-                      }
+                  >
+                    {t("Enhanced")}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: {
+                        xs: "1fr",
+                        sm: "repeat(2, 1fr)",
+                        md: "repeat(3, 1fr)",
+                        lg: "repeat(4, 1fr)",
+                        xl: "repeat(5, 1fr)",
+                      },
+                      gap: 2,
                     }}
-                  />
+                  >
+                    <ProfileMore
+                      id="Merge"
+                      onSave={async (prev, curr) => {
+                        if (prev !== curr) {
+                          await onEnhance(false);
+                        }
+                      }}
+                    />
+                    <ProfileMore
+                      id="Script"
+                      logInfo={chainLogs["Script"]}
+                      onSave={async (prev, curr) => {
+                        if (prev !== curr) {
+                          await onEnhance(false);
+                        }
+                      }}
+                    />
+                  </Box>
                 </Box>
               </Box>
             </Box>
@@ -1273,8 +1312,7 @@ const ProfilePage = () => {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                height: "100%",
-                minHeight: "400px",
+                flex: 1,
               }}
             >
               <TextSnippetOutlined sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />

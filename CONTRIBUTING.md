@@ -1,6 +1,8 @@
 # CONTRIBUTING
 
-Thank you for your interest in contributing to Clash Verge Rev! This document provides guidelines and instructions to help you set up your development environment and start contributing.
+Thank you for your interest in contributing to NeedyClash! This document provides guidelines and instructions to help you set up your development environment and start contributing.
+
+**Note**: NeedyClash is a secondary development version based on [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev).
 
 ## Development Setup
 

@@ -325,7 +325,7 @@
   "uninstall": "uninstalled",
   "active": "active",
   "unknown": "unknown",
-  "Information: Please make sure that the Clash Verge Service is installed and enabled": "Information: Please make sure that the Clash Verge Service is installed and enabled",
+  "Information: Please make sure that the Clash Verge Service is installed and enabled": "Information: Please make sure that the NeedyClash Service is installed and enabled",
   "Install": "Install",
   "Uninstall": "Uninstall",
   "Disable Service Mode": "Disable Service Mode",
@@ -596,7 +596,7 @@
   "Export Diagnostic Info": "Export Diagnostic Info",
   "Export Diagnostic Info For Issue Reporting": "Export Diagnostic Info For Issue Reporting",
   "Exit": "Exit",
-  "Verge Version": "Verge Version",
+  "Verge Version": "NeedyClash Version",
   "ReadOnly": "ReadOnly",
   "ReadOnlyMessage": "Cannot edit in read-only editor",
   "Filter": "Filter",
@@ -740,7 +740,7 @@
   "Validate Merge File": "Validate Merge File",
   "Validation Success": "Validation Success",
   "Validation Failed": "Validation Failed",
-  "Service Administrator Prompt": "Clash Verge requires administrator privileges to reinstall the system service",
+  "Service Administrator Prompt": "NeedyClash requires administrator privileges to reinstall the system service",
   "DNS Settings": "DNS Settings",
   "DNS settings saved": "DNS settings saved",
   "DNS Overwrite": "DNS Overwrite",
@@ -1002,5 +1002,7 @@
   "Select All": "Select All",
   "Selected": "Selected",
   "Selected profiles deleted successfully": "Selected profiles deleted successfully",
-  "Prefer System Titlebar": "Prefer System Titlebar"
+  "Prefer System Titlebar": "Prefer System Titlebar",
+  "Custom": "Custom",
+  "Invalid color format. Please use #RRGGBB format": "Invalid color format. Please use #RRGGBB format"
 }

@@ -375,9 +375,13 @@ export const useCustomTheme = () => {
               },
               styleOverrides: {
                 select: {
-                  backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  "&:focus": {
-                    backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                  padding: "4px 32px 4px 12px !important",
+                  height: "24px",
+                  display: "flex",
+                  alignItems: "center",
+                  "&.MuiSelect-select.MuiInputBase-inputSizeSmall": {
+                    padding: "4px 32px 4px 12px !important",
+                    height: "24px",
                   },
                 },
                 icon: {
@@ -389,8 +393,10 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 select: {
                   backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
-                  padding: "5.5px 32px 5.5px 12px",
+                  padding: "4px 32px 4px 12px",
                   fontSize: "13px",
+                  minHeight: "32px",
+                  height: "32px",
                   color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)",
                   "&:focus": {
                     backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
@@ -457,6 +463,13 @@ export const useCustomTheme = () => {
                   },
                   "&.Mui-error .MuiOutlinedInput-notchedOutline": {
                     borderColor: setting.error_color || dt.error_color,
+                  },
+                  "&.MuiInputBase-sizeSmall": {
+                    height: "32px",
+                    "& input": {
+                      padding: "4px 12px",
+                      height: "24px",
+                    },
                   },
                 },
                 notchedOutline: {
@@ -1036,38 +1049,27 @@ export const useCustomTheme = () => {
           background-color: ${mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.08)"};
         }
 
-        /* Select 下拉菜单背景优化 */
-        select,
-        .MuiNativeSelect-select,
-        .MuiSelect-select {
-          background-color: ${mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)"} !important;
-          color: ${mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)"} !important;
-        }
-
         /* MUI Select 组件优化 */
         .MuiSelect-select,
         .MuiNativeSelect-select {
           transition: all 0.2s ease !important;
         }
 
-        /* Select 边框优化 */
-        .MuiOutlinedInput-root:has(.MuiSelect-select),
-        .MuiOutlinedInput-root:has(.MuiNativeSelect-select) {
+        /* TextField 和 Select 统一背景色 */
+        .MuiOutlinedInput-root {
           background-color: ${mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)"} !important;
         }
 
-        .MuiOutlinedInput-root:has(.MuiSelect-select) .MuiOutlinedInput-notchedOutline,
-        .MuiOutlinedInput-root:has(.MuiNativeSelect-select) .MuiOutlinedInput-notchedOutline {
+        /* TextField 和 Select 统一边框样式 */
+        .MuiOutlinedInput-notchedOutline {
           border-color: ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)"} !important;
         }
 
-        .MuiOutlinedInput-root:has(.MuiSelect-select):hover .MuiOutlinedInput-notchedOutline,
-        .MuiOutlinedInput-root:has(.MuiNativeSelect-select):hover .MuiOutlinedInput-notchedOutline {
+        .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
           border-color: ${mode === "light" ? "#CBD5E1" : "rgba(255, 255, 255, 0.2)"} !important;
         }
 
-        .MuiOutlinedInput-root:has(.MuiSelect-select).Mui-focused .MuiOutlinedInput-notchedOutline,
-        .MuiOutlinedInput-root:has(.MuiNativeSelect-select).Mui-focused .MuiOutlinedInput-notchedOutline {
+        .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
           border-color: ${setting.primary_color || dt.primary_color} !important;
           border-width: 2px !important;
         }
@@ -1141,16 +1143,6 @@ export const useCustomTheme = () => {
                 background-color: ${proxyCardStyle.backgroundColor} !important;
                 backdrop-filter: blur(${proxyCardStyle.blur}px) saturate(180%) !important;
                 -webkit-backdrop-filter: blur(${proxyCardStyle.blur}px) saturate(180%) !important;
-              }
-            `);
-          }
-          
-          // TextField 编辑框
-          const textfieldStyle = getComponentStyle("textfield");
-          if (textfieldStyle) {
-            styles.push(`
-              .MuiTextField-root .MuiOutlinedInput-root {
-                background-color: ${textfieldStyle.backgroundColor} !important;
               }
             `);
           }

@@ -247,7 +247,7 @@
   "uninstall": "dicopot",
   "active": "aktif",
   "unknown": "tidak diketahui",
-  "Information: Please make sure that the Clash Verge Service is installed and enabled": "Informasi: Harap pastikan bahwa Layanan Clash Verge terinstal dan diaktifkan",
+  "Information: Please make sure that the Clash Verge Service is installed and enabled": "Informasi: Harap pastikan bahwa Layanan NeedyClash terinstal dan diaktifkan",
   "Install": "Instal",
   "Uninstall": "Copot",
   "Disable Service Mode": "Nonaktifkan Mode Layanan",
@@ -386,7 +386,7 @@
   "Break Change Update Error": "Versi ini adalah pembaruan besar dan tidak mendukung pembaruan dalam aplikasi. Harap hapus instalasi dan unduh serta instal versi baru secara manual",
   "Open Dev Tools": "Buka Alat Pengembang",
   "Exit": "Keluar",
-  "Verge Version": "Versi Verge",
+  "Verge Version": "Versi NeedyClash",
   "ReadOnly": "Hanya Baca",
   "ReadOnlyMessage": "Tidak dapat mengedit di editor hanya baca",
   "Filter": "Filter",
@@ -455,5 +455,5 @@
   "TUN requires Service Mode": "Mode TUN memerlukan layanan",
   "Install Service": "Instal Layanan",
   "Installing Service...": "Memasang Layanan...",
-  "Service Administrator Prompt": "Clash Verge memerlukan hak administrator untuk menginstal ulang layanan sistem"
+  "Service Administrator Prompt": "NeedyClash memerlukan hak administrator untuk menginstal ulang layanan sistem"
 }

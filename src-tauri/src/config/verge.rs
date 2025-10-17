@@ -221,6 +221,9 @@ pub struct IVerge {
 
     /// 流量配额提醒设置
     pub traffic_quota_reminder: Option<ITrafficQuotaReminder>,
+
+    /// 使用系统标题栏（默认为 false，即使用自定义标题栏）
+    pub window_use_system_titlebar: Option<bool>,
 }
 
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
@@ -650,6 +653,7 @@ pub struct IVergeResponse {
     pub enable_external_controller: Option<bool>,
     pub favorite_proxies: Option<Vec<String>>,
     pub traffic_quota_reminder: Option<ITrafficQuotaReminder>,
+    pub window_use_system_titlebar: Option<bool>,
 }
 
 impl From<IVerge> for IVergeResponse {
@@ -727,6 +731,7 @@ impl From<IVerge> for IVergeResponse {
             enable_external_controller: verge.enable_external_controller,
             favorite_proxies: verge.favorite_proxies,
             traffic_quota_reminder: verge.traffic_quota_reminder,
+            window_use_system_titlebar: verge.window_use_system_titlebar,
         }
     }
 }

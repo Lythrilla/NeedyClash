@@ -1,32 +1,54 @@
-/* 现代化页面布局 */
+/* ========================================
+   页面基础布局
+   ======================================== */
+
 .base-page {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  /* 防止页面初始化时抖动 */
+  min-height: 100%;
   
+  /* 页面头部 */
   > header {
-    flex: 0 0 var(--header-height);
+    flex: 0 0 var(--cv-header-height);
     width: 100%;
     margin: 0;
-    padding: 0 calc(var(--spacing-unit) * 2);
+    padding: 0 0 0 calc(var(--cv-spacing-unit) * 2);
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     background: transparent;
-    backdrop-filter: blur(calc(var(--spacing-unit) * 1.25));
-    transition: all var(--transition-fast);
+    backdrop-filter: blur(calc(var(--cv-spacing-unit) * 1.25));
+    transition: all var(--cv-transition-fast);
+    z-index: var(--cv-z-base);
+    /* 确保头部高度固定 */
+    min-height: var(--cv-header-height);
+    max-height: var(--cv-header-height);
     
     @media (min-width: 600px) {
-      padding: 0 calc(var(--spacing-unit) * 3);
+      padding: 0 0 0 calc(var(--cv-spacing-unit) * 3);
+    }
+  }
+  
+  /* 暗色模式下的柔和分割线 */
+  @media (prefers-color-scheme: dark) {
+    > header {
+      border-bottom-color: rgba(255, 255, 255, 0.04);
     }
   }
 
+  /* 页面容器 */
   .base-container {
+    flex: 1;
     height: 100%;
     overflow: hidden;
+    position: relative;
+    /* 确保容器高度正确计算 */
+    min-height: 0;
 
     > section {
       position: relative;
@@ -34,32 +56,38 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      padding: calc(var(--spacing-unit) * 2.5) 0;
+      padding: calc(var(--cv-spacing-unit) * 2.5) 0;
       box-sizing: border-box;
       scrollbar-gutter: stable;
+      /* 防止内容抖动 */
+      min-height: 0;
       
-        .base-content {
-          width: calc(100% - var(--spacing-unit) * 4);
-          margin: 0 auto;
-          max-width: var(--content-max-width);
-          
-          @media (min-width: 600px) {
-            width: calc(100% - var(--spacing-unit) * 6);
-          }
-
-          @media (min-width: 900px) {
-            width: calc(100% - var(--spacing-unit) * 8);
-          }
+      /* 内容区域 */
+      .base-content {
+        width: calc(100% - var(--cv-spacing-unit) * 4);
+        margin: 0 auto;
+        max-width: var(--cv-content-max-width);
+        
+        @media (min-width: 600px) {
+          width: calc(100% - var(--cv-spacing-unit) * 6);
         }
+
+        @media (min-width: 900px) {
+          width: calc(100% - var(--cv-spacing-unit) * 8);
+        }
+      }
     }
 
+    /* 无内边距模式 */
     &.no-padding {
       > section {
         padding: 0;
         overflow: visible;
+        
         .base-content {
           width: 100%;
           max-width: none;
+          margin: 0;
         }
       }
     }

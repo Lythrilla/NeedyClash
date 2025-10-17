@@ -8,10 +8,44 @@
       type="image/x-icon"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clash Verge</title>
+    <title>NeedyClash</title>
+    <style>
+      #root {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+      
+      /* 加载遮罩 */
+      #initial-loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #181a1b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease;
+      }
+      
+      @media (prefers-color-scheme: light) {
+        #initial-loading-overlay {
+          background-color: #ffffff;
+        }
+      }
+    </style>
   </head>
   <body>
+    <!-- 初始加载遮罩 -->
+    <div id="initial-loading-overlay"></div>
+    
+    <!-- 主应用容器 -->
     <div id="root"></div>
+    
+    <!-- 应用脚本 -->
     <script type="module" src="./main.tsx"></script>
   </body>
 </html>

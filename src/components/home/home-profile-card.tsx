@@ -178,6 +178,7 @@ const ProfileDetails = ({
                 cursor: "pointer",
                 px: 1.5,
                 py: 0.5,
+                borderRadius: "var(--cv-border-radius-sm)",
                 border: (theme) => `1px solid ${alpha(theme.palette.divider, 0.5)}`,
                 "&:hover": { 
                   borderColor: "primary.main",
@@ -311,8 +312,10 @@ const ProfileDetails = ({
               value={trafficPercentage}
               sx={{
                 height: 8,
+                borderRadius: "var(--cv-border-radius-xs)",
                 backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
                 "& .MuiLinearProgress-bar": {
+                  borderRadius: "var(--cv-border-radius-xs)",
                   background: (theme) => 
                     trafficPercentage > 90
                       ? `linear-gradient(90deg, ${theme.palette.error.main}, ${theme.palette.error.dark})`

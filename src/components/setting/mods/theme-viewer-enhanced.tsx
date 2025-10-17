@@ -250,7 +250,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
               type="color"
               value={bgColor}
               onChange={(e) => updateComponentStyle(key, { background_color: e.target.value })}
-              style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
+              style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
             />
             <TextField
               size="small"
@@ -500,38 +500,81 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
           <Tab label={t("Layout")} />
         </Tabs>
         
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2.5 }}>
           {tabValue === 0 && (
-            <Stack spacing={2}>
-              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Stack spacing={2.5}>
+              {/* 顶部控制栏 - 更简洁 */}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                 <ToggleButtonGroup
                   value={presetFilter}
                   exclusive
                   onChange={(_, value) => value && setPresetFilter(value)}
                   size="small"
+                  sx={{
+                    "& .MuiToggleButton-root": {
+                      px: 2,
+                      py: 0.75,
+                      fontSize: 12.5,
+                      fontWeight: 500,
+                      textTransform: "none",
+                      borderRadius: "var(--cv-border-radius-sm)",
+                      "&.Mui-selected": {
+                        backgroundColor: "primary.main",
+                        color: "#fff",
+                        "&:hover": {
+                          backgroundColor: "primary.dark",
+                        },
+                      },
+                    },
+                  }}
                 >
                   <ToggleButton value="light">
-                    <Brightness7Rounded sx={{ fontSize: 16, mr: 0.5 }} />
+                    <Brightness7Rounded sx={{ fontSize: 15, mr: 0.75 }} />
                     {t("Light")}
                   </ToggleButton>
                   <ToggleButton value="dark">
-                    <Brightness4Rounded sx={{ fontSize: 16, mr: 0.5 }} />
+                    <Brightness4Rounded sx={{ fontSize: 15, mr: 0.75 }} />
                     {t("Dark")}
                   </ToggleButton>
                 </ToggleButtonGroup>
-                <Button size="small" onClick={resetToDefault} startIcon={<RefreshRounded />}>
+                <Box sx={{ flex: 1 }} />
+                <Button 
+                  size="small" 
+                  onClick={resetToDefault} 
+                  startIcon={<RefreshRounded sx={{ fontSize: 16 }} />}
+                  sx={{
+                    textTransform: "none",
+                    fontSize: 12.5,
+                    fontWeight: 500,
+                    px: 2,
+                  }}
+                >
                   {t("Reset")}
                 </Button>
               </Box>
 
+              {/* 主题网格 - 优化间距和布局 */}
               <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
-                  gap: 1.5,
-                  maxHeight: 420,
+                  gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                  gap: 2,
+                  maxHeight: 440,
                   overflowY: "auto",
-                  pr: 1,
+                  pr: 0.5,
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "transparent",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "rgba(128, 128, 128, 0.2)",
+                    borderRadius: "var(--cv-border-radius-xs)",
+                    "&:hover": {
+                      background: "rgba(128, 128, 128, 0.3)",
+                    },
+                  },
                 }}
               >
                 {[...presets, ...customPresets].map((preset, index) => (
@@ -612,7 +655,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                     type="color"
                     value={theme.background_color || "#000000"}
                     onChange={(e) => handleBackgroundChange("background_color", e.target.value)}
-                    style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
+                    style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
                   />
                   <TextField
                     size="small"
@@ -838,7 +881,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                           type="color"
                           value={theme.sidebar_background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff")}
                           onChange={(e) => handleBackgroundChange("sidebar_background_color", e.target.value)}
-                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
+                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
                         />
                         <TextField
                           size="small"
@@ -902,7 +945,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                           type="color"
                           value={theme.header_background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff")}
                           onChange={(e) => handleBackgroundChange("header_background_color", e.target.value)}
-                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: 4, cursor: "pointer" }}
+                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
                         />
                         <TextField
                           size="small"

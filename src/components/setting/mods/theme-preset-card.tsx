@@ -24,19 +24,30 @@ export const ThemePresetCard = ({ preset, isActive, onApply, onDelete }: Props) 
         position: "relative",
         overflow: "hidden",
         cursor: "pointer",
-        border: 1,
-        borderColor: isActive ? "primary.main" : "divider",
-        transition: "all 0.2s",
+        borderRadius: "var(--cv-border-radius-md)",
+        border: isActive ? "2px solid" : "1px solid",
+        borderColor: isActive ? "primary.main" : (theme) => 
+          theme.palette.mode === "light" 
+            ? "rgba(0, 0, 0, 0.08)" 
+            : "rgba(255, 255, 255, 0.08)",
+        transition: "all 0.15s ease",
         "&:hover": {
-          borderColor: "primary.main",
-          boxShadow: 1,
+          borderColor: isActive ? "primary.main" : (theme) =>
+            theme.palette.mode === "light" 
+              ? "rgba(0, 0, 0, 0.2)" 
+              : "rgba(255, 255, 255, 0.2)",
+          transform: "translateY(-2px)",
+          boxShadow: (theme) => 
+            theme.palette.mode === "light" 
+              ? "0 4px 12px rgba(0, 0, 0, 0.08)"
+              : "0 4px 12px rgba(0, 0, 0, 0.3)",
           "& .delete-btn": {
             opacity: 1,
           },
         },
       }}
     >
-      {/* 删除按钮 */}
+      {/* 删除按钮 - 更简洁 */}
       {preset.isCustom && onDelete && (
         <IconButton
           className="delete-btn"
@@ -47,79 +58,69 @@ export const ThemePresetCard = ({ preset, isActive, onApply, onDelete }: Props) 
           }}
           sx={{
             position: "absolute",
-            top: 4,
-            right: 4,
-            width: 20,
-            height: 20,
+            top: 2,
+            right: 2,
+            width: 18,
+            height: 18,
             opacity: 0,
-            transition: "opacity 0.2s",
-            backgroundColor: "error.main",
+            transition: "opacity 0.15s",
+            backgroundColor: "rgba(244, 67, 54, 0.9)",
             color: "#fff",
             zIndex: 2,
             "&:hover": {
-              backgroundColor: "error.dark",
+              backgroundColor: "error.main",
             },
           }}
         >
-          <DeleteRounded sx={{ fontSize: 14 }} />
+          <DeleteRounded sx={{ fontSize: 12 }} />
         </IconButton>
       )}
 
-      {/* 激活指示器 */}
+      {/* 激活指示器 - 更简洁的对勾 */}
       {isActive && (
         <Box
           sx={{
             position: "absolute",
-            top: 4,
-            right: 4,
-            width: 18,
-            height: 18,
+            top: 6,
+            right: 6,
+            width: 16,
+            height: 16,
+            borderRadius: "50%",
             backgroundColor: "primary.main",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 2,
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
           }}
         >
-          <CheckRounded sx={{ fontSize: 12, color: "#fff" }} />
+          <CheckRounded sx={{ fontSize: 11, color: "#fff" }} />
         </Box>
       )}
 
-      {/* 主题预览 */}
-      <Box sx={{ p: 1 }}>
-        {/* 渐变色块 */}
+      {/* 主题预览 - 简化设计 */}
+      <Box sx={{ p: 1.25 }}>
+        {/* 主色渐变块 - 减小高度 */}
         <Box
           sx={{
-            height: 40,
+            height: 36,
+            borderRadius: "var(--cv-border-radius-sm)",
             background: `linear-gradient(135deg, ${preset.primary_color} 0%, ${preset.secondary_color} 100%)`,
-            mb: 0.5,
+            mb: 1,
           }}
         />
 
-        {/* 颜色点 */}
-        <Box sx={{ display: "flex", gap: 0.5, mb: 0.5 }}>
-          {[preset.info_color, preset.success_color, preset.warning_color, preset.error_color].map((color, i) => (
-            <Box
-              key={i}
-              sx={{
-                flex: 1,
-                height: 4,
-                backgroundColor: color,
-              }}
-            />
-          ))}
-        </Box>
-
-        {/* 主题名称 */}
+        {/* 主题名称 - 更清晰 */}
         <Box
           sx={{
-            fontSize: 11,
+            fontSize: 11.5,
             fontWeight: isActive ? 600 : 500,
-            color: isActive ? "primary.main" : "text.secondary",
+            color: isActive ? "primary.main" : "text.primary",
             textAlign: "center",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            letterSpacing: "-0.01em",
           }}
         >
           {preset.name}

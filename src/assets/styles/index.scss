@@ -1,89 +1,153 @@
+/* 导入顺序很重要 - 确保 dev 和 build 一致 */
+@use "./font.scss";
 @use "./layout.scss";
 @use "./page.scss";
-@use "./font.scss";
+
+/* ========================================
+   全局基础样式
+   ======================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
 
 body {
   margin: 0;
+  padding: 0;
   overflow: hidden;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
     "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
 }
 
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ========================================
+   CSS 变量定义 - 使用 cv- 前缀避免冲突
+   ======================================== */
+
 :root {
   /* 颜色变量 */
-  --primary-main: #7C3AED;
-  --text-primary: #0F172A;
-  --selection-color: #EEF2FF;
-  --scroller-color: #9CA3AF;
-  --scroller-hover-color: #6B7280;
-  --background-color: #F8FAFC;
-  --background-color-alpha: rgba(124, 58, 237, 0.05);
-  --card-background: #FFFFFF;
-  --card-hover-background: #F8FAFC;
+  --cv-primary-main: #7C3AED;
+  --cv-text-primary: #0F172A;
+  --cv-selection-color: #EEF2FF;
+  --cv-scroller-color: #9CA3AF;
+  --cv-scroller-hover-color: #6B7280;
+  --cv-background-color: #F8FAFC;
+  --cv-background-color-alpha: rgba(124, 58, 237, 0.05);
+  --cv-card-background: #FFFFFF;
+  --cv-card-hover-background: #F8FAFC;
   
-  /* 边框 */
-  --border-color: #E2E8F0;
-  --divider-color: var(--border-color);
-  --border-radius-small: 0px;
+  /* 边框与圆角 */
+  --cv-border-color: #E2E8F0;
+  --cv-divider-color: var(--cv-border-color);
+  
+  /* 圆角系统 - 统一管理所有圆角值 */
+  --cv-border-radius-xs: 4px;      /* 超小圆角：滚动条、小元素 */
+  --cv-border-radius-sm: 6px;      /* 小圆角：按钮、输入框 */
+  --cv-border-radius-md: 8px;      /* 中等圆角：卡片、导航项 */
+  --cv-border-radius-lg: 12px;     /* 大圆角：对话框、模态框 */
+  --cv-border-radius-xl: 16px;     /* 超大圆角：特殊容器 */
+  --cv-border-radius-full: 9999px; /* 完全圆角：圆形按钮 */
   
   /* 间距系统 */
-  --spacing-unit: 8px;
+  --cv-spacing-unit: 8px;
   
   /* 布局尺寸 */
-  --sidebar-width: 180px;
-  --titlebar-height: 36px;
-  --header-height: 56px;
-  --content-max-width: 1400px;
-  --scrollbar-size: 8px;
+  --cv-sidebar-width: 180px;
+  --cv-titlebar-height: 36px;
+  --cv-header-height: 56px;
+  --cv-content-max-width: 1400px;
+  --cv-scrollbar-size: 8px;
   
   /* 动画 */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
+  --cv-transition-fast: 0.2s ease;
+  --cv-transition-normal: 0.3s ease;
+  
+  /* Z-index 层级 */
+  --cv-z-background: -1;
+  --cv-z-base: 0;
+  --cv-z-sidebar: 10;
+  --cv-z-header: 20;
+  --cv-z-modal: 1000;
 }
+
+/* ========================================
+   文本选择样式
+   ======================================== */
 
 ::selection {
-  color: var(--selection-color);
-  background-color: var(--primary-main);
+  color: var(--cv-selection-color);
+  background-color: var(--cv-primary-main);
 }
 
-/* 现代化滚动条 - 优雅舒适 */
-*::-webkit-scrollbar {
-  width: var(--scrollbar-size);
-  height: var(--scrollbar-size);
+::-moz-selection {
+  color: var(--cv-selection-color);
+  background-color: var(--cv-primary-main);
+}
+
+/* ========================================
+   滚动条样式 - 仅应用于特定容器
+   ======================================== */
+
+/* 主内容区域滚动条 */
+.the-content::-webkit-scrollbar,
+.base-container section::-webkit-scrollbar,
+.the-menu::-webkit-scrollbar {
+  width: var(--cv-scrollbar-size);
+  height: var(--cv-scrollbar-size);
   background: transparent;
 }
 
-*::-webkit-scrollbar-thumb {
-  background-color: var(--scroller-color);
-  transition: background-color var(--transition-fast);
+.the-content::-webkit-scrollbar-thumb,
+.base-container section::-webkit-scrollbar-thumb,
+.the-menu::-webkit-scrollbar-thumb {
+  background-color: var(--cv-scroller-color);
+  border-radius: var(--cv-border-radius-xs);
+  transition: background-color var(--cv-transition-fast);
 }
 
-*::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scroller-hover-color);
+.the-content::-webkit-scrollbar-thumb:hover,
+.base-container section::-webkit-scrollbar-thumb:hover,
+.the-menu::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cv-scroller-hover-color);
 }
 
-*::-webkit-scrollbar-corner {
+.the-content::-webkit-scrollbar-corner,
+.base-container section::-webkit-scrollbar-corner,
+.the-menu::-webkit-scrollbar-corner {
   background-color: transparent;
 }
 
-*::-webkit-scrollbar-track {
+.the-content::-webkit-scrollbar-track,
+.base-container section::-webkit-scrollbar-track,
+.the-menu::-webkit-scrollbar-track {
   background: transparent;
-  margin: calc(var(--spacing-unit) / 2) 0;
+  margin: calc(var(--cv-spacing-unit) / 2) 0;
 }
 
-// @media (prefers-color-scheme: dark) {
-//   :root {
-//     background-color: rgba(18, 18, 18, 1);
-//   }
-// }
+/* ========================================
+   背景视频容器
+   ======================================== */
 
-/* 背景视频容器样式 */
 #background-video-container {
   position: fixed;
   top: 0;
@@ -91,7 +155,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  z-index: -1;
+  z-index: var(--cv-z-background);
   pointer-events: none;
 }
 

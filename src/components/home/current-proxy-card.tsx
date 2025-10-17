@@ -37,9 +37,9 @@ import { useAppData } from "@/providers/app-data-context";
 import delayManager from "@/services/delay";
 
 // 本地存储的键名
-const STORAGE_KEY_GROUP = "clash-verge-selected-proxy-group";
-const STORAGE_KEY_PROXY = "clash-verge-selected-proxy";
-const STORAGE_KEY_SORT_TYPE = "clash-verge-proxy-sort-type";
+const STORAGE_KEY_GROUP = "needyclash-selected-proxy-group";
+const STORAGE_KEY_PROXY = "needyclash-selected-proxy";
+const STORAGE_KEY_SORT_TYPE = "needyclash-proxy-sort-type";
 
 const AUTO_CHECK_INITIAL_DELAY_MS = 1500;
 const AUTO_CHECK_INTERVAL_MS = 5 * 60 * 1000;

@@ -1,4 +1,4 @@
-import { IconButton, Tooltip, type IconButtonProps } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography, type IconButtonProps } from "@mui/material";
 import { ReactNode } from "react";
 
 import { getIconButtonStyles } from "./theme-tokens";
@@ -49,29 +49,29 @@ interface ToolbarButtonGroupProps {
 }
 
 /**
- * 工具栏按钮组
+ * 工具栏按钮组 - 使用 MUI 组件确保样式一致
  */
 export const ToolbarButtonGroup = ({
   label,
   children,
 }: ToolbarButtonGroupProps) => {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
       {label && (
-        <span
-          style={{
-            fontSize: "11px",
+        <Typography
+          sx={{
+            fontSize: 11,
             fontWeight: 600,
-            color: "var(--text-disabled)",
+            color: "text.disabled",
             textTransform: "uppercase",
             letterSpacing: "0.5px",
           }}
         >
           {label}
-        </span>
+        </Typography>
       )}
-      <div style={{ display: "flex", gap: "6px" }}>{children}</div>
-    </div>
+      <Box sx={{ display: "flex", gap: 0.75 }}>{children}</Box>
+    </Box>
   );
 };
 

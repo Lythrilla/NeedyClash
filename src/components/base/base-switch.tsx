@@ -49,7 +49,7 @@ export const Switch = styled((props: SwitchProps) => (
     borderRadius: "50%",
   },
   "& .MuiSwitch-track": {
-    borderRadius: "13px",
+    borderRadius: "var(--cv-border-radius-lg)",
     backgroundColor: theme.palette.mode === "light" ? "#BBBBBB" : "#39393d36",
     opacity: 1,
     transition: theme.transitions.create(["background-color"], {

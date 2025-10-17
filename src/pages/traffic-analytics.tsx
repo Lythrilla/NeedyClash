@@ -185,7 +185,7 @@ const TrafficAnalyticsPage = () => {
           border: "1px solid",
           borderColor: "divider",
           backgroundColor: "transparent",
-          borderRadius: 1,
+          borderRadius: "var(--cv-border-radius-sm)",
           transition: "all 0.2s ease",
           "&:hover": {
             borderColor: "primary.main",

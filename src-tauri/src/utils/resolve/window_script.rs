@@ -44,7 +44,7 @@ pub const WINDOW_INITIAL_SCRIPT: &str = r#"
                     color: var(--text-color, #000000);
                     letter-spacing: 0.3px;
                     opacity: 0.7;
-                ">Clash Verge Rev Lythrilla</div>
+                ">NeedyClash Loading..</div>
             </div>
             
             <style>

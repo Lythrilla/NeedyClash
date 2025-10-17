@@ -7,6 +7,7 @@ import {
   MenuItem,
   Menu,
   IconButton,
+  LinearProgress,
 } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useState } from "react";
@@ -59,14 +60,6 @@ export const ProfileMore = (props: Props) => {
     { label: "Open File", handler: onOpenFile },
   ];
 
-  const boxStyle = {
-    height: 26,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    lineHeight: 1,
-  };
-
   return (
     <>
       <ProfileBox
@@ -79,12 +72,8 @@ export const ProfileMore = (props: Props) => {
           event.preventDefault();
         }}
       >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={0.5}
-        >
+        {/* 第一行：标题栏 */}
+        <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
           <Typography
             width="calc(100% - 52px)"
             variant="h6"
@@ -104,7 +93,20 @@ export const ProfileMore = (props: Props) => {
           />
         </Box>
 
-        <Box sx={boxStyle}>
+        {/* 第二行：空行占位，保持与订阅卡片一致 */}
+        <Box sx={{ height: 26, display: "flex", alignItems: "center" }}>
+          <Typography sx={{ fontSize: "14px", color: "text.secondary" }}>
+            {t("Global Configuration")}
+          </Typography>
+        </Box>
+
+        {/* 第三行：控制台按钮 */}
+        <Box sx={{ 
+          height: 26, 
+          display: "flex", 
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}>
           {id === "Script" &&
             (hasError ? (
               <Badge color="error" variant="dot" overlap="circular">
@@ -130,6 +132,13 @@ export const ProfileMore = (props: Props) => {
               </IconButton>
             ))}
         </Box>
+
+        {/* 占位进度条，保持与订阅卡片一致的高度 */}
+        <LinearProgress
+          variant="determinate"
+          value={0}
+          sx={{ opacity: 0 }}
+        />
       </ProfileBox>
 
       <Menu

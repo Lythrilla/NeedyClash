@@ -341,7 +341,7 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
                   {...field}
                   size="small"
                   fullWidth
-                  placeholder={`clash-verge/v${version}`}
+                  placeholder={`NeedyClash/v${version}`}
                 />
               )}
             />

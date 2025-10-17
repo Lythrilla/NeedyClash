@@ -215,7 +215,7 @@
   "uninstall": "حذف شده",
   "active": "فعال",
   "unknown": "ناشناخته",
-  "Information: Please make sure that the Clash Verge Service is installed and enabled": "اطلاعات: لطفاً مطمئن شوید که سرویس Clash Verge نصب و فعال شده است",
+  "Information: Please make sure that the Clash Verge Service is installed and enabled": "اطلاعات: لطفاً مطمئن شوید که سرویس NeedyClash نصب و فعال شده است",
   "Install": "نصب",
   "Uninstall": "حذف نصب",
   "Disable Service Mode": "غیرفعال کردن حالت سرویس",
@@ -355,7 +355,7 @@
   "Break Change Update Error": "این نسخه یک به‌روزرسانی اساسی است و پشتیبانی از به‌روزرسانی درون برنامه را پشتیبانی نمی‌کند. لطفاً پس از حذف، دستی دانلود و نصب کنید.",
   "Open Dev Tools": "باز کردن ابزارهای توسعه‌دهنده",
   "Exit": "خروج",
-  "Verge Version": "نسخه Verge",
+  "Verge Version": "نسخه NeedyClash",
   "ReadOnly": "فقط خواندنی",
   "ReadOnlyMessage": "نمی‌توان در ویرایشگر فقط خواندنی ویرایش کرد",
   "Filter": "فیلتر",
@@ -456,5 +456,5 @@
   "TUN requires Service Mode": "حالت تونل‌زنی نیاز به سرویس دارد",
   "Install Service": "نصب سرویس",
   "Installing Service...": "در حال نصب سرویس...",
-  "Service Administrator Prompt": "Clash Verge برای نصب مجدد سرویس سیستم به امتیازات مدیر نیاز دارد"
+  "Service Administrator Prompt": "NeedyClash برای نصب مجدد سرویس سیستم به امتیازات مدیر نیاز دارد"
 }

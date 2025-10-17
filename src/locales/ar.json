@@ -215,7 +215,7 @@
   "uninstall": "إلغاء التثبيت",
   "active": "نشط",
   "unknown": "غير معروف",
-  "Information: Please make sure that the Clash Verge Service is installed and enabled": "معلومة: يرجى التأكد من تثبيت وتشغيل خدمة Clash Verge",
+  "Information: Please make sure that the Clash Verge Service is installed and enabled": "معلومة: يرجى التأكد من تثبيت وتشغيل خدمة NeedyClash",
   "Install": "تثبيت",
   "Uninstall": "إلغاء التثبيت",
   "Disable Service Mode": "تعطيل وضع الخدمة",
@@ -352,7 +352,7 @@
   "Break Change Update Error": "هذا الإصدار هو تحديث رئيسي ولا يدعم التحديث داخل التطبيق. يرجى إلغاء التثبيت وتنزيل الإصدار الجديد وتثبيته يدويًا",
   "Open Dev Tools": "أدوات المطور",
   "Exit": "خروج",
-  "Verge Version": "إصدار Verge",
+  "Verge Version": "إصدار NeedyClash",
   "ReadOnly": "للقراءة فقط",
   "ReadOnlyMessage": "لا يمكن التعديل في محرر القراءة فقط",
   "Filter": "تصفية",
@@ -459,5 +459,5 @@
   "TUN requires Service Mode": "يتطلب وضع TUN خدمة",
   "Install Service": "تثبيت الخدمة ",
   "Installing Service...": "جاري تثبيت الخدمة...",
-  "Service Administrator Prompt": "يتطلب Clash Verge امتيازات المسؤول لإعادة تثبيت خدمة النظام"
+  "Service Administrator Prompt": "يتطلب NeedyClash امتيازات المسؤول لإعادة تثبيت خدمة النظام"
 }
