@@ -45,7 +45,7 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
     open: () => {
       setOpen(true);
       // 从 Clash 配置加载当前 TUN 设置
-      const tunConfig = clash?.tun || {};
+      const tunConfig: Partial<IConfigData["tun"]> = clash?.tun || {};
       setValues({
         stack: tunConfig.stack ?? DEFAULT_TUN_CONFIG.stack,
         device: tunConfig.device ?? DEFAULT_TUN_CONFIG.device,
@@ -191,7 +191,7 @@ export function TunViewer({ ref }: { ref?: Ref<DialogRef> }) {
       onClose={() => setOpen(false)}
       onCancel={() => setOpen(false)}
       onOk={onSave}
-      okBtnDisabled={isSaving}
+      disableOk={isSaving}
     >
       {/* 标题 */}
       <EnhancedDialogTitle
