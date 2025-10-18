@@ -3,9 +3,12 @@ import { t } from "i18next";
 import { useCallback, useState } from "react";
 
 import { showNotice } from "@/services/noticeService";
+import { getLogger } from "@/utils/logger";
 
 import { useSystemState } from "./use-system-state";
 import { useVerge } from "./use-verge";
+
+const logger = getLogger("useTunMode");
 
 interface TunModeOperationResult {
   success: boolean;
@@ -18,7 +21,7 @@ interface TunModeOperationResult {
  */
 export const useTunMode = () => {
   const { verge, mutateVerge, patchVerge } = useVerge();
-  const { isTunModeAvailable, isServiceMode, isAdminMode } = useSystemState();
+  const { isTunModeAvailable, isServiceMode } = useSystemState();
   const [isToggling, setIsToggling] = useState(false);
 
   const enableTunMode = verge?.enable_tun_mode ?? false;
@@ -31,7 +34,7 @@ export const useTunMode = () => {
       const available = await invoke<boolean>("check_tun_available");
       return available;
     } catch (err) {
-      console.error("[useTunMode] 检查 TUN 可用性失败:", err);
+      logger.error("检查 TUN 可用性失败:", err);
       return false;
     }
   }, []);
@@ -44,7 +47,7 @@ export const useTunMode = () => {
       const status = await invoke<string>("get_tun_status");
       return status;
     } catch (err) {
-      console.error("[useTunMode] 获取 TUN 状态失败:", err);
+      logger.error("获取 TUN 状态失败:", err);
       return "Unknown";
     }
   }, []);
@@ -55,11 +58,14 @@ export const useTunMode = () => {
   const toggleTunMode = useCallback(
     async (value: boolean): Promise<TunModeOperationResult> => {
       if (isToggling) {
-        console.warn("[useTunMode] TUN 模式切换操作正在进行中");
+        logger.warn("TUN 模式切换操作正在进行中");
         return { success: false, error: "Operation in progress" };
       }
 
       setIsToggling(true);
+
+      // 保存原始状态用于错误恢复
+      const originalState = verge?.enable_tun_mode ?? false;
 
       try {
         // 预检查：确认是否可以启用 TUN 模式
@@ -102,10 +108,10 @@ export const useTunMode = () => {
         return { success: true };
       } catch (err) {
         const errorMsg = (err as Error)?.message || String(err);
-        console.error("[useTunMode] TUN 模式切换失败:", errorMsg);
+        logger.error("TUN 模式切换失败:", errorMsg);
 
-        // 恢复原始状态
-        mutateVerge({ ...verge, enable_tun_mode: !value }, false);
+        // 恢复到原始状态
+        mutateVerge({ ...verge, enable_tun_mode: originalState }, false);
         await mutateVerge();
 
         showNotice("error", errorMsg);
@@ -122,6 +128,7 @@ export const useTunMode = () => {
       mutateVerge,
       patchVerge,
       checkTunAvailable,
+      t,
     ],
   );
 
@@ -139,12 +146,12 @@ export const useTunMode = () => {
         return { success: true };
       } catch (err) {
         const errorMsg = (err as Error)?.message || String(err);
-        console.error("[useTunMode] 重新应用 TUN 配置失败:", errorMsg);
+        logger.error("重新应用 TUN 配置失败:", errorMsg);
 
         showNotice("error", errorMsg);
         return { success: false, error: errorMsg };
       }
-    }, []);
+    }, [t]);
 
   return {
     enableTunMode,

@@ -5,6 +5,9 @@ import useSWR from "swr";
 import { useSystemState } from "@/hooks/use-system-state";
 import { getVergeConfig, patchVergeConfig } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
+import { getLogger } from "@/utils/logger";
+
+const logger = getLogger("useVerge");
 
 export const useVerge = () => {
   const { t } = useTranslation();
@@ -31,16 +34,19 @@ export const useVerge = () => {
 
   useEffect(() => {
     const timeSinceInit = Date.now() - initTimeRef.current;
+    // 应用启动5秒内不处理，避免初始化时误判
     if (timeSinceInit < 5000) {
       return;
     }
 
+    // 避免重复处理
     if (isProcessingRef.current || hasNotifiedRef.current) {
       return;
     }
 
+    // TUN模式启用但不可用时自动关闭
     if (enable_tun_mode && !isTunModeAvailable && !isLoading) {
-      console.log("[useVerge] 检测到服务不可用，自动关闭TUN模式");
+      logger.info("检测到服务不可用，自动关闭TUN模式");
 
       isProcessingRef.current = true;
 
@@ -56,7 +62,7 @@ export const useVerge = () => {
           }
         })
         .catch((err) => {
-          console.error("[useVerge] 自动关闭TUN模式失败:", err);
+          logger.error("自动关闭TUN模式失败:", err);
           if (!hasNotifiedRef.current) {
             showNotice("error", t("Failed to disable TUN Mode automatically"));
             hasNotifiedRef.current = true;
@@ -66,7 +72,7 @@ export const useVerge = () => {
           isProcessingRef.current = false;
         });
     }
-  }, [isTunModeAvailable, isLoading, enable_tun_mode, mutateVerge, t]);
+  }, [isTunModeAvailable, isLoading, enable_tun_mode, t, mutateVerge]);
 
   return {
     verge,

@@ -1,12 +1,16 @@
 import useSWR, { mutate } from "swr";
 import { selectNodeForGroup } from "tauri-plugin-mihomo-api";
 
+import { profileSWRConfig } from "@/config/swr-config";
 import {
   getProfiles,
   patchProfile,
   patchProfilesConfig,
 } from "@/services/cmds";
 import { calcuProxies } from "@/services/cmds";
+import { getLogger } from "@/utils/logger";
+
+const logger = getLogger("useProfiles");
 
 export const useProfiles = () => {
   const {
@@ -15,20 +19,12 @@ export const useProfiles = () => {
     error,
     isValidating,
   } = useSWR("getProfiles", getProfiles, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-    dedupingInterval: 500, // 减少去重时间，提高响应性
-    errorRetryCount: 3,
-    errorRetryInterval: 1000,
-    refreshInterval: 0, // 完全由手动控制
+    ...profileSWRConfig,
     onError: (error) => {
-      console.error("[useProfiles] SWR错误:", error);
+      logger.error("SWR错误:", error);
     },
     onSuccess: (data) => {
-      console.log(
-        "[useProfiles] 配置数据更新成功，配置数量:",
-        data?.items?.length || 0,
-      );
+      logger.info("配置数据更新成功，配置数量:", data?.items?.length || 0);
     },
   });
 
@@ -61,15 +57,20 @@ export const useProfiles = () => {
 
   const patchCurrent = async (value: Partial<IProfileItem>) => {
     if (profiles?.current) {
-      await patchProfile(profiles.current, value);
-      mutateProfiles();
+      try {
+        await patchProfile(profiles.current, value);
+        mutateProfiles();
+      } catch (error) {
+        logger.error("更新当前配置失败:", error);
+        throw error;
+      }
     }
   };
 
   // 根据selected的节点选择
   const activateSelected = async () => {
     try {
-      console.log("[ActivateSelected] 开始处理代理选择");
+      logger.debug("开始处理代理选择");
 
       const [proxiesData, profileData] = await Promise.all([
         calcuProxies(),
@@ -77,7 +78,7 @@ export const useProfiles = () => {
       ]);
 
       if (!profileData || !proxiesData) {
-        console.log("[ActivateSelected] 代理或配置数据不可用，跳过处理");
+        logger.debug("代理或配置数据不可用，跳过处理");
         return;
       }
 
@@ -86,23 +87,27 @@ export const useProfiles = () => {
       );
 
       if (!current) {
-        console.log("[ActivateSelected] 未找到当前profile配置");
+        logger.debug("未找到当前profile配置");
         return;
       }
 
       // 检查是否有saved的代理选择
       const { selected = [] } = current;
       if (selected.length === 0) {
-        console.log("[ActivateSelected] 当前profile无保存的代理选择，跳过");
+        logger.debug("当前profile无保存的代理选择，跳过");
         return;
       }
 
-      console.log(
-        `[ActivateSelected] 当前profile有 ${selected.length} 个代理选择配置`,
+      logger.info(`当前profile有 ${selected.length} 个代理选择配置`);
+
+      // 使用类型守卫过滤有效的选择项
+      const validSelected = selected.filter(
+        (item): item is { name: string; now: string } =>
+          item?.name != null && item?.now != null,
       );
 
       const selectedMap = Object.fromEntries(
-        selected.map((each) => [each.name!, each.now!]),
+        validSelected.map((each) => [each.name, each.now]),
       );
 
       let hasChange = false;
@@ -120,9 +125,7 @@ export const useProfiles = () => {
 
         const targetProxy = selectedMap[name];
         if (targetProxy != null && targetProxy !== now) {
-          console.log(
-            `[ActivateSelected] 需要切换代理组 ${name}: ${now} -> ${targetProxy}`,
-          );
+          logger.info(`需要切换代理组 ${name}: ${now} -> ${targetProxy}`);
           hasChange = true;
           selectNodeForGroup(name, targetProxy);
         }
@@ -131,27 +134,33 @@ export const useProfiles = () => {
       });
 
       if (!hasChange) {
-        console.log("[ActivateSelected] 所有代理选择已经是目标状态，无需更新");
+        logger.debug("所有代理选择已经是目标状态，无需更新");
         return;
       }
 
-      console.log(`[ActivateSelected] 完成代理切换，保存新的选择配置`);
+      logger.info("完成代理切换，保存新的选择配置");
+
+      // 类型守卫确保 current 存在
+      if (!profileData.current) {
+        logger.error("Profile ID 不存在，无法保存配置");
+        return;
+      }
 
       try {
-        await patchProfile(profileData.current!, { selected: newSelected });
-        console.log("[ActivateSelected] 代理选择配置保存成功");
+        await patchProfile(profileData.current, { selected: newSelected });
+        logger.info("代理选择配置保存成功");
 
         setTimeout(() => {
           mutate("getProxies", calcuProxies());
         }, 100);
-      } catch (error: any) {
-        console.error(
-          "[ActivateSelected] 保存代理选择配置失败:",
-          error.message,
-        );
+      } catch (error: unknown) {
+        const errorMsg =
+          error instanceof Error ? error.message : String(error);
+        logger.error("保存代理选择配置失败:", errorMsg);
       }
-    } catch (error: any) {
-      console.error("[ActivateSelected] 处理代理选择失败:", error.message);
+    } catch (error: unknown) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      logger.error("处理代理选择失败:", errorMsg);
     }
   };
 

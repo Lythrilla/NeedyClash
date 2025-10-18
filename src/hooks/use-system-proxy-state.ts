@@ -1,18 +1,24 @@
 import useSWR, { mutate } from "swr";
+
+import { systemProxySWRConfig } from "@/config/swr-config";
 import { closeAllConnections } from "tauri-plugin-mihomo-api";
 
 import { useVerge } from "@/hooks/use-verge";
 import { useAppData } from "@/providers/app-data-context";
 import { getAutotemProxy } from "@/services/cmds";
+import { getLogger } from "@/utils/logger";
+
+const logger = getLogger("useSystemProxyState");
 
 // 系统代理状态检测统一逻辑
 export const useSystemProxyState = () => {
   const { verge, mutateVerge, patchVerge } = useVerge();
   const { sysproxy } = useAppData();
-  const { data: autoproxy } = useSWR("getAutotemProxy", getAutotemProxy, {
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-  });
+  const { data: autoproxy } = useSWR(
+    "getAutotemProxy",
+    getAutotemProxy,
+    systemProxySWRConfig,
+  );
 
   const { enable_system_proxy, proxy_auto_config } = verge ?? {};
 
@@ -47,24 +53,22 @@ export const useSystemProxyState = () => {
     await mutate("getAutotemProxy");
   };
 
-  const toggleSystemProxy = (enabled: boolean) => {
+  const toggleSystemProxy = async (enabled: boolean) => {
+    // 乐观更新
     mutateVerge({ ...verge, enable_system_proxy: enabled }, false);
 
-    setTimeout(async () => {
-      try {
-        if (!enabled && verge?.auto_close_connection) {
-          closeAllConnections();
-        }
-        await patchVerge({ enable_system_proxy: enabled });
-
-        updateProxyStatus();
-      } catch (error) {
-        console.warn("[useSystemProxyState] toggleSystemProxy failed:", error);
-        mutateVerge({ ...verge, enable_system_proxy: !enabled }, false);
+    try {
+      if (!enabled && verge?.auto_close_connection) {
+        closeAllConnections();
       }
-    }, 0);
-
-    return Promise.resolve();
+      await patchVerge({ enable_system_proxy: enabled });
+      await updateProxyStatus();
+    } catch (error) {
+      console.warn("[useSystemProxyState] toggleSystemProxy failed:", error);
+      // 回滚状态
+      mutateVerge({ ...verge, enable_system_proxy: !enabled }, false);
+      throw error;
+    }
   };
 
   return {

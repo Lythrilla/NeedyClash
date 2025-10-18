@@ -15,6 +15,11 @@ import { useClashInfo } from "@/hooks/use-clash";
 import { useVerge } from "@/hooks/use-verge";
 import { showNotice } from "@/services/noticeService";
 import getSystem from "@/utils/get-system";
+import {
+  validatePort,
+  detectPortConflicts,
+  PORT_RANGE,
+} from "@/utils/port-validator";
 
 import {
   EnhancedDialogTitle,
@@ -30,7 +35,7 @@ interface ClashPortViewerRef {
 }
 
 const generateRandomPort = () =>
-  Math.floor(Math.random() * (65535 - 1025 + 1)) + 1025;
+  Math.floor(Math.random() * (PORT_RANGE.MAX - 1025 + 1)) + 1025;
 
 export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
   const { t } = useTranslation();
@@ -98,29 +103,26 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
 
   const onSave = useLockFn(async () => {
     // 端口冲突检测
-    const portList = [
+    const activePorts = [
       mixedPort,
-      socksEnabled ? socksPort : -1,
-      httpEnabled ? httpPort : -1,
-      redirEnabled ? redirPort : -1,
-      tproxyEnabled ? tproxyPort : -1,
-    ].filter((p) => p !== -1);
+      socksEnabled ? socksPort : undefined,
+      httpEnabled ? httpPort : undefined,
+      redirEnabled ? redirPort : undefined,
+      tproxyEnabled ? tproxyPort : undefined,
+    ];
 
-    if (new Set(portList).size !== portList.length) {
+    if (detectPortConflicts(activePorts)) {
+      showNotice("error", t("Port conflict detected"));
       return;
     }
 
     // 验证端口范围
-    const isValidPort = (port: number) => port >= 1 && port <= 65535;
-    const allPortsValid = [
-      mixedPort,
-      socksEnabled ? socksPort : 0,
-      httpEnabled ? httpPort : 0,
-      redirEnabled ? redirPort : 0,
-      tproxyEnabled ? tproxyPort : 0,
-    ].every((port) => port === 0 || isValidPort(port));
-
-    if (!allPortsValid) {
+    const portsToValidate = activePorts.filter((p) => p != null) as number[];
+    if (!portsToValidate.every(validatePort)) {
+      showNotice(
+        "error",
+        t(`Port must be between ${PORT_RANGE.MIN} and ${PORT_RANGE.MAX}`),
+      );
       return;
     }
 

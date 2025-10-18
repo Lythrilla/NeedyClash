@@ -7,6 +7,7 @@ import {
   patchClashConfig,
   getRuntimeConfig,
 } from "@/services/cmds";
+import { validatePorts } from "@/utils/port-validator";
 
 export const useClash = () => {
   const { data: clash, mutate: mutateClash } = useSWR(
@@ -68,55 +69,8 @@ export const useClashInfo = () => {
 
     if (!hasInfo) return;
 
-    if (patch["redir-port"]) {
-      const port = patch["redir-port"];
-      if (port < 1111) {
-        throw new Error("The port should not < 1111");
-      }
-      if (port > 65536) {
-        throw new Error("The port should not > 65536");
-      }
-    }
-
-    if (patch["tproxy-port"]) {
-      const port = patch["tproxy-port"];
-      if (port < 1111) {
-        throw new Error("The port should not < 1111");
-      }
-      if (port > 65536) {
-        throw new Error("The port should not > 65536");
-      }
-    }
-
-    if (patch["mixed-port"]) {
-      const port = patch["mixed-port"];
-      if (port < 1111) {
-        throw new Error("The port should not < 1111");
-      }
-      if (port > 65536) {
-        throw new Error("The port should not > 65536");
-      }
-    }
-
-    if (patch["socks-port"]) {
-      const port = patch["socks-port"];
-      if (port < 1111) {
-        throw new Error("The port should not < 1111");
-      }
-      if (port > 65536) {
-        throw new Error("The port should not > 65536");
-      }
-    }
-
-    if (patch["port"]) {
-      const port = patch["port"];
-      if (port < 1111) {
-        throw new Error("The port should not < 1111");
-      }
-      if (port > 65536) {
-        throw new Error("The port should not > 65536");
-      }
-    }
+    // 使用统一的端口验证
+    validatePorts(patch);
 
     await patchClashConfig(patch);
     mutateInfo();

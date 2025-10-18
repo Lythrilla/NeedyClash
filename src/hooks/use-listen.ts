@@ -1,6 +1,6 @@
 import { event } from "@tauri-apps/api";
 import { listen, UnlistenFn, EventCallback } from "@tauri-apps/api/event";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export const useListen = () => {
   const unlistenFns = useRef<UnlistenFn[]>([]);
@@ -13,6 +13,7 @@ export const useListen = () => {
     unlistenFns.current.push(unlisten);
     return unlisten;
   };
+  
   const removeAllListeners = () => {
     unlistenFns.current.forEach((unlisten) => unlisten());
     unlistenFns.current = [];
@@ -23,6 +24,13 @@ export const useListen = () => {
       removeAllListeners();
     });
   };
+
+  // 组件卸载时清理所有监听器
+  useEffect(() => {
+    return () => {
+      removeAllListeners();
+    };
+  }, []);
 
   return {
     addListener,

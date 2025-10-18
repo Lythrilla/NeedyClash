@@ -1,6 +1,9 @@
 import { t } from "i18next";
 
 import { showNotice } from "@/services/noticeService";
+import { getLogger } from "@/utils/logger";
+
+const logger = getLogger("ServiceOperations");
 
 /**
  * 服务操作结果接口
@@ -46,7 +49,7 @@ export const executeServiceSequence = async (
         showNotice("info", t(step.startMsg));
       }
 
-      console.log(`[ServiceOperations] 执行步骤: ${step.name}`);
+      logger.debug(`执行步骤: ${step.name}`);
 
       // 执行操作
       await step.fn();
@@ -56,16 +59,14 @@ export const executeServiceSequence = async (
         showNotice("success", t(step.successMsg));
       }
 
-      console.log(`[ServiceOperations] 步骤成功: ${step.name}`);
+      logger.debug(`步骤成功: ${step.name}`);
     } catch (err) {
       const errorMsg = (err as Error)?.message || String(err);
-      console.error(`[ServiceOperations] 步骤失败: ${step.name}`, errorMsg);
+      logger.error(`步骤失败: ${step.name}`, errorMsg);
 
       // 如果是可选步骤，记录错误但继续执行
       if (step.isOptional) {
-        console.warn(
-          `[ServiceOperations] 可选步骤失败，继续执行: ${step.name}`,
-        );
+        logger.warn(`可选步骤失败，继续执行: ${step.name}`);
         continue;
       }
 
@@ -99,10 +100,7 @@ export const executeWithRetry = async <T>(
       return await fn();
     } catch (err) {
       lastError = err as Error;
-      console.warn(
-        `[ServiceOperations] 操作失败，重试 ${i + 1}/${maxRetries}:`,
-        lastError.message,
-      );
+      logger.warn(`操作失败，重试 ${i + 1}/${maxRetries}:`, lastError.message);
 
       if (i < maxRetries - 1) {
         await waitForStateStabilization(retryDelay);

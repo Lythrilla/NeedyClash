@@ -1,6 +1,7 @@
 mod backup;
 mod clash;
 mod config;
+mod config_flags;
 mod profile;
 mod proxy;
 mod window;

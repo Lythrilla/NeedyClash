@@ -9,6 +9,9 @@ import {
 import { useProfiles } from "@/hooks/use-profiles";
 import { useVerge } from "@/hooks/use-verge";
 import { syncTrayProxySelection } from "@/services/cmds";
+import { getLogger } from "@/utils/logger";
+
+const logger = getLogger("ProxySelection");
 
 // 缓存连接清理
 const cleanupConnections = async (previousProxy: string) => {
@@ -20,10 +23,10 @@ const cleanupConnections = async (previousProxy: string) => {
 
     if (cleanupPromises.length > 0) {
       await Promise.allSettled(cleanupPromises);
-      console.log(`[ProxySelection] 清理了 ${cleanupPromises.length} 个连接`);
+      logger.info(`清理了 ${cleanupPromises.length} 个连接`);
     }
   } catch (error) {
-    console.warn("[ProxySelection] 连接清理失败:", error);
+    logger.warn("连接清理失败:", error);
   }
 };
 
@@ -57,9 +60,10 @@ export const useProxySelection = (options: ProxySelectionOptions = {}) => {
       previousProxy?: string,
       skipConfigSave: boolean = false,
     ) => {
-      console.log(`[ProxySelection] 代理切换: ${groupName} -> ${proxyName}`);
+      logger.info(`代理切换: ${groupName} -> ${proxyName}`);
 
       try {
+        // 第一步：保存配置到本地
         if (current && !skipConfigSave) {
           if (!current.selected) current.selected = [];
 
@@ -75,41 +79,32 @@ export const useProxySelection = (options: ProxySelectionOptions = {}) => {
           await patchCurrent({ selected: current.selected });
         }
 
+        // 第二步：应用到 Clash 核心
         await selectNodeForGroup(groupName, proxyName);
+        
+        // 第三步：同步到系统托盘
         await syncTrayProxySelection();
-        console.log(
-          `[ProxySelection] 代理和状态同步完成: ${groupName} -> ${proxyName}`,
-        );
+        
+        logger.info(`代理和状态同步完成: ${groupName} -> ${proxyName}`);
 
         onSuccess?.();
 
+        // 第四步：清理旧连接（异步，不阻塞）
         if (
           config.enableConnectionCleanup &&
           config.autoCloseConnection &&
           previousProxy
         ) {
-          setTimeout(() => cleanupConnections(previousProxy), 0);
+          queueMicrotask(() => cleanupConnections(previousProxy));
         }
       } catch (error) {
-        console.error(
-          `[ProxySelection] 代理切换失败: ${groupName} -> ${proxyName}`,
-          error,
-        );
-
-        try {
-          await selectNodeForGroup(groupName, proxyName);
-          await syncTrayProxySelection();
-          onSuccess?.();
-          console.log(
-            `[ProxySelection] 代理切换回退成功: ${groupName} -> ${proxyName}`,
-          );
-        } catch (fallbackError) {
-          console.error(
-            `[ProxySelection] 代理切换回退也失败: ${groupName} -> ${proxyName}`,
-            fallbackError,
-          );
-          onError?.(fallbackError);
-        }
+        logger.error(`代理切换失败: ${groupName} -> ${proxyName}`, error);
+        
+        // 配置保存失败或核心应用失败，通知用户
+        onError?.(error);
+        
+        // 不进行重试，因为参数没有变化，重试会得到相同结果
+        throw error;
       }
     },
   );

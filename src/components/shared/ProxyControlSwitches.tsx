@@ -4,7 +4,7 @@ import {
   RefreshRounded,
   DeleteOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, alpha, Button, Stack } from "@mui/material";
+import { Box, Typography, Button, Stack } from "@mui/material";
 import { useLockFn } from "ahooks";
 import React, { useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,13 @@ import { useSystemProxyState } from "@/hooks/use-system-proxy-state";
 import { useSystemState } from "@/hooks/use-system-state";
 import { useVerge } from "@/hooks/use-verge";
 import { showNotice } from "@/services/noticeService";
+import {
+  SWITCH_ROW_CONTAINER,
+  LABEL_STYLE,
+  HINT_TEXT_STYLES,
+  ICON_STYLE,
+  SERVICE_BUTTON_STYLES,
+} from "./proxy-control-styles";
 
 interface ProxySwitchProps {
   label?: string;
@@ -38,9 +45,6 @@ interface SwitchRowProps {
   highlight?: boolean;
 }
 
-/**
- * 极简轻量开关 UI - 最小化设计
- */
 const SwitchRow = ({
   label,
   active,
@@ -53,17 +57,7 @@ const SwitchRow = ({
   highlight,
 }: SwitchRowProps) => {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 1.5,
-        px: 0,
-        py: 1,
-        opacity: disabled ? 0.4 : 1,
-        transition: "opacity 0.15s ease",
-      }}
-    >
+    <Box sx={{ ...SWITCH_ROW_CONTAINER, opacity: disabled ? 0.4 : 1 }}>
       <Box
         sx={{
           display: "flex",
@@ -73,26 +67,13 @@ const SwitchRow = ({
           minWidth: 0,
         }}
       >
-        <Typography
-          sx={{
-            fontSize: 12,
-            fontWeight: 400,
-            color: "text.secondary",
-            flex: 1,
-            minWidth: 0,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {label}
-        </Typography>
+        <Typography sx={LABEL_STYLE}>{label}</Typography>
         {infoTitle && (
           <TooltipIcon
             title={infoTitle}
             icon={SettingsRounded}
             onClick={onInfoClick}
-            sx={{ fontSize: 14, opacity: 0.4, flexShrink: 0 }}
+            sx={ICON_STYLE}
           />
         )}
         {extraIcons}
@@ -205,17 +186,7 @@ const ProxyControlSwitches = ({
 
           {/* 状态提示 - 极简设计 */}
           {!isTunModeAvailable && (
-            <Typography
-              variant="caption"
-              sx={{
-                fontSize: 10,
-                lineHeight: 1.4,
-                color: "text.disabled",
-                display: "block",
-                mt: 0.5,
-                mb: 1,
-              }}
-            >
+            <Typography variant="caption" sx={HINT_TEXT_STYLES.caption}>
               {t("TUN requires Service Mode or Admin Mode")}
             </Typography>
           )}
@@ -226,14 +197,7 @@ const ProxyControlSwitches = ({
               <Stack spacing={0.75}>
                 {/* 提示文本 */}
                 {!isAdminMode && (
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontSize: 9,
-                      color: "warning.main",
-                      lineHeight: 1.3,
-                    }}
-                  >
+                  <Typography variant="caption" sx={HINT_TEXT_STYLES.warning}>
                     {t("Service Installation Requires Administrator")}
                   </Typography>
                 )}
@@ -243,26 +207,7 @@ const ProxyControlSwitches = ({
                   size="small"
                   startIcon={<BuildRounded sx={{ fontSize: "14px" }} />}
                   onClick={onInstallService}
-                  sx={{
-                    width: "100%",
-                    py: 0.75,
-                    px: 1,
-                    fontSize: "11px",
-                    fontWeight: 500,
-                    textTransform: "none",
-                    borderRadius: "var(--cv-border-radius-sm)",
-                    color: "primary.main",
-                    backgroundColor: (theme) =>
-                      alpha(theme.palette.primary.main, 0.06),
-                    transition: "all 0.2s",
-                    "&:hover": {
-                      backgroundColor: (theme) =>
-                        alpha(theme.palette.primary.main, 0.12),
-                    },
-                    "& .MuiButton-startIcon": {
-                      marginRight: "6px",
-                    },
-                  }}
+                  sx={{ width: "100%", ...SERVICE_BUTTON_STYLES.install }}
                 >
                   {t("Install Service")}
                 </Button>
@@ -271,14 +216,7 @@ const ProxyControlSwitches = ({
               <Stack spacing={0.75}>
                 {/* 提示文本 */}
                 {!isAdminMode && (
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontSize: 9,
-                      color: "warning.main",
-                      lineHeight: 1.3,
-                    }}
-                  >
+                  <Typography variant="caption" sx={HINT_TEXT_STYLES.warning}>
                     {t("Service Management Requires Administrator")}
                   </Typography>
                 )}
@@ -289,26 +227,7 @@ const ProxyControlSwitches = ({
                     size="small"
                     startIcon={<RefreshRounded sx={{ fontSize: "13px" }} />}
                     onClick={onReinstallService}
-                    sx={{
-                      flex: 1,
-                      py: 0.75,
-                      px: 0.75,
-                      fontSize: "10px",
-                      fontWeight: 500,
-                      textTransform: "none",
-                      borderRadius: "var(--cv-border-radius-sm)",
-                      color: "success.main",
-                      backgroundColor: (theme) =>
-                        alpha(theme.palette.success.main, 0.06),
-                      transition: "all 0.2s",
-                      "&:hover": {
-                        backgroundColor: (theme) =>
-                          alpha(theme.palette.success.main, 0.12),
-                      },
-                      "& .MuiButton-startIcon": {
-                        marginRight: "4px",
-                      },
-                    }}
+                    sx={{ flex: 1, ...SERVICE_BUTTON_STYLES.reinstall }}
                   >
                     {t("Reinstall Service")}
                   </Button>
@@ -317,26 +236,7 @@ const ProxyControlSwitches = ({
                     size="small"
                     startIcon={<DeleteOutlined sx={{ fontSize: "13px" }} />}
                     onClick={onUninstallService}
-                    sx={{
-                      flex: 1,
-                      py: 0.75,
-                      px: 0.75,
-                      fontSize: "10px",
-                      fontWeight: 500,
-                      textTransform: "none",
-                      borderRadius: "var(--cv-border-radius-sm)",
-                      color: "error.main",
-                      backgroundColor: (theme) =>
-                        alpha(theme.palette.error.main, 0.06),
-                      transition: "all 0.2s",
-                      "&:hover": {
-                        backgroundColor: (theme) =>
-                          alpha(theme.palette.error.main, 0.12),
-                      },
-                      "& .MuiButton-startIcon": {
-                        marginRight: "4px",
-                      },
-                    }}
+                    sx={{ flex: 1, ...SERVICE_BUTTON_STYLES.uninstall }}
                   >
                     {t("Uninstall Service")}
                   </Button>

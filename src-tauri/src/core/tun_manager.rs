@@ -1,9 +1,14 @@
-use anyhow::{Result, bail};
+use anyhow::Result;
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use crate::{config::Config, core::handle::Handle, logging, utils::logging::Type};
+use crate::{
+    config::Config,
+    core::handle::Handle,
+    logging,
+    utils::{logging::Type, permission::check_elevated_privileges},
+};
 
 /// TUN 模式状态
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -58,33 +63,7 @@ impl TunManager {
 
     /// 检查是否可以启用 TUN 模式
     pub async fn can_enable_tun() -> Result<()> {
-        // 检查是否在服务模式或管理员模式下运行
-        use crate::core::CoreManager;
-        let running_mode = CoreManager::global().get_running_mode();
-
-        #[cfg(target_os = "windows")]
-        {
-            use deelevate::{PrivilegeLevel, Token};
-            let is_admin = Token::with_current_process()
-                .and_then(|token| token.privilege_level())
-                .map(|level| level != PrivilegeLevel::NotPrivileged)
-                .unwrap_or(false);
-
-            if running_mode != crate::core::RunningMode::Service && !is_admin {
-                bail!("TUN mode requires Service Mode or Administrator privileges");
-            }
-        }
-
-        #[cfg(not(target_os = "windows"))]
-        {
-            let is_root = unsafe { libc::geteuid() } == 0;
-
-            if running_mode != crate::core::RunningMode::Service && !is_root {
-                bail!("TUN mode requires Service Mode or root privileges");
-            }
-        }
-
-        Ok(())
+        check_elevated_privileges()
     }
 
     /// 启用 TUN 模式
@@ -133,7 +112,7 @@ impl TunManager {
     /// 应用 TUN 配置到 Clash 核心
     async fn apply_tun_config(&self, enable: bool) -> Result<()> {
         use tokio::time::{Duration, timeout};
-        
+
         // 配置超时时间常量
         const CONFIG_TIMEOUT_SECS: u64 = 10;
         const CONFIG_STABILIZATION_MS: u64 = 100;

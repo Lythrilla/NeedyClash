@@ -315,7 +315,8 @@ jobs:
 
           sudo apt-get install -y \
             libxslt1.1:${{ matrix.arch }} \
-            libwebkit2gtk-4.0-dev:${{ matrix.arch }} \
+            libwebkit2gtk-4.1-dev:${{ matrix.arch }} \
+            libjavascriptcoregtk-4.1-dev:${{ matrix.arch }} \
             libayatana-appindicator3-dev:${{ matrix.arch }} \
             libssl-dev:${{ matrix.arch }} \
             patchelf:${{ matrix.arch }} \

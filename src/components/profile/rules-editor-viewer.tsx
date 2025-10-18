@@ -61,11 +61,10 @@ interface Props {
   onSave?: (prev?: string, curr?: string) => void;
 }
 
-const portValidator = (value: string): boolean => {
-  return new RegExp(
-    "^(?:[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])$",
-  ).test(value);
-};
+// 导入统一的端口验证工具
+import { validatePortFormat } from "@/utils/port-validator";
+
+const portValidator = validatePortFormat;
 const ipv4CIDRValidator = (value: string): boolean => {
   return new RegExp(
     "^(?:(?:[1-9]?[0-9]|1[0-9][0-9]|2(?:[0-4][0-9]|5[0-5]))\\.){3}(?:[1-9]?[0-9]|1[0-9][0-9]|2(?:[0-4][0-9]|5[0-5]))(?:\\/(?:[12]?[0-9]|3[0-2]))$",

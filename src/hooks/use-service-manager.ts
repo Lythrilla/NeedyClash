@@ -9,6 +9,9 @@ import {
   restartCore,
 } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
+import { getLogger } from "@/utils/logger";
+
+const logger = getLogger("useServiceManager");
 
 import {
   executeServiceSequence,
@@ -57,9 +60,7 @@ export const useServiceManager = () => {
     ) => {
       // 检查是否有操作正在进行（使用 ref 避免依赖 state）
       if (operatingRef.current) {
-        console.warn(
-          `[useServiceManager] 操作正在进行中，忽略新的 ${operationType} 请求`,
-        );
+        logger.warn(`操作正在进行中，忽略新的 ${operationType} 请求`);
         return;
       }
 
@@ -182,7 +183,7 @@ export const useServiceManager = () => {
         successMsg: "Service Uninstalled Successfully",
       },
       {
-        fn: () => waitForStateStabilization(800),
+        fn: () => waitForStateStabilization(TIMING.SERVICE_STABILIZATION),
         name: "WaitForServiceRemoval",
       },
       {

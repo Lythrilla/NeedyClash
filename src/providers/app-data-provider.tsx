@@ -7,6 +7,14 @@ import {
   getRules,
 } from "tauri-plugin-mihomo-api";
 
+import {
+  proxySWRConfig,
+  clashConfigSWRConfig,
+  providerSWRConfig,
+  ruleSWRConfig,
+  systemStateSWRConfig,
+  uptimeSWRConfig,
+} from "@/config/swr-config";
 import { useVerge } from "@/hooks/use-verge";
 import {
   calcuProxies,
@@ -15,8 +23,11 @@ import {
   getRunningMode,
   getSystemProxy,
 } from "@/services/cmds";
+import { getLogger } from "@/utils/logger";
 
 import { AppDataContext, AppDataContextType } from "./app-data-context";
+
+const logger = getLogger("AppDataProvider");
 
 // 全局数据提供者组件
 export const AppDataProvider = ({
@@ -29,57 +40,31 @@ export const AppDataProvider = ({
   const { data: proxiesData, mutate: refreshProxy } = useSWR(
     "getProxies",
     calcuProxies,
-    {
-      refreshInterval: 5000,
-      revalidateOnFocus: true,
-      suspense: false,
-      errorRetryCount: 3,
-      dedupingInterval: 2000,
-    },
+    proxySWRConfig,
   );
 
   const { data: clashConfig, mutate: refreshClashConfig } = useSWR(
     "getClashConfig",
     getBaseConfig,
-    {
-      refreshInterval: 60000,
-      revalidateOnFocus: false,
-      suspense: false,
-      errorRetryCount: 3,
-      dedupingInterval: 5000,
-    },
+    clashConfigSWRConfig,
   );
 
   const { data: proxyProviders, mutate: refreshProxyProviders } = useSWR(
     "getProxyProviders",
     calcuProxyProviders,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      dedupingInterval: 3000,
-      suspense: false,
-      errorRetryCount: 3,
-    },
+    providerSWRConfig,
   );
 
   const { data: ruleProviders, mutate: refreshRuleProviders } = useSWR(
     "getRuleProviders",
     getRuleProviders,
-    {
-      revalidateOnFocus: false,
-      suspense: false,
-      errorRetryCount: 3,
-    },
+    ruleSWRConfig,
   );
 
   const { data: rulesData, mutate: refreshRules } = useSWR(
     "getRules",
     getRules,
-    {
-      revalidateOnFocus: false,
-      suspense: false,
-      errorRetryCount: 3,
-    },
+    ruleSWRConfig,
   );
 
   // 监听配置变更事件
@@ -128,13 +113,13 @@ export const AppDataProvider = ({
       const newProfileId = event.payload;
       const now = Date.now();
 
-      console.log(`[AppDataProvider] Profile切换事件: ${newProfileId}`);
+      logger.info(`Profile切换事件: ${newProfileId}`);
 
       if (
         lastProfileId === newProfileId &&
         now - lastUpdateTime < refreshThrottle
       ) {
-        console.log("[AppDataProvider] 重复事件被防抖，跳过");
+        logger.debug("重复事件被防抖，跳过");
         return;
       }
 
@@ -143,16 +128,16 @@ export const AppDataProvider = ({
 
       // 刷新规则数据
       refreshRules().catch((error) =>
-        console.warn("[AppDataProvider] 规则刷新失败:", error),
+        logger.warn("规则刷新失败:", error),
       );
       refreshRuleProviders().catch((error) =>
-        console.warn("[AppDataProvider] 规则提供者刷新失败:", error),
+        logger.warn("规则提供者刷新失败:", error),
       );
     };
 
     const handleRefreshClash = () => {
       const now = Date.now();
-      console.log("[AppDataProvider] Clash配置刷新事件");
+      logger.info("Clash配置刷新事件");
 
       if (now - lastUpdateTime <= refreshThrottle) {
         return;
@@ -162,20 +147,17 @@ export const AppDataProvider = ({
 
       scheduleTimeout(async () => {
         try {
-          console.log("[AppDataProvider] Clash刷新 - 刷新代理数据");
+          logger.debug("Clash刷新 - 刷新代理数据");
           await refreshProxy();
         } catch (error) {
-          console.error(
-            "[AppDataProvider] Clash刷新时刷新代理数据失败:",
-            error,
-          );
+          logger.error("Clash刷新时刷新代理数据失败:", error);
         }
       }, 0);
     };
 
     const handleRefreshProxy = () => {
       const now = Date.now();
-      console.log("[AppDataProvider] 代理配置刷新事件");
+      logger.info("代理配置刷新事件");
 
       if (now - lastUpdateTime <= refreshThrottle) {
         return;
@@ -185,7 +167,7 @@ export const AppDataProvider = ({
 
       scheduleTimeout(() => {
         refreshProxy().catch((error) =>
-          console.warn("[AppDataProvider] 代理刷新失败:", error),
+          logger.warn("代理刷新失败:", error),
         );
       }, 100);
     };
@@ -198,7 +180,7 @@ export const AppDataProvider = ({
         );
         registerCleanup(unlistenProfile);
       } catch (error) {
-        console.error("[AppDataProvider] 监听 Profile 事件失败:", error);
+        logger.error("监听 Profile 事件失败:", error);
       }
 
       try {
@@ -216,7 +198,7 @@ export const AppDataProvider = ({
           unlistenProxy();
         });
       } catch (error) {
-        console.warn("[AppDataProvider] 设置 Tauri 事件监听器失败:", error);
+        logger.warn("设置 Tauri 事件监听器失败:", error);
 
         const fallbackHandlers: Array<[string, EventListener]> = [
           ["verge://refresh-clash-config", handleRefreshClash],
@@ -241,26 +223,16 @@ export const AppDataProvider = ({
   const { data: sysproxy, mutate: refreshSysproxy } = useSWR(
     "getSystemProxy",
     getSystemProxy,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      suspense: false,
-      errorRetryCount: 3,
-      dedupingInterval: 3000,
-    },
+    systemStateSWRConfig,
   );
 
-  const { data: runningMode } = useSWR("getRunningMode", getRunningMode, {
-    revalidateOnFocus: false,
-    suspense: false,
-    errorRetryCount: 3,
-  });
+  const { data: runningMode } = useSWR(
+    "getRunningMode",
+    getRunningMode,
+    systemStateSWRConfig,
+  );
 
-  const { data: uptimeData } = useSWR("appUptime", getAppUptime, {
-    refreshInterval: 2000,
-    revalidateOnFocus: false,
-    suspense: false,
-  });
+  const { data: uptimeData } = useSWR("appUptime", getAppUptime, uptimeSWRConfig);
 
   // 刷新方法
   const refreshAll = useCallback(async () => {

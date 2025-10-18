@@ -1,7 +1,15 @@
 import { useEffect } from "react";
 import useSWR from "swr";
 
+import {
+  systemStateSWRConfig,
+  serviceSWRConfig,
+  SWR_CONFIG,
+} from "@/config/swr-config";
 import { getRunningMode, isAdmin, isServiceAvailable } from "@/services/cmds";
+import { getLogger } from "@/utils/logger";
+
+const logger = getLogger("useSystemState");
 
 /**
  * 自定义 hook 用于获取系统运行状态
@@ -13,11 +21,7 @@ export function useSystemState() {
     data: runningMode = "Sidecar",
     mutate: mutateRunningMode,
     isLoading: runningModeLoading,
-  } = useSWR("getRunningMode", getRunningMode, {
-    suspense: false,
-    revalidateOnFocus: true, // 允许重新验证运行模式
-    revalidateOnReconnect: true, // 网络重连时重新验证
-  });
+  } = useSWR("getRunningMode", getRunningMode, systemStateSWRConfig);
   const isSidecarMode = runningMode === "Sidecar";
   const isServiceMode = runningMode === "Service";
 
@@ -25,10 +29,7 @@ export function useSystemState() {
   const { data: isAdminMode = false, isLoading: isAdminLoading } = useSWR(
     "isAdmin",
     isAdmin,
-    {
-      suspense: false,
-      revalidateOnFocus: false,
-    },
+    systemStateSWRConfig,
   );
 
   const {
@@ -36,16 +37,13 @@ export function useSystemState() {
     mutate: mutateServiceOk,
     isLoading: isServiceLoading,
   } = useSWR(isServiceMode ? "isServiceAvailable" : null, isServiceAvailable, {
-    suspense: false,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: true,
-    refreshInterval: isServiceMode ? 30000 : 0,
-    dedupingInterval: 5000,
+    ...serviceSWRConfig,
+    refreshInterval: isServiceMode ? SWR_CONFIG.SERVICE_REFRESH_INTERVAL : 0,
     onSuccess: (data) => {
-      console.log("[useSystemState] 服务状态更新:", data);
+      logger.debug("服务状态更新:", data);
     },
     onError: (error) => {
-      console.error("[useSystemState] 服务状态检查失败:", error);
+      logger.error("服务状态检查失败:", error);
     },
   });
 
@@ -61,7 +59,7 @@ export function useSystemState() {
     const initServiceState = async () => {
       if (!mounted) return;
 
-      console.log("[useSystemState] 应用启动，初始化状态");
+      logger.debug("应用启动，初始化状态");
       await mutateRunningMode();
 
       if (mounted && isServiceMode) {
@@ -82,7 +80,7 @@ export function useSystemState() {
         cancelIdleCallback(idleCallback);
       }
     };
-  }, []);
+  }, [isServiceMode, mutateRunningMode, mutateServiceOk]);
 
   return {
     runningMode,
