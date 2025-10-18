@@ -40,7 +40,8 @@ tokio = { version = "1.48.0", features = [
   "sync",
 ] }
 serde = { version = "1.0.228", features = ["derive"] }
-reqwest = { version = "0.12.24", features = ["json", "cookies", "rustls-tls"], default-features = false }
+reqwest = { version = "0.12.24", features = ["json", "cookies"] }
+openssl = { version = "0.10", features = ["vendored"] }
 regex = "1.12.2"
 sysproxy = { git = "https://github.com/clash-verge-rev/sysproxy-rs" }
 tauri = { version = "2.8.5", features = [
@@ -56,7 +57,7 @@ tauri-plugin-dialog = "2.4.0"
 tauri-plugin-fs = "2.4.2"
 tauri-plugin-process = "2.3.0"
 tauri-plugin-clipboard-manager = "2.3.0"
-tauri-plugin-deep-link = "1.0.0"
+tauri-plugin-deep-link = "2.4.3"
 tauri-plugin-window-state = "2.4.0"
 zip = "6.0.0"
 reqwest_dav = "0.2.2"
@@ -79,6 +80,7 @@ isahc = { version = "1.7.2", default-features = false, features = [
   "parking_lot",
   "static-ssl",
 ] }
+openssl-sys = { version = "0.9", features = ["vendored"] }
 backoff = { version = "0.4.0", features = ["tokio"] }
 compact_str = { version = "0.9.0", features = ["serde"] }
 tauri-plugin-http = "2.5.2"

@@ -92,10 +92,6 @@ jobs:
           target: ${{ matrix.target }}
           override: true
 
-      - name: 安装系统依赖
-        run: |
-          brew install openssl@3
-
       - name: 安装依赖
         run: pnpm install
 
