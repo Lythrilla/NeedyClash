@@ -39,7 +39,7 @@ export const useCustomTheme = () => {
   const { theme_mode, theme_setting } = verge ?? {};
   const mode = useThemeMode();
   const setMode = useSetThemeMode();
-  
+
   // 背景设置
   const backgroundType = theme_setting?.background_type || "none";
   const backgroundColor = theme_setting?.background_color || "#000000";
@@ -53,9 +53,9 @@ export const useCustomTheme = () => {
   const backgroundPosition = theme_setting?.background_position || "center";
   const backgroundRepeat = theme_setting?.background_repeat || "no-repeat";
   const backgroundScale = theme_setting?.background_scale ?? 1.0;
-  
+
   const hasCustomBackground = backgroundType !== "none";
-  
+
   // 布局元素样式设置
   const sidebarBgColor = theme_setting?.sidebar_background_color;
   const sidebarOpacity = theme_setting?.sidebar_opacity ?? 1;
@@ -63,31 +63,31 @@ export const useCustomTheme = () => {
   const headerBgColor = theme_setting?.header_background_color;
   const headerOpacity = theme_setting?.header_opacity ?? 1;
   const headerBlur = theme_setting?.header_blur ?? 0;
-  
+
   // 设置页面样式
   const settingsBlur = theme_setting?.settings_background_blur ?? false;
   const settingsOpacity = theme_setting?.settings_background_opacity ?? 0.95;
-  
+
   // 连接表格样式设置
   const connectionTableBlur = theme_setting?.connection_table_blur ?? 0;
-  
+
   // 组件微调样式设置
   const componentStyles = theme_setting?.component_styles || {};
   const globalStyle = componentStyles.global || {};
-  
+
   // 辅助函数：将颜色和opacity合并为rgba
   const applyOpacityToColor = (color: string, opacity: number): string => {
     // 如果已经是rgba格式，替换alpha值
-    if (color.startsWith('rgba')) {
+    if (color.startsWith("rgba")) {
       return color.replace(/[\d.]+\)$/, `${opacity})`);
     }
     // 如果是rgb格式，转换为rgba
-    if (color.startsWith('rgb(')) {
-      return color.replace('rgb(', 'rgba(').replace(')', `, ${opacity})`);
+    if (color.startsWith("rgb(")) {
+      return color.replace("rgb(", "rgba(").replace(")", `, ${opacity})`);
     }
     // 如果是hex格式，转换为rgba
-    if (color.startsWith('#')) {
-      const hex = color.replace('#', '');
+    if (color.startsWith("#")) {
+      const hex = color.replace("#", "");
       const r = parseInt(hex.substring(0, 2), 16);
       const g = parseInt(hex.substring(2, 4), 16);
       const b = parseInt(hex.substring(4, 6), 16);
@@ -101,17 +101,26 @@ export const useCustomTheme = () => {
   const getComponentStyle = (key: string) => {
     const compStyle = (componentStyles as any)[key] || {};
     if (compStyle.enabled === false) return null;
-    
+
     // 检查是否真的设置了样式（组件级别或全局级别）
-    const hasComponentStyle = compStyle.background_color || compStyle.blur !== undefined || compStyle.opacity !== undefined;
-    const hasGlobalStyle = globalStyle.background_color || globalStyle.blur !== undefined || globalStyle.opacity !== undefined;
-    
+    const hasComponentStyle =
+      compStyle.background_color ||
+      compStyle.blur !== undefined ||
+      compStyle.opacity !== undefined;
+    const hasGlobalStyle =
+      globalStyle.background_color ||
+      globalStyle.blur !== undefined ||
+      globalStyle.opacity !== undefined;
+
     // 如果都没设置，返回 null
     if (!hasComponentStyle && !hasGlobalStyle) return null;
-    
-    const baseColor = compStyle.background_color || globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)");
+
+    const baseColor =
+      compStyle.background_color ||
+      globalStyle.background_color ||
+      (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)");
     const opacity = compStyle.opacity ?? globalStyle.opacity ?? 0.7;
-    
+
     return {
       backgroundColor: applyOpacityToColor(baseColor, opacity),
       blur: compStyle.blur ?? globalStyle.blur ?? 25,
@@ -133,7 +142,17 @@ export const useCustomTheme = () => {
         position: backgroundPosition,
       });
     }
-  }, [backgroundType, backgroundImage, backgroundVideo, backgroundColor, backgroundOpacity, backgroundBlur, backgroundBrightness, backgroundSize, backgroundPosition]);
+  }, [
+    backgroundType,
+    backgroundImage,
+    backgroundVideo,
+    backgroundColor,
+    backgroundOpacity,
+    backgroundBlur,
+    backgroundBrightness,
+    backgroundSize,
+    backgroundPosition,
+  ]);
 
   useEffect(() => {
     if (theme_mode === "light" || theme_mode === "dark") {
@@ -284,10 +303,19 @@ export const useCustomTheme = () => {
               paper: mode === "light" ? "#FFFFFF" : "#3232326b",
               default: dt.background_color,
             },
-            divider: mode === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)",
+            divider:
+              mode === "light"
+                ? "rgba(0, 0, 0, 0.08)"
+                : "rgba(255, 255, 255, 0.08)",
             action: {
-              hover: mode === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
-              selected: mode === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)",
+              hover:
+                mode === "light"
+                  ? "rgba(0, 0, 0, 0.04)"
+                  : "rgba(255, 255, 255, 0.05)",
+              selected:
+                mode === "light"
+                  ? "rgba(0, 0, 0, 0.08)"
+                  : "rgba(255, 255, 255, 0.08)",
             },
           },
           shadows: Array(25).fill("none") as Shadows,
@@ -300,7 +328,7 @@ export const useCustomTheme = () => {
             MuiPaper: {
               styleOverrides: {
                 root: {
-                  backgroundImage: 'none',
+                  backgroundImage: "none",
                   backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
                 },
               },
@@ -309,9 +337,10 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 paper: {
                   border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                  boxShadow: mode === "light" 
-                    ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
-                    : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
+                  boxShadow:
+                    mode === "light"
+                      ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                      : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
                 },
               },
             },
@@ -335,22 +364,39 @@ export const useCustomTheme = () => {
                   transition: "all 0.2s ease",
                   minHeight: "auto",
                   "&:hover": {
-                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.08)",
+                    backgroundColor:
+                      mode === "light"
+                        ? "#F8FAFC"
+                        : "rgba(255, 255, 255, 0.08)",
                   },
                   "&.Mui-selected": {
-                    backgroundColor: mode === "light" 
-                      ? alpha(setting.primary_color || dt.primary_color, 0.1)
-                      : alpha(setting.primary_color || dt.primary_color, 0.16),
+                    backgroundColor:
+                      mode === "light"
+                        ? alpha(setting.primary_color || dt.primary_color, 0.1)
+                        : alpha(
+                            setting.primary_color || dt.primary_color,
+                            0.16,
+                          ),
                     color: setting.primary_color || dt.primary_color,
                     fontWeight: 500,
                     "&:hover": {
-                      backgroundColor: mode === "light" 
-                        ? alpha(setting.primary_color || dt.primary_color, 0.15)
-                        : alpha(setting.primary_color || dt.primary_color, 0.22),
+                      backgroundColor:
+                        mode === "light"
+                          ? alpha(
+                              setting.primary_color || dt.primary_color,
+                              0.15,
+                            )
+                          : alpha(
+                              setting.primary_color || dt.primary_color,
+                              0.22,
+                            ),
                     },
                   },
                   "&.Mui-focusVisible": {
-                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.08)",
+                    backgroundColor:
+                      mode === "light"
+                        ? "#F8FAFC"
+                        : "rgba(255, 255, 255, 0.08)",
                   },
                 },
               },
@@ -360,11 +406,13 @@ export const useCustomTheme = () => {
                 MenuProps: {
                   PaperProps: {
                     sx: {
-                      backgroundColor: mode === "light" ? "#FFFFFF" : "#3232326b",
+                      backgroundColor:
+                        mode === "light" ? "#FFFFFF" : "#3232326b",
                       border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
-                      boxShadow: mode === "light" 
-                        ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
-                        : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
+                      boxShadow:
+                        mode === "light"
+                          ? "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+                          : "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)",
                       mt: 0.5,
                       "& .MuiList-root": {
                         padding: "4px",
@@ -385,25 +433,38 @@ export const useCustomTheme = () => {
                   },
                 },
                 icon: {
-                  color: mode === "light" ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.7)",
+                  color:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.54)"
+                      : "rgba(255, 255, 255, 0.7)",
                 },
               },
             },
             MuiNativeSelect: {
               styleOverrides: {
                 select: {
-                  backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                  backgroundColor:
+                    mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
                   padding: "4px 32px 4px 12px",
                   fontSize: "13px",
                   minHeight: "32px",
                   height: "32px",
-                  color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)",
+                  color:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.87)"
+                      : "rgba(255, 255, 255, 0.87)",
                   "&:focus": {
-                    backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                    backgroundColor:
+                      mode === "light"
+                        ? "#FFFFFF"
+                        : "rgba(255, 255, 255, 0.03)",
                   },
                 },
                 icon: {
-                  color: mode === "light" ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.7)",
+                  color:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.54)"
+                      : "rgba(255, 255, 255, 0.7)",
                 },
               },
             },
@@ -411,7 +472,10 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   "& .MuiInputLabel-root": {
-                    color: mode === "light" ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.7)",
+                    color:
+                      mode === "light"
+                        ? "rgba(0, 0, 0, 0.6)"
+                        : "rgba(255, 255, 255, 0.7)",
                     fontSize: "14px",
                     "&.Mui-focused": {
                       color: setting.primary_color || dt.primary_color,
@@ -423,7 +487,10 @@ export const useCustomTheme = () => {
             MuiInputLabel: {
               styleOverrides: {
                 root: {
-                  color: mode === "light" ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.7)",
+                  color:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.6)"
+                      : "rgba(255, 255, 255, 0.7)",
                   fontSize: "14px",
                   "&.Mui-focused": {
                     color: setting.primary_color || dt.primary_color,
@@ -433,7 +500,10 @@ export const useCustomTheme = () => {
                   },
                 },
                 shrink: {
-                  color: mode === "light" ? "rgba(0, 0, 0, 0.6)" : "rgba(255, 255, 255, 0.7)",
+                  color:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.6)"
+                      : "rgba(255, 255, 255, 0.7)",
                   "&.Mui-focused": {
                     color: setting.primary_color || dt.primary_color,
                   },
@@ -444,7 +514,10 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   "& .MuiInputBase-root": {
-                    backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                    backgroundColor:
+                      mode === "light"
+                        ? "#FFFFFF"
+                        : "rgba(255, 255, 255, 0.03)",
                   },
                 },
               },
@@ -452,10 +525,12 @@ export const useCustomTheme = () => {
             MuiOutlinedInput: {
               styleOverrides: {
                 root: {
-                  backgroundColor: mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
+                  backgroundColor:
+                    mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)",
                   transition: "all 0.2s ease",
                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: mode === "light" ? "#CBD5E1" : "rgba(255, 255, 255, 0.2)",
+                    borderColor:
+                      mode === "light" ? "#CBD5E1" : "rgba(255, 255, 255, 0.2)",
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                     borderColor: setting.primary_color || dt.primary_color,
@@ -473,11 +548,15 @@ export const useCustomTheme = () => {
                   },
                 },
                 notchedOutline: {
-                  borderColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
+                  borderColor:
+                    mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
                   transition: "all 0.2s ease",
                 },
                 input: {
-                  color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)",
+                  color:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.87)"
+                      : "rgba(255, 255, 255, 0.87)",
                 },
               },
             },
@@ -488,12 +567,17 @@ export const useCustomTheme = () => {
                   fontWeight: 500,
                 },
                 outlined: {
-                  borderColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
+                  borderColor:
+                    mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)",
                   "&:hover": {
                     borderColor: setting.primary_color || dt.primary_color,
-                    backgroundColor: mode === "light" 
-                      ? alpha(setting.primary_color || dt.primary_color, 0.04)
-                      : alpha(setting.primary_color || dt.primary_color, 0.08),
+                    backgroundColor:
+                      mode === "light"
+                        ? alpha(setting.primary_color || dt.primary_color, 0.04)
+                        : alpha(
+                            setting.primary_color || dt.primary_color,
+                            0.08,
+                          ),
                   },
                 },
                 contained: {
@@ -508,7 +592,10 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   "&:hover": {
-                    backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.04)" : "rgba(255, 255, 255, 0.05)",
+                    backgroundColor:
+                      mode === "light"
+                        ? "rgba(0, 0, 0, 0.04)"
+                        : "rgba(255, 255, 255, 0.05)",
                   },
                 },
               },
@@ -541,7 +628,7 @@ export const useCustomTheme = () => {
                 PopperProps: {
                   modifiers: [
                     {
-                      name: 'offset',
+                      name: "offset",
                       options: {
                         offset: [0, -8],
                       },
@@ -551,12 +638,18 @@ export const useCustomTheme = () => {
               },
               styleOverrides: {
                 tooltip: {
-                  backgroundColor: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(50, 50, 50, 0.95)",
+                  backgroundColor:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.87)"
+                      : "rgba(50, 50, 50, 0.95)",
                   fontSize: "12px",
                   padding: "6px 12px",
                 },
                 arrow: {
-                  color: mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(50, 50, 50, 0.95)",
+                  color:
+                    mode === "light"
+                      ? "rgba(0, 0, 0, 0.87)"
+                      : "rgba(50, 50, 50, 0.95)",
                 },
               },
             },
@@ -564,7 +657,10 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   "&:hover": {
-                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.05)",
+                    backgroundColor:
+                      mode === "light"
+                        ? "#F8FAFC"
+                        : "rgba(255, 255, 255, 0.05)",
                   },
                 },
               },
@@ -573,15 +669,17 @@ export const useCustomTheme = () => {
               styleOverrides: {
                 root: {
                   "&:hover": {
-                    backgroundColor: mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.05)",
+                    backgroundColor:
+                      mode === "light"
+                        ? "#F8FAFC"
+                        : "rgba(255, 255, 255, 0.05)",
                   },
                 },
               },
             },
             MuiChip: {
               styleOverrides: {
-                root: {
-                },
+                root: {},
               },
             },
             MuiSwitch: {
@@ -597,7 +695,8 @@ export const useCustomTheme = () => {
                     transform: "translateX(16px)",
                     color: "#fff",
                     "& + .MuiSwitch-track": {
-                      backgroundColor: setting.primary_color || dt.primary_color,
+                      backgroundColor:
+                        setting.primary_color || dt.primary_color,
                       opacity: 1,
                     },
                   },
@@ -607,7 +706,8 @@ export const useCustomTheme = () => {
                   height: 24,
                 },
                 track: {
-                  backgroundColor: mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.2)",
+                  backgroundColor:
+                    mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.2)",
                   opacity: 1,
                 },
               },
@@ -644,12 +744,12 @@ export const useCustomTheme = () => {
     if (rootEle) {
       // 立即设置 data-theme 属性，确保主题样式立即生效
       rootEle.setAttribute("data-theme", mode);
-      
+
       // 立即设置背景色，防止闪烁
       const themeBackgroundColor = mode === "light" ? "#FAFAFA" : "#0F0F0F";
       document.body.style.backgroundColor = themeBackgroundColor;
       rootEle.style.backgroundColor = themeBackgroundColor;
-      
+
       // 优化暗色模式配色方案 - 温暖灰色系
       const backgroundColor =
         mode === "light" ? "#F8FAFC" : dt.background_color;
@@ -657,13 +757,11 @@ export const useCustomTheme = () => {
       const scrollColor = mode === "light" ? "#CBD5E1" : "#5A5A5A";
       const dividerColor =
         mode === "light" ? "rgba(0, 0, 0, 0.06)" : "rgba(255, 255, 255, 0.08)";
-      const cardBackground = 
-        mode === "light" ? "#FFFFFF" : "#3232326b";
-      const cardHoverBackground = 
-        mode === "light" ? "#F8FAFC" : "#3C3C3C";
-      const borderColor = 
+      const cardBackground = mode === "light" ? "#FFFFFF" : "#3232326b";
+      const cardHoverBackground = mode === "light" ? "#F8FAFC" : "#3C3C3C";
+      const borderColor =
         mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)";
-      
+
       rootEle.style.setProperty("--divider-color", dividerColor);
       rootEle.style.setProperty("--border-color", borderColor);
       rootEle.style.setProperty("--background-color", backgroundColor);
@@ -686,22 +784,28 @@ export const useCustomTheme = () => {
       // 统一滚动条颜色变量
       rootEle.style.setProperty(
         "--cv-scroller-color",
-        mode === "light" ? "rgba(148, 163, 184, 0.4)" : "rgba(148, 163, 184, 0.3)",
+        mode === "light"
+          ? "rgba(148, 163, 184, 0.4)"
+          : "rgba(148, 163, 184, 0.3)",
       );
       rootEle.style.setProperty(
         "--cv-scroller-hover-color",
-        mode === "light" ? "rgba(100, 116, 139, 0.6)" : "rgba(148, 163, 184, 0.5)",
+        mode === "light"
+          ? "rgba(100, 116, 139, 0.6)"
+          : "rgba(148, 163, 184, 0.5)",
       );
       // 自定义背景CSS变量
       rootEle.style.setProperty("--bg-type", backgroundType);
       rootEle.style.setProperty("--bg-custom-color", backgroundColor);
       rootEle.style.setProperty(
         "--bg-image",
-        backgroundType === "image" && backgroundImage ? `url('${backgroundImage}')` : "none"
+        backgroundType === "image" && backgroundImage
+          ? `url('${backgroundImage}')`
+          : "none",
       );
       rootEle.style.setProperty(
         "--bg-video-url",
-        backgroundType === "video" && backgroundVideo ? backgroundVideo : ""
+        backgroundType === "video" && backgroundVideo ? backgroundVideo : "",
       );
       rootEle.style.setProperty("--bg-opacity", String(backgroundOpacity));
       rootEle.style.setProperty("--bg-blur", `${backgroundBlur}px`);
@@ -752,7 +856,11 @@ export const useCustomTheme = () => {
 
         /* 侧边栏自定义样式 - 使用伪元素实现背景效果，不影响内容 */
         ${
-          sidebarBgColor || sidebarOpacity !== 1 || sidebarBlur > 0 || (hasCustomBackground && (globalStyle.background_color || globalStyle.blur))
+          sidebarBgColor ||
+          sidebarOpacity !== 1 ||
+          sidebarBlur > 0 ||
+          (hasCustomBackground &&
+            (globalStyle.background_color || globalStyle.blur))
             ? `
         .layout-content__left {
           position: relative !important;
@@ -767,19 +875,25 @@ export const useCustomTheme = () => {
           right: 0 !important;
           bottom: 0 !important;
           ${
-            sidebarBgColor 
+            sidebarBgColor
               ? `background-color: ${sidebarBgColor} !important;
                  opacity: ${sidebarOpacity} !important;`
-              : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground
-              ? `background-color: ${globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)")} !important;`
-              : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${sidebarOpacity})` : `rgba(255, 255, 255, ${sidebarOpacity})`} !important;`
+              : (globalStyle.background_color || globalStyle.blur) &&
+                  hasCustomBackground
+                ? `background-color: ${globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)")} !important;`
+                : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${sidebarOpacity})` : `rgba(255, 255, 255, ${sidebarOpacity})`} !important;`
           }
-          ${sidebarBlur > 0 ? `backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;
-          -webkit-backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;` 
-          : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground && (globalStyle.blur ?? 25) > 0
-          ? `backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;
+          ${
+            sidebarBlur > 0
+              ? `backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(${sidebarBlur}px) saturate(180%) !important;`
+              : (globalStyle.background_color || globalStyle.blur) &&
+                  hasCustomBackground &&
+                  (globalStyle.blur ?? 25) > 0
+                ? `backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;
           -webkit-backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;`
-          : ""}
+                : ""
+          }
           z-index: 0 !important;
           pointer-events: none !important;
         }
@@ -794,7 +908,11 @@ export const useCustomTheme = () => {
 
         /* Header自定义样式 - 使用伪元素实现背景效果，不影响内容 */
         ${
-          headerBgColor || headerOpacity !== 1 || headerBlur > 0 || (hasCustomBackground && (globalStyle.background_color || globalStyle.blur))
+          headerBgColor ||
+          headerOpacity !== 1 ||
+          headerBlur > 0 ||
+          (hasCustomBackground &&
+            (globalStyle.background_color || globalStyle.blur))
             ? `
         .base-page > header {
           position: relative !important;
@@ -809,19 +927,25 @@ export const useCustomTheme = () => {
           right: 0 !important;
           bottom: 0 !important;
           ${
-            headerBgColor 
+            headerBgColor
               ? `background-color: ${headerBgColor} !important;
                  opacity: ${headerOpacity} !important;`
-              : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground
-              ? `background-color: ${globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)")} !important;`
-              : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${headerOpacity})` : `rgba(255, 255, 255, ${headerOpacity})`} !important;`
+              : (globalStyle.background_color || globalStyle.blur) &&
+                  hasCustomBackground
+                ? `background-color: ${globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)")} !important;`
+                : `background-color: ${mode === "dark" ? `rgba(26, 26, 26, ${headerOpacity})` : `rgba(255, 255, 255, ${headerOpacity})`} !important;`
           }
-          ${headerBlur > 0 ? `backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;
-          -webkit-backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;` 
-          : (globalStyle.background_color || globalStyle.blur) && hasCustomBackground && (globalStyle.blur ?? 25) > 0
-          ? `backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;
+          ${
+            headerBlur > 0
+              ? `backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;
+          -webkit-backdrop-filter: blur(${headerBlur}px) saturate(180%) !important;`
+              : (globalStyle.background_color || globalStyle.blur) &&
+                  hasCustomBackground &&
+                  (globalStyle.blur ?? 25) > 0
+                ? `backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;
           -webkit-backdrop-filter: blur(${globalStyle.blur ?? 25}px) saturate(180%) !important;`
-          : ""}
+                : ""
+          }
           z-index: 0 !important;
           pointer-events: none !important;
         }
@@ -845,9 +969,11 @@ export const useCustomTheme = () => {
           left: 0 !important;
           right: 0 !important;
           bottom: 0 !important;
-          background-color: ${theme.palette.mode === "dark" 
-            ? `rgba(26, 26, 26, ${settingsOpacity})` 
-            : `rgba(255, 255, 255, ${settingsOpacity})`} !important;
+          background-color: ${
+            theme.palette.mode === "dark"
+              ? `rgba(26, 26, 26, ${settingsOpacity})`
+              : `rgba(255, 255, 255, ${settingsOpacity})`
+          } !important;
           backdrop-filter: blur(20px) saturate(180%) !important;
           -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
           z-index: -1 !important;
@@ -872,9 +998,11 @@ export const useCustomTheme = () => {
           left: 0 !important;
           right: 0 !important;
           bottom: 0 !important;
-          background-color: ${mode === "dark" 
-            ? "rgba(50, 50, 50, 0.7)" 
-            : "rgba(255, 255, 255, 0.7)"} !important;
+          background-color: ${
+            mode === "dark"
+              ? "rgba(50, 50, 50, 0.7)"
+              : "rgba(255, 255, 255, 0.7)"
+          } !important;
           backdrop-filter: blur(25px) saturate(180%) !important;
           -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
           z-index: -1 !important;
@@ -919,8 +1047,20 @@ export const useCustomTheme = () => {
         ${
           backgroundType === "image" && backgroundImage
             ? (() => {
-                console.log("[CSS Injection] Applying image background:", backgroundImage);
-                console.log("[CSS Injection] Image scale:", backgroundScale.toFixed(2), "Blur:", backgroundBlur + "px", "Opacity:", backgroundOpacity, "Brightness:", backgroundBrightness + "%");
+                console.log(
+                  "[CSS Injection] Applying image background:",
+                  backgroundImage,
+                );
+                console.log(
+                  "[CSS Injection] Image scale:",
+                  backgroundScale.toFixed(2),
+                  "Blur:",
+                  backgroundBlur + "px",
+                  "Opacity:",
+                  backgroundOpacity,
+                  "Brightness:",
+                  backgroundBrightness + "%",
+                );
                 return `
         /* 图片背景层 - 动态缩放防止模糊白边，实时响应所有参数变化 */
         body::before {
@@ -955,8 +1095,20 @@ export const useCustomTheme = () => {
         ${
           backgroundType === "video" && backgroundVideo
             ? (() => {
-                console.log("[CSS Injection] Applying video background:", backgroundVideo);
-                console.log("[CSS Injection] Video scale:", backgroundScale.toFixed(2), "Blur:", backgroundBlur + "px", "Opacity:", backgroundOpacity, "Brightness:", backgroundBrightness + "%");
+                console.log(
+                  "[CSS Injection] Applying video background:",
+                  backgroundVideo,
+                );
+                console.log(
+                  "[CSS Injection] Video scale:",
+                  backgroundScale.toFixed(2),
+                  "Blur:",
+                  backgroundBlur + "px",
+                  "Opacity:",
+                  backgroundOpacity,
+                  "Brightness:",
+                  backgroundBrightness + "%",
+                );
                 return `
         #background-video-container {
           position: fixed !important;
@@ -1105,7 +1257,7 @@ export const useCustomTheme = () => {
         /* 组件微调样式 */
         ${(() => {
           const styles: string[] = [];
-          
+
           // Select 下拉框 - 应用自定义样式
           const selectStyle = getComponentStyle("select");
           if (selectStyle) {
@@ -1117,7 +1269,7 @@ export const useCustomTheme = () => {
               }
             `);
           }
-          
+
           // Profile 卡片 - 固定位置组件，可以安全使用模糊
           const profileCardStyle = getComponentStyle("profile_card");
           if (profileCardStyle) {
@@ -1129,7 +1281,7 @@ export const useCustomTheme = () => {
               }
             `);
           }
-          
+
           // Proxy 卡片 - 固定位置组件，可以安全使用模糊
           const proxyCardStyle = getComponentStyle("proxy_card");
           if (proxyCardStyle) {
@@ -1141,7 +1293,7 @@ export const useCustomTheme = () => {
               }
             `);
           }
-          
+
           // Analytics 图表 - 固定位置组件，可以安全使用模糊
           const analyticsChartStyle = getComponentStyle("analytics_chart");
           if (analyticsChartStyle) {
@@ -1155,7 +1307,7 @@ export const useCustomTheme = () => {
               }
             `);
           }
-          
+
           // Analytics 头部 - 固定位置组件，可以安全使用模糊
           const analyticsHeaderStyle = getComponentStyle("analytics_header");
           if (analyticsHeaderStyle) {
@@ -1167,7 +1319,7 @@ export const useCustomTheme = () => {
               }
             `);
           }
-          
+
           // Dialog 弹窗 - Portal组件，只用背景色，不破坏定位
           const dialogStyle = getComponentStyle("dialog");
           if (dialogStyle) {
@@ -1177,14 +1329,18 @@ export const useCustomTheme = () => {
               }
             `);
           }
-          
+
           // 导航栏图标 hover 效果
           if (hasCustomBackground && globalStyle) {
-            const baseNavColor = globalStyle.background_color || (mode === "dark" ? "rgba(26, 26, 26, 0.7)" : "rgba(255, 255, 255, 0.7)");
+            const baseNavColor =
+              globalStyle.background_color ||
+              (mode === "dark"
+                ? "rgba(26, 26, 26, 0.7)"
+                : "rgba(255, 255, 255, 0.7)");
             const navOpacity = globalStyle.opacity ?? 0.7;
             const navBgColor = applyOpacityToColor(baseNavColor, navOpacity);
             const navBlur = globalStyle.blur ?? 25;
-            
+
             styles.push(`
               .MuiListItemButton-root:not(.custom-proxy-card):hover {
                 background-color: ${navBgColor} !important;
@@ -1193,8 +1349,8 @@ export const useCustomTheme = () => {
               }
             `);
           }
-          
-          return styles.join('\n');
+
+          return styles.join("\n");
         })()}
       `;
 

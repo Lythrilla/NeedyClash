@@ -22,7 +22,7 @@ html {
 /* 亮色模式背景 - 默认 */
 html,
 body {
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   transition: background-color 0.3s ease;
 }
 
@@ -31,13 +31,13 @@ body {
 [data-theme="dark"] body,
 html[data-theme="dark"],
 body[data-theme="dark"] {
-  background-color: #0F0F0F;
+  background-color: #0f0f0f;
 }
 
 @media (prefers-color-scheme: dark) {
   html:not([data-theme]),
   body:not([data-theme]) {
-    background-color: #0F0F0F;
+    background-color: #0f0f0f;
   }
 }
 
@@ -68,45 +68,45 @@ body {
 
 :root {
   /* 颜色变量 */
-  --cv-primary-main: #7C3AED;
-  --cv-text-primary: #0F172A;
-  --cv-selection-color: #EEF2FF;
+  --cv-primary-main: #7c3aed;
+  --cv-text-primary: #0f172a;
+  --cv-selection-color: #eef2ff;
   --cv-scroller-color: rgba(148, 163, 184, 0.4);
   --cv-scroller-hover-color: rgba(100, 116, 139, 0.6);
-  --cv-background-color: #F8FAFC;
+  --cv-background-color: #f8fafc;
   --cv-background-color-alpha: rgba(124, 58, 237, 0.05);
-  --cv-card-background: #FFFFFF;
-  --cv-card-hover-background: #F8FAFC;
-  
+  --cv-card-background: #ffffff;
+  --cv-card-hover-background: #f8fafc;
+
   /* 边框与圆角 */
-  --cv-border-color: #E2E8F0;
+  --cv-border-color: #e2e8f0;
   --cv-divider-color: var(--cv-border-color);
-  
+
   /* 圆角系统 - 统一管理所有圆角值 */
-  --cv-border-radius-xs: 4px;      /* 超小圆角：滚动条、小元素 */
-  --cv-border-radius-sm: 6px;      /* 小圆角：按钮、输入框 */
-  --cv-border-radius-md: 8px;      /* 中等圆角：卡片、导航项 */
-  --cv-border-radius-lg: 12px;     /* 大圆角：对话框、模态框 */
-  --cv-border-radius-xl: 16px;     /* 超大圆角：特殊容器 */
+  --cv-border-radius-xs: 4px; /* 超小圆角：滚动条、小元素 */
+  --cv-border-radius-sm: 6px; /* 小圆角：按钮、输入框 */
+  --cv-border-radius-md: 8px; /* 中等圆角：卡片、导航项 */
+  --cv-border-radius-lg: 12px; /* 大圆角：对话框、模态框 */
+  --cv-border-radius-xl: 16px; /* 超大圆角：特殊容器 */
   --cv-border-radius-full: 9999px; /* 完全圆角：圆形按钮 */
-  
+
   /* 间距系统 */
   --cv-spacing-unit: 8px;
-  
+
   /* 布局尺寸 */
   --cv-sidebar-width: 180px;
   --cv-titlebar-height: 36px;
   --cv-header-height: 56px;
   --cv-content-max-width: 1400px;
-  
+
   /* 滚动条样式变量 */
   --cv-scrollbar-size: 6px;
   --cv-scrollbar-size-hover: 8px;
-  
+
   /* 动画 */
   --cv-transition-fast: 0.2s ease;
   --cv-transition-normal: 0.3s ease;
-  
+
   /* Z-index 层级 */
   --cv-z-background: -1;
   --cv-z-base: 0;
