@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import useSWR from "swr";
 
 import { getRunningMode, isAdmin, isServiceAvailable } from "@/services/cmds";
@@ -14,7 +15,8 @@ export function useSystemState() {
     isLoading: runningModeLoading,
   } = useSWR("getRunningMode", getRunningMode, {
     suspense: false,
-    revalidateOnFocus: false,
+    revalidateOnFocus: true, // 允许重新验证运行模式
+    revalidateOnReconnect: true, // 网络重连时重新验证
   });
   const isSidecarMode = runningMode === "Sidecar";
   const isServiceMode = runningMode === "Service";
@@ -35,20 +37,39 @@ export function useSystemState() {
     isLoading: isServiceLoading,
   } = useSWR(isServiceMode ? "isServiceAvailable" : null, isServiceAvailable, {
     suspense: false,
-    revalidateOnFocus: false,
+    revalidateOnFocus: true, // 允许在获得焦点时重新验证服务状态
+    revalidateOnReconnect: true, // 网络重连时重新验证
+    refreshInterval: isServiceMode ? 5000 : 0, // 服务模式下每5秒自动刷新检测
     onSuccess: (data) => {
       console.log("[useSystemState] 服务状态更新:", data);
     },
     onError: (error) => {
       console.error("[useSystemState] 服务状态检查失败:", error);
     },
-    // isPaused: () => !isServiceMode, // 仅在非 Service 模式下暂停请求
   });
 
   const isLoading =
     runningModeLoading || isAdminLoading || (isServiceMode && isServiceLoading);
 
   const isTunModeAvailable = isAdminMode || isServiceOk;
+
+  // 应用启动时强制刷新服务状态
+  useEffect(() => {
+    const initServiceState = async () => {
+      console.log("[useSystemState] 应用启动，强制刷新运行模式和服务状态");
+      await mutateRunningMode();
+      if (isServiceMode) {
+        await mutateServiceOk();
+      }
+    };
+
+    // 延迟一小段时间，确保后端初始化完成
+    const timer = setTimeout(() => {
+      initServiceState();
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []); // 只在组件挂载时执行一次
 
   return {
     runningMode,

@@ -24,16 +24,19 @@ pub const WINDOW_INITIAL_SCRIPT: &str = r#"
                     <div style="
                         width: 10px; height: 10px;
                         background: var(--dot-color, #3b82f6);
+                        border-radius: 50%;
                         animation: bounce 1s ease-in-out infinite;
                     "></div>
                     <div style="
                         width: 10px; height: 10px;
                         background: var(--dot-color, #3b82f6);
+                        border-radius: 50%;
                         animation: bounce 1s ease-in-out 0.15s infinite;
                     "></div>
                     <div style="
                         width: 10px; height: 10px;
                         background: var(--dot-color, #3b82f6);
+                        border-radius: 50%;
                         animation: bounce 1s ease-in-out 0.3s infinite;
                     "></div>
                 </div>
