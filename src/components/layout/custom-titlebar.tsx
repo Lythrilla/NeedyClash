@@ -28,7 +28,8 @@ export const CustomTitlebar: FC = () => {
         alignItems: "center",
         justifyContent: "flex-end",
         backgroundColor: "transparent",
-        px: 1,
+        pl: 1,
+        pr: 0,
         WebkitAppRegion: "drag",
         userSelect: "none",
       }}
@@ -53,10 +54,12 @@ export const CustomTitlebar: FC = () => {
             color: isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             "&:hover": {
-              backgroundColor: isDark 
+              backgroundColor: isDark
                 ? alpha(theme.palette.common.white, 0.06)
                 : alpha(theme.palette.common.black, 0.04),
-              color: isDark ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.85)",
+              color: isDark
+                ? "rgba(255, 255, 255, 0.85)"
+                : "rgba(0, 0, 0, 0.85)",
               transform: "scale(1.05)",
             },
             "&:active": {
@@ -64,11 +67,13 @@ export const CustomTitlebar: FC = () => {
             },
           }}
         >
-          <Minimize sx={{ 
-            fontSize: "16px", 
-            strokeWidth: 0.5,
-            transform: "translateY(-3px)",
-          }} />
+          <Minimize
+            sx={{
+              fontSize: "16px",
+              strokeWidth: 0.5,
+              transform: "translateY(-3px)",
+            }}
+          />
         </IconButton>
         <IconButton
           size="small"
@@ -81,10 +86,12 @@ export const CustomTitlebar: FC = () => {
             color: isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             "&:hover": {
-              backgroundColor: isDark 
+              backgroundColor: isDark
                 ? alpha(theme.palette.common.white, 0.06)
                 : alpha(theme.palette.common.black, 0.04),
-              color: isDark ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.85)",
+              color: isDark
+                ? "rgba(255, 255, 255, 0.85)"
+                : "rgba(0, 0, 0, 0.85)",
               transform: "scale(1.05)",
             },
             "&:active": {
@@ -125,4 +132,3 @@ export const CustomTitlebar: FC = () => {
     </Box>
   );
 };
-
