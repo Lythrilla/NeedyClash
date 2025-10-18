@@ -5,28 +5,29 @@ import { MenuProps } from "@mui/material";
  */
 export const getSelectMenuProps = (maxHeight?: number): Partial<MenuProps> => ({
   anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'left',
+    vertical: "bottom",
+    horizontal: "left",
   },
   transformOrigin: {
-    vertical: 'top',
-    horizontal: 'left',
+    vertical: "top",
+    horizontal: "left",
   },
   PaperProps: {
     sx: {
-      position: 'fixed',
+      position: "fixed",
       backgroundColor: (theme) =>
-        theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+        theme.palette.mode === "light"
+          ? "rgba(255, 255, 255, 0.95)"
+          : "rgba(50, 50, 50, 0.95)",
       backdropFilter: "blur(20px) saturate(180%)",
       WebkitBackdropFilter: "blur(20px) saturate(180%)",
       border: (theme) =>
         `1px solid ${theme.palette.mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"}`,
       maxHeight: maxHeight || 300,
       zIndex: 1400,
-      '& .MuiList-root': {
-        padding: '4px',
+      "& .MuiList-root": {
+        padding: "4px",
       },
     },
   },
 });
-

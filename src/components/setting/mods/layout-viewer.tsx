@@ -201,18 +201,20 @@ export const LayoutViewer = forwardRef<DialogRef>((props, ref) => {
             onChange={(value) => onChangeData({ menu_icon: value })}
             onGuard={(value) => patchVerge({ menu_icon: value })}
           >
-            <Select 
-              className="custom-select" 
-              size="small" 
+            <Select
+              className="custom-select"
+              size="small"
               sx={{ width: 140, "> div": { py: "7.5px" } }}
               MenuProps={{
-                anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-                transformOrigin: { vertical: 'top', horizontal: 'left' },
+                anchorOrigin: { vertical: "bottom", horizontal: "left" },
+                transformOrigin: { vertical: "top", horizontal: "left" },
                 PaperProps: {
                   sx: {
-                    position: 'fixed',
+                    position: "fixed",
                     backgroundColor: (theme) =>
-                      theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                      theme.palette.mode === "light"
+                        ? "rgba(255, 255, 255, 0.95)"
+                        : "rgba(50, 50, 50, 0.95)",
                     backdropFilter: "blur(20px) saturate(180%)",
                     WebkitBackdropFilter: "blur(20px) saturate(180%)",
                     border: (theme) =>
@@ -244,13 +246,15 @@ export const LayoutViewer = forwardRef<DialogRef>((props, ref) => {
                 size="small"
                 sx={{ width: 140, "> div": { py: "7.5px" } }}
                 MenuProps={{
-                  anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-                  transformOrigin: { vertical: 'top', horizontal: 'left' },
+                  anchorOrigin: { vertical: "bottom", horizontal: "left" },
+                  transformOrigin: { vertical: "top", horizontal: "left" },
                   PaperProps: {
                     sx: {
-                      position: 'fixed',
+                      position: "fixed",
                       backgroundColor: (theme) =>
-                        theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                        theme.palette.mode === "light"
+                          ? "rgba(255, 255, 255, 0.95)"
+                          : "rgba(50, 50, 50, 0.95)",
                       backdropFilter: "blur(20px) saturate(180%)",
                       WebkitBackdropFilter: "blur(20px) saturate(180%)",
                       border: (theme) =>

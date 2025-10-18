@@ -1,3 +1,4 @@
+import { CloseRounded } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -8,7 +9,6 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { CloseRounded } from "@mui/icons-material";
 import { useLockFn } from "ahooks";
 import dayjs from "dayjs";
 import { t } from "i18next";
@@ -42,11 +42,12 @@ export function ConnectionDetail({ ref }: { ref?: Ref<ConnectionDetailRef> }) {
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        sx: {
-        },
+        sx: {},
       }}
     >
-      {detail ? <InnerConnectionDetail data={detail} onClose={onClose} /> : null}
+      {detail ? (
+        <InnerConnectionDetail data={detail} onClose={onClose} />
+      ) : null}
     </Dialog>
   );
 }

@@ -213,4 +213,3 @@ export const EnhancedFormGroup: React.FC<EnhancedFormGroupProps> = ({
     </Box>
   );
 };
-

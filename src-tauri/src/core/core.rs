@@ -139,7 +139,7 @@ impl CoreManager {
     pub async fn use_default_config(&self, msg_type: &str, msg_content: &str) -> Result<()> {
         let runtime_path = dirs::app_home_dir()?.join(RUNTIME_CONFIG);
 
-        // Extract clash config before async operations
+        // Extract clash config before async operations (只 clone 一次)
         let clash_config = Config::clash().await.latest_ref().0.clone();
 
         *Config::runtime().await.draft_mut() = Box::new(IRuntime {
@@ -429,11 +429,8 @@ impl CoreManager {
 
         // 清理过程超时保护
         let cleanup_result = timeout(Duration::from_secs(30), async {
-            // 获取当前管理的进程 PID
-            let current_pid = {
-                let child_guard = self.child_sidecar.lock();
-                child_guard.as_ref().and_then(|child| child.pid())
-            };
+            // 获取当前管理的进程 PID（缩短锁持有时间）
+            let current_pid = self.child_sidecar.lock().as_ref().and_then(|child| child.pid());
 
             if let Some(pid) = current_pid {
                 logging!(debug, Type::Core, "当前管理的进程 PID: {}", pid);

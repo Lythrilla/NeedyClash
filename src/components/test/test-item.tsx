@@ -278,9 +278,11 @@ export const TestItem = ({
         MenuListProps={{ sx: { py: 0.5 } }}
         PaperProps={{
           sx: {
-            position: 'fixed',
+            position: "fixed",
             backgroundColor: (theme) =>
-              theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+              theme.palette.mode === "light"
+                ? "rgba(255, 255, 255, 0.95)"
+                : "rgba(50, 50, 50, 0.95)",
             backdropFilter: "blur(20px) saturate(180%)",
             WebkitBackdropFilter: "blur(20px) saturate(180%)",
             border: (theme) =>

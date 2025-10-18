@@ -38,19 +38,14 @@ const RuleItem = (props: Props) => {
   const { index, value } = props;
 
   return (
-    <ListItem
-      dense
-      sx={{ borderBottom: "1px solid var(--divider-color)" }}
-    >
+    <ListItem dense sx={{ borderBottom: "1px solid var(--divider-color)" }}>
       <ListItemText
         sx={{ userSelect: "text" }}
         primary={value.payload || "-"}
         secondary={
           <Box sx={{ display: "flex", flexWrap: "wrap" }}>
             <Tag sx={{ color: "text.secondary" }}>#{index}</Tag>
-            <Tag sx={{ textTransform: "uppercase" }}>
-              {value.type}
-            </Tag>
+            <Tag sx={{ textTransform: "uppercase" }}>{value.type}</Tag>
             <Tag
               sx={{
                 color: parseColor(value.proxy),

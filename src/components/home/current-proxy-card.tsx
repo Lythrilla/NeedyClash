@@ -537,7 +537,9 @@ export const CurrentProxyCard = () => {
           const name = typeof p === "string" ? p : p.name;
           return name !== "DIRECT" && name !== "REJECT";
         })
-        .map((p: string | { name: string }) => (typeof p === "string" ? p : p.name));
+        .map((p: string | { name: string }) =>
+          typeof p === "string" ? p : p.name,
+        );
 
       allProxies.forEach((name: string) => {
         const proxy = state.proxyData.records[name];
@@ -782,7 +784,9 @@ export const CurrentProxyCard = () => {
               flexWrap: { xs: "wrap", sm: "nowrap" },
             }}
           >
-            <Box sx={{ flex: 1, minWidth: 0, width: { xs: "100%", sm: "auto" } }}>
+            <Box
+              sx={{ flex: 1, minWidth: 0, width: { xs: "100%", sm: "auto" } }}
+            >
               <Typography
                 variant="body1"
                 sx={{
@@ -797,7 +801,14 @@ export const CurrentProxyCard = () => {
                 {currentProxy.name}
               </Typography>
 
-              <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.5, sm: 0.75 }, flexWrap: "wrap" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: { xs: 0.5, sm: 0.75 },
+                  flexWrap: "wrap",
+                }}
+              >
                 <Typography
                   variant="caption"
                   sx={{
@@ -819,7 +830,8 @@ export const CurrentProxyCard = () => {
                       color: "primary.main",
                       px: 0.75,
                       py: 0.25,
-                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                      bgcolor: (theme) =>
+                        alpha(theme.palette.primary.main, 0.1),
                     }}
                   >
                     {t("Global Mode")}
@@ -833,7 +845,8 @@ export const CurrentProxyCard = () => {
                       color: "success.main",
                       px: 0.75,
                       py: 0.25,
-                      bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
+                      bgcolor: (theme) =>
+                        alpha(theme.palette.success.main, 0.1),
                     }}
                   >
                     {t("Direct Mode")}
@@ -913,7 +926,13 @@ export const CurrentProxyCard = () => {
           </Box>
 
           {/* 选择器 - 更简洁 */}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: { xs: 1.25, sm: 1.5 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: { xs: 1.25, sm: 1.5 },
+            }}
+          >
             {/* 代理组 */}
             <Box>
               <Typography
@@ -941,7 +960,11 @@ export const CurrentProxyCard = () => {
                 }}
               >
                 {state.proxyData.groups.map((group) => (
-                  <MenuItem key={group.name} value={group.name} sx={{ fontSize: 13 }}>
+                  <MenuItem
+                    key={group.name}
+                    value={group.name}
+                    sx={{ fontSize: 13 }}
+                  >
                     {group.name}
                   </MenuItem>
                 ))}
@@ -968,7 +991,13 @@ export const CurrentProxyCard = () => {
                 size="small"
                 fullWidth
                 renderValue={(selected) => (
-                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
                     <Typography sx={{ fontSize: 13 }} noWrap>
                       {selected}
                     </Typography>
@@ -980,17 +1009,24 @@ export const CurrentProxyCard = () => {
                           px: 0.75,
                           py: 0.25,
                           color: signalInfo.color,
-                          bgcolor: (theme) => alpha(signalInfo.color === "success.main" ? theme.palette.success.main : 
-                                                     signalInfo.color === "warning.main" ? theme.palette.warning.main :
-                                                     signalInfo.color === "error.main" ? theme.palette.error.main : 
-                                                     theme.palette.grey[500], 0.1),
+                          bgcolor: (theme) =>
+                            alpha(
+                              signalInfo.color === "success.main"
+                                ? theme.palette.success.main
+                                : signalInfo.color === "warning.main"
+                                  ? theme.palette.warning.main
+                                  : signalInfo.color === "error.main"
+                                    ? theme.palette.error.main
+                                    : theme.palette.grey[500],
+                              0.1,
+                            ),
                         }}
                       >
                         {delayManager.formatDelay(
                           delayManager.getDelayFix(
                             state.proxyData.records[selected],
-                            state.selection.group
-                          )
+                            state.selection.group,
+                          ),
                         )}
                       </Typography>
                     )}
@@ -1044,12 +1080,17 @@ export const CurrentProxyCard = () => {
                               px: 0.75,
                               py: 0.25,
                               color: `${color}.main`,
-                              bgcolor: (theme) => alpha(
-                                color === "success" ? theme.palette.success.main :
-                                color === "warning" ? theme.palette.warning.main :
-                                color === "error" ? theme.palette.error.main :
-                                theme.palette.grey[500], 0.1
-                              ),
+                              bgcolor: (theme) =>
+                                alpha(
+                                  color === "success"
+                                    ? theme.palette.success.main
+                                    : color === "warning"
+                                      ? theme.palette.warning.main
+                                      : color === "error"
+                                        ? theme.palette.error.main
+                                        : theme.palette.grey[500],
+                                  0.1,
+                                ),
                             }}
                           >
                             {delayManager.formatDelay(delayValue)}

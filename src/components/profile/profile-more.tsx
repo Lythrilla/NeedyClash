@@ -101,12 +101,14 @@ export const ProfileMore = (props: Props) => {
         </Box>
 
         {/* 第三行：控制台按钮 */}
-        <Box sx={{ 
-          height: 26, 
-          display: "flex", 
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}>
+        <Box
+          sx={{
+            height: 26,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           {id === "Script" &&
             (hasError ? (
               <Badge color="error" variant="dot" overlap="circular">
@@ -134,11 +136,7 @@ export const ProfileMore = (props: Props) => {
         </Box>
 
         {/* 占位进度条，保持与订阅卡片一致的高度 */}
-        <LinearProgress
-          variant="determinate"
-          value={0}
-          sx={{ opacity: 0 }}
-        />
+        <LinearProgress variant="determinate" value={0} sx={{ opacity: 0 }} />
       </ProfileBox>
 
       <Menu
@@ -151,9 +149,11 @@ export const ProfileMore = (props: Props) => {
         MenuListProps={{ sx: { py: 0.5 } }}
         PaperProps={{
           sx: {
-            position: 'fixed',
+            position: "fixed",
             backgroundColor: (theme) =>
-              theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+              theme.palette.mode === "light"
+                ? "rgba(255, 255, 255, 0.95)"
+                : "rgba(50, 50, 50, 0.95)",
             backdropFilter: "blur(20px) saturate(180%)",
             WebkitBackdropFilter: "blur(20px) saturate(180%)",
             border: (theme) =>

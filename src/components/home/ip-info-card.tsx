@@ -15,7 +15,6 @@ import { EnhancedCard } from "./enhanced-card";
 // 定义刷新时间（秒）
 const IP_REFRESH_SECONDS = 300;
 
-
 const InfoRow = memo(
   ({ label, value }: { label: string; value: string | React.ReactNode }) => (
     <Box
@@ -58,7 +57,7 @@ const InfoRow = memo(
         {value || "-"}
       </Typography>
     </Box>
-  )
+  ),
 );
 
 // 获取国旗表情
@@ -275,10 +274,7 @@ export const IpInfoCard = () => {
         )}
 
         {/* ASN */}
-        <InfoRow
-          label="ASN"
-          value={ipInfo?.asn ? `AS${ipInfo.asn}` : "-"}
-        />
+        <InfoRow label="ASN" value={ipInfo?.asn ? `AS${ipInfo.asn}` : "-"} />
       </Box>
     </EnhancedCard>
   );

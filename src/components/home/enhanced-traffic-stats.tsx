@@ -6,15 +6,7 @@ import {
   LinkRounded,
   MemoryRounded,
 } from "@mui/icons-material";
-import {
-  Box,
-  Grid,
-  PaletteColor,
-  Paper,
-  Typography,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Box, Grid, PaletteColor, Typography, useTheme } from "@mui/material";
 import { useRef, memo, useMemo } from "react";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";

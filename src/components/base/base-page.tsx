@@ -29,7 +29,7 @@ export const BasePage: React.FC<Props> = (props) => {
         <header data-tauri-drag-region="true" style={{ userSelect: "none" }}>
           <Typography
             sx={{
-              fontSize: "20px", /* 更小的标题 */
+              fontSize: "20px" /* 更小的标题 */,
               fontWeight: "600",
               letterSpacing: "-0.3px",
             }}
@@ -43,17 +43,21 @@ export const BasePage: React.FC<Props> = (props) => {
 
         <div
           className={full ? "base-container no-padding" : "base-container"}
-          style={{ 
-            backgroundColor: hasCustomBackground 
-              ? "transparent" 
-              : (isDark ? "#282828" : "#F8FAFC")
+          style={{
+            backgroundColor: hasCustomBackground
+              ? "transparent"
+              : isDark
+                ? "#282828"
+                : "#F8FAFC",
           }}
         >
           <section
             style={{
-              backgroundColor: hasCustomBackground 
-                ? "transparent" 
-                : (isDark ? "#282828" : "#F8FAFC"),
+              backgroundColor: hasCustomBackground
+                ? "transparent"
+                : isDark
+                  ? "#282828"
+                  : "#F8FAFC",
             }}
           >
             <div className="base-content" style={contentStyle}>

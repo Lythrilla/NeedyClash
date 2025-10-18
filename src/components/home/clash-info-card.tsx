@@ -1,5 +1,5 @@
 import { DeveloperBoardOutlined } from "@mui/icons-material";
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 

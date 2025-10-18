@@ -4,10 +4,10 @@
  * @returns true if valid, false otherwise
  */
 export const isValidUrl = (url: string): boolean => {
-  if (!url || typeof url !== 'string') {
+  if (!url || typeof url !== "string") {
     return false;
   }
-  
+
   try {
     new URL(url);
     return true;

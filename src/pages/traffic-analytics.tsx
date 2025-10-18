@@ -5,13 +5,7 @@ import {
   LanguageRounded,
   AppsRounded,
 } from "@mui/icons-material";
-import {
-  Box,
-  IconButton,
-  Tooltip,
-  Typography,
-  alpha,
-} from "@mui/material";
+import { Box, IconButton, Tooltip, Typography, alpha } from "@mui/material";
 import { useLockFn } from "ahooks";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
@@ -103,7 +97,8 @@ const TrafficAnalyticsPage = () => {
   const processStats = useMemo(() => {
     const stats = new Map<string, ProcessStats>();
     connections?.connections?.forEach((conn) => {
-      const process = conn.metadata?.process || conn.metadata?.processPath || "";
+      const process =
+        conn.metadata?.process || conn.metadata?.processPath || "";
       if (!process) return;
 
       const processName = process.split(/[/\\]/).pop() || process;
@@ -130,7 +125,8 @@ const TrafficAnalyticsPage = () => {
     () => ({
       upload: connections?.uploadTotal || 0,
       download: connections?.downloadTotal || 0,
-      total: (connections?.uploadTotal || 0) + (connections?.downloadTotal || 0),
+      total:
+        (connections?.uploadTotal || 0) + (connections?.downloadTotal || 0),
     }),
     [connections],
   );
@@ -193,7 +189,14 @@ const TrafficAnalyticsPage = () => {
           },
         }}
       >
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1,
+          }}
+        >
           <Typography
             sx={{
               fontSize: "12px",
@@ -285,7 +288,14 @@ const TrafficAnalyticsPage = () => {
             TRAFFIC
           </Typography>
 
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center", fontSize: "12px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+              fontSize: "12px",
+            }}
+          >
             <Box sx={{ color: "success.main", fontWeight: 600 }}>
               ↓ {parseTraffic(totalTraffic.download)}
             </Box>
@@ -404,16 +414,31 @@ const TrafficAnalyticsPage = () => {
               <ResponsiveContainer width="100%" height={160}>
                 <AreaChart data={chartData}>
                   <defs>
-                    <linearGradient id="colorDownload" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id="colorDownload"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
                       <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                     </linearGradient>
-                    <linearGradient id="colorUpload" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id="colorUpload"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
                       <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(128, 128, 128, 0.1)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(128, 128, 128, 0.1)"
+                  />
                   <XAxis
                     dataKey="time"
                     stroke="rgba(128, 128, 128, 0.5)"
@@ -469,7 +494,11 @@ const TrafficAnalyticsPage = () => {
                 textAlign: "center",
               }}
             >
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: "11px" }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ fontSize: "11px" }}
+              >
                 {t("No data")}
               </Typography>
             </Box>
@@ -505,7 +534,9 @@ const TrafficAnalyticsPage = () => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-              <LanguageRounded sx={{ fontSize: 14, color: "success.main", opacity: 0.7 }} />
+              <LanguageRounded
+                sx={{ fontSize: 14, color: "success.main", opacity: 0.7 }}
+              />
               <Typography
                 variant="caption"
                 sx={{
@@ -529,9 +560,11 @@ const TrafficAnalyticsPage = () => {
               </Box>
             ) : (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                {domainStats.slice(0, 20).map((stat, index) =>
-                  renderStatCard(stat, index, maxDomainTraffic),
-                )}
+                {domainStats
+                  .slice(0, 20)
+                  .map((stat, index) =>
+                    renderStatCard(stat, index, maxDomainTraffic),
+                  )}
               </Box>
             )}
           </Box>
@@ -547,7 +580,9 @@ const TrafficAnalyticsPage = () => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-              <AppsRounded sx={{ fontSize: 14, color: "info.main", opacity: 0.7 }} />
+              <AppsRounded
+                sx={{ fontSize: 14, color: "info.main", opacity: 0.7 }}
+              />
               <Typography
                 variant="caption"
                 sx={{
@@ -571,9 +606,11 @@ const TrafficAnalyticsPage = () => {
               </Box>
             ) : (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                {processStats.slice(0, 20).map((stat, index) =>
-                  renderStatCard(stat, index, maxProcessTraffic),
-                )}
+                {processStats
+                  .slice(0, 20)
+                  .map((stat, index) =>
+                    renderStatCard(stat, index, maxProcessTraffic),
+                  )}
               </Box>
             )}
           </Box>

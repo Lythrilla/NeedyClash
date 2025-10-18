@@ -25,7 +25,8 @@ function notifyListeners() {
 
 // 生成消息的唯一key用于去重
 function getMessageKey(type: string, message: ReactNode): string {
-  const msgStr = typeof message === "string" ? message : JSON.stringify(message);
+  const msgStr =
+    typeof message === "string" ? message : JSON.stringify(message);
   return `${type}:${msgStr}`;
 }
 
@@ -35,7 +36,9 @@ function isDuplicateNotice(messageKey: string): boolean {
   if (lastShown) {
     const timeSinceLastShown = Date.now() - lastShown;
     if (timeSinceLastShown < DEDUP_WINDOW) {
-      console.log(`[noticeService] 跳过重复通知 (${timeSinceLastShown}ms 前显示过): ${messageKey}`);
+      console.log(
+        `[noticeService] 跳过重复通知 (${timeSinceLastShown}ms 前显示过): ${messageKey}`,
+      );
       return true;
     }
   }
@@ -50,7 +53,7 @@ export function showNotice(
   duration?: number,
 ): number {
   const messageKey = getMessageKey(type, message);
-  
+
   // 检查是否是重复通知
   if (isDuplicateNotice(messageKey)) {
     return -1; // 返回-1表示被去重
@@ -118,16 +121,18 @@ export function clearAllNotices() {
 setInterval(() => {
   const now = Date.now();
   const keysToDelete: string[] = [];
-  
+
   recentNotices.forEach((timestamp, key) => {
     if (now - timestamp > DEDUP_WINDOW) {
       keysToDelete.push(key);
     }
   });
-  
-  keysToDelete.forEach(key => recentNotices.delete(key));
-  
+
+  keysToDelete.forEach((key) => recentNotices.delete(key));
+
   if (keysToDelete.length > 0) {
-    console.log(`[noticeService] 清理了 ${keysToDelete.length} 条过期的去重记录`);
+    console.log(
+      `[noticeService] 清理了 ${keysToDelete.length} 条过期的去重记录`,
+    );
   }
 }, 60000); // 定期清理

@@ -210,7 +210,8 @@ export const UnlockItem = (props: Props) => {
                   fontWeight: 600,
                   backgroundColor: (theme) =>
                     alpha(theme.palette.warning.main, 0.1),
-                  borderColor: (theme) => alpha(theme.palette.warning.main, 0.3),
+                  borderColor: (theme) =>
+                    alpha(theme.palette.warning.main, 0.3),
                 }}
               >
                 CUSTOM
@@ -236,4 +237,3 @@ export const UnlockItem = (props: Props) => {
     </ListItem>
   );
 };
-

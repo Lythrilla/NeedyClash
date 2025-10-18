@@ -20,7 +20,11 @@ class ResourceManager {
   /**
    * 注册资源清理函数
    */
-  register(id: string, cleanup: CleanupFunction, description?: string): () => void {
+  register(
+    id: string,
+    cleanup: CleanupFunction,
+    description?: string,
+  ): () => void {
     const entry: ResourceEntry = {
       id,
       cleanup,
@@ -29,7 +33,9 @@ class ResourceManager {
     };
 
     this.resources.set(id, entry);
-    console.debug(`[ResourceManager] 注册资源: ${id}${description ? ` (${description})` : ''}`);
+    console.debug(
+      `[ResourceManager] 注册资源: ${id}${description ? ` (${description})` : ""}`,
+    );
 
     // 返回移除函数
     return () => this.unregister(id);
@@ -60,14 +66,16 @@ class ResourceManager {
    * 清理所有资源
    */
   async cleanupAll(): Promise<void> {
-    console.log(`[ResourceManager] 开始清理所有资源 (共 ${this.resources.size} 个)`);
-    
+    console.log(
+      `[ResourceManager] 开始清理所有资源 (共 ${this.resources.size} 个)`,
+    );
+
     const cleanupPromises = Array.from(this.resources.keys()).map((id) =>
-      this.unregister(id)
+      this.unregister(id),
     );
 
     await Promise.allSettled(cleanupPromises);
-    console.log('[ResourceManager] 所有资源清理完成');
+    console.log("[ResourceManager] 所有资源清理完成");
   }
 
   /**
@@ -85,7 +93,9 @@ class ResourceManager {
     }
 
     if (expiredIds.length > 0) {
-      console.warn(`[ResourceManager] 发现 ${expiredIds.length} 个过期资源，开始清理`);
+      console.warn(
+        `[ResourceManager] 发现 ${expiredIds.length} 个过期资源，开始清理`,
+      );
       await Promise.allSettled(expiredIds.map((id) => this.unregister(id)));
     }
   }
@@ -95,13 +105,13 @@ class ResourceManager {
    */
   startAutoCleanup(intervalMs: number = 1000 * 60 * 10): void {
     if (this.autoCleanupInterval) {
-      console.warn('[ResourceManager] 自动清理已在运行');
+      console.warn("[ResourceManager] 自动清理已在运行");
       return;
     }
 
     this.autoCleanupInterval = setInterval(() => {
       this.cleanupExpired().catch((error) => {
-        console.error('[ResourceManager] 自动清理失败:', error);
+        console.error("[ResourceManager] 自动清理失败:", error);
       });
     }, intervalMs);
 
@@ -115,7 +125,7 @@ class ResourceManager {
     if (this.autoCleanupInterval) {
       clearInterval(this.autoCleanupInterval);
       this.autoCleanupInterval = null;
-      console.log('[ResourceManager] 停止自动清理');
+      console.log("[ResourceManager] 停止自动清理");
     }
   }
 
@@ -134,9 +144,8 @@ class ResourceManager {
       description: entry.description,
     }));
 
-    const oldestResourceAge = resources.length > 0
-      ? Math.max(...resources.map((r) => r.age))
-      : 0;
+    const oldestResourceAge =
+      resources.length > 0 ? Math.max(...resources.map((r) => r.age)) : 0;
 
     return {
       totalResources: this.resources.size,
@@ -150,11 +159,10 @@ class ResourceManager {
 export const resourceManager = new ResourceManager();
 
 // 页面卸载时清理资源
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', () => {
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeunload", () => {
     resourceManager.cleanupAll().catch((error) => {
-      console.error('[ResourceManager] 页面卸载清理失败:', error);
+      console.error("[ResourceManager] 页面卸载清理失败:", error);
     });
   });
 }
-

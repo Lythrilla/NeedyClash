@@ -77,14 +77,16 @@ export const getBackgroundColor = (theme: Theme, transparent = false) =>
 // 获取卡片样式
 export const getCardStyles = (theme: Theme) => ({
   border: `1px solid ${getDividerColor(theme)}`,
-  backgroundColor: theme.palette.mode === "dark" 
-    ? "rgba(255, 255, 255, 0.02)" 
-    : "rgba(255, 255, 255, 0.8)",
+  backgroundColor:
+    theme.palette.mode === "dark"
+      ? "rgba(255, 255, 255, 0.02)"
+      : "rgba(255, 255, 255, 0.8)",
   transition: transitions.normal,
   "&:hover": {
-    borderColor: theme.palette.mode === "dark"
-      ? "rgba(255, 255, 255, 0.08)"
-      : "rgba(0, 0, 0, 0.08)",
+    borderColor:
+      theme.palette.mode === "dark"
+        ? "rgba(255, 255, 255, 0.08)"
+        : "rgba(0, 0, 0, 0.08)",
   },
 });
 
@@ -133,7 +135,9 @@ export const getIconButtonStyles = (size: "small" | "medium" = "small") => ({
 });
 
 // 获取标题样式
-export const getSectionTitleStyles = (variant: "primary" | "secondary" = "primary") => ({
+export const getSectionTitleStyles = (
+  variant: "primary" | "secondary" = "primary",
+) => ({
   display: "block",
   mb: 2.5,
   fontWeight: variant === "primary" ? fontWeight.bold : fontWeight.normal,
@@ -143,5 +147,3 @@ export const getSectionTitleStyles = (variant: "primary" | "secondary" = "primar
   color: variant === "primary" ? "text.secondary" : "text.disabled",
   opacity: variant === "primary" ? 0.7 : 0.5,
 });
-
-

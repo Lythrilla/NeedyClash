@@ -1,4 +1,10 @@
-import { Menu, type MenuProps, Select, type SelectProps, type Theme } from "@mui/material";
+import {
+  Menu,
+  type MenuProps,
+  Select,
+  type SelectProps,
+  type Theme,
+} from "@mui/material";
 import { ReactNode } from "react";
 
 import { getGlassMenuStyles } from "./theme-tokens";
@@ -44,15 +50,15 @@ export const GlassSelect = ({ children, ...props }: GlassSelectProps) => {
         width: 140,
         fontSize: "13px",
         "& .MuiOutlinedInput-notchedOutline": {
-          borderColor: (theme) => 
-            theme.palette.mode === "light" 
-              ? "#E2E8F0" 
+          borderColor: (theme) =>
+            theme.palette.mode === "light"
+              ? "#E2E8F0"
               : "rgba(255, 255, 255, 0.12)",
         },
         "&:hover .MuiOutlinedInput-notchedOutline": {
-          borderColor: (theme) => 
-            theme.palette.mode === "light" 
-              ? "#CBD5E1" 
+          borderColor: (theme) =>
+            theme.palette.mode === "light"
+              ? "#CBD5E1"
               : "rgba(255, 255, 255, 0.2)",
         },
         "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -97,5 +103,3 @@ export const getContextMenuProps = (
     e.preventDefault();
   },
 });
-
-

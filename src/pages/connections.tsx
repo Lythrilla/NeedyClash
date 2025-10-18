@@ -5,13 +5,7 @@ import {
   TableRowsRounded,
   DeleteSweepRounded,
 } from "@mui/icons-material";
-import {
-  Box,
-  IconButton,
-  MenuItem,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, MenuItem, Tooltip, Typography } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,8 +13,8 @@ import { Virtuoso } from "react-virtuoso";
 import { closeAllConnections } from "tauri-plugin-mihomo-api";
 
 import { BaseEmpty, BasePage } from "@/components/base";
-import { BaseSearchBox } from "@/components/base/base-search-box";
 import { GlassSelect } from "@/components/base";
+import { BaseSearchBox } from "@/components/base/base-search-box";
 import {
   ConnectionDetail,
   ConnectionDetailRef,
@@ -152,7 +146,14 @@ const ConnectionsPage = () => {
           >
             TRAFFIC
           </Typography>
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center", fontSize: "12px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              alignItems: "center",
+              fontSize: "12px",
+            }}
+          >
             <Box sx={{ color: "success.main", fontWeight: 600 }}>
               ↓ {parseTraffic(displayData.downloadTotal)}
             </Box>
@@ -160,7 +161,11 @@ const ConnectionsPage = () => {
               ↑ {parseTraffic(displayData.uploadTotal)}
             </Box>
             <Box sx={{ color: "text.secondary", fontWeight: 600 }}>
-              Σ {parseTraffic((displayData.downloadTotal || 0) + (displayData.uploadTotal || 0))}
+              Σ{" "}
+              {parseTraffic(
+                (displayData.downloadTotal || 0) +
+                  (displayData.uploadTotal || 0),
+              )}
             </Box>
           </Box>
 

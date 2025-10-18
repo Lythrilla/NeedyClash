@@ -54,20 +54,34 @@ export function useSystemState() {
 
   const isTunModeAvailable = isAdminMode || isServiceOk;
 
+  // 组件挂载时立即初始化状态，而不是延迟 2 秒
   useEffect(() => {
+    let mounted = true;
+
     const initServiceState = async () => {
-      console.log("[useSystemState] 应用启动，强制刷新运行模式和服务状态");
+      if (!mounted) return;
+
+      console.log("[useSystemState] 应用启动，初始化状态");
       await mutateRunningMode();
-      if (isServiceMode) {
+
+      if (mounted && isServiceMode) {
         await mutateServiceOk();
       }
     };
 
-    const timer = setTimeout(() => {
-      initServiceState();
-    }, 2000);
+    // 使用 requestIdleCallback 或短暂延迟，避免阻塞初始渲染
+    const idleCallback = requestIdleCallback
+      ? requestIdleCallback(() => initServiceState())
+      : setTimeout(() => initServiceState(), 100);
 
-    return () => clearTimeout(timer);
+    return () => {
+      mounted = false;
+      if (typeof idleCallback === "number") {
+        clearTimeout(idleCallback);
+      } else {
+        cancelIdleCallback(idleCallback);
+      }
+    };
   }, []);
 
   return {

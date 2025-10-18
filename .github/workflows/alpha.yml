@@ -395,10 +395,10 @@ jobs:
           sudo ls -lR /etc/apt/
 
           cat > /tmp/sources.list << EOF
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-security main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-updates main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-backports main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble-security main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble-updates main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble-backports main multiverse universe restricted
 
           deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble main multiverse universe restricted
           deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-security main multiverse universe restricted
@@ -406,19 +406,24 @@ jobs:
           deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-backports main multiverse universe restricted
           EOF
 
-          # Backup original sources
+          # Backup and remove ALL existing sources to prevent conflicts
           if [ -f /etc/apt/sources.list ]; then
-            sudo mv /etc/apt/sources.list /etc/apt/sources.list.default
+            sudo mv /etc/apt/sources.list /etc/apt/sources.list.backup
           fi
           if [ -d /etc/apt/sources.list.d ]; then
             sudo mkdir -p /etc/apt/sources.list.d.backup
-            sudo mv /etc/apt/sources.list.d/* /etc/apt/sources.list.d.backup/ || true
+            sudo find /etc/apt/sources.list.d -type f -name "*.list" -exec mv {} /etc/apt/sources.list.d.backup/ \; || true
+          fi
+          
+          # Remove apt-mirrors.txt if it exists to prevent mirror override
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo mv /etc/apt/apt-mirrors.txt /etc/apt/apt-mirrors.txt.backup || true
           fi
           
           sudo mv /tmp/sources.list /etc/apt/sources.list
 
           sudo dpkg --add-architecture ${{ matrix.arch }}
-          sudo apt-get update -y
+          sudo apt-get update -y || { echo "apt-get update failed, showing sources:"; cat /etc/apt/sources.list; exit 1; }
           sudo apt-get -f install -y
 
           sudo apt-get install -y \

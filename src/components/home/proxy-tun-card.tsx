@@ -35,9 +35,9 @@ export const ProxyTunCard: FC = () => {
       <Box
         sx={{
           borderBottom: "1px solid",
-          borderColor: (theme) => 
-            theme.palette.mode === "dark" 
-              ? "rgba(255, 255, 255, 0.03)" 
+          borderColor: (theme) =>
+            theme.palette.mode === "dark"
+              ? "rgba(255, 255, 255, 0.03)"
               : "rgba(0, 0, 0, 0.03)",
           pb: 2,
         }}

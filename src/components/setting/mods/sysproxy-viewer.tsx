@@ -1,15 +1,5 @@
-import {
-  EditRounded,
-  RestartAltOutlined,
-} from "@mui/icons-material";
-import {
-  Autocomplete,
-  Button,
-  InputAdornment,
-  TextField,
-  Typography,
-  Box,
-} from "@mui/material";
+import { EditRounded } from "@mui/icons-material";
+import { Autocomplete, Button, InputAdornment, TextField } from "@mui/material";
 import { useLockFn } from "ahooks";
 import {
   forwardRef,
@@ -24,7 +14,6 @@ import useSWR, { mutate } from "swr";
 import { getBaseConfig } from "tauri-plugin-mihomo-api";
 
 import { BaseDialog, DialogRef, Switch } from "@/components/base";
-import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { EditorViewer } from "@/components/profile/editor-viewer";
 import { useVerge } from "@/hooks/use-verge";
 import { useAppData } from "@/providers/app-data-context";

@@ -1,4 +1,4 @@
-import { List, Paper, SvgIcon, ThemeProvider } from "@mui/material";
+import { List, Paper, ThemeProvider } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
@@ -6,18 +6,18 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate, useRoutes, useMatch, useResolvedPath } from "react-router-dom";
+import { useLocation, useNavigate, useRoutes } from "react-router-dom";
 import { SWRConfig, mutate } from "swr";
 
 import logoPng from "@/assets/image/logo.png";
 import LogoSvg from "@/assets/image/logo.svg?react";
 import { NoticeManager } from "@/components/base/NoticeManager";
 import { CustomTitlebar } from "@/components/layout/custom-titlebar";
-import { WindowControls } from "@/components/controller/window-controller";
 import { LayoutItem } from "@/components/layout/layout-item";
 import { LayoutTraffic } from "@/components/layout/layout-traffic";
 import { UpdateButton } from "@/components/layout/update-button";
 import { useCustomTheme } from "@/components/layout/use-custom-theme";
+import { TunStatusMonitor } from "@/components/shared/TunStatusMonitor";
 import { useConnectionData } from "@/hooks/use-connection-data";
 import { useI18n } from "@/hooks/use-i18n";
 import { useListen } from "@/hooks/use-listen";
@@ -165,7 +165,7 @@ const Layout = () => {
   const { switchLanguage } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // 背景设置
   const backgroundType = theme_setting?.background_type || "none";
   const backgroundImage = theme_setting?.background_image || "";
@@ -210,7 +210,7 @@ const Layout = () => {
 
     let fadeTimer: number | null = null;
     let retryTimer: number | null = null;
-    let debugTimer: number | null = null;
+    const debugTimer: number | null = null;
     let attempts = 0;
     const maxAttempts = 50;
     let stopped = false;
@@ -618,7 +618,7 @@ const Layout = () => {
       <ThemeProvider theme={theme}>
         {/* 背景视频容器 - 实时响应缩放、模糊、透明度和亮度变化 */}
         {backgroundType === "video" && backgroundVideo && (
-          <div 
+          <div
             id="background-video-container"
             key={`video-${backgroundVideo}-${backgroundScale}-${backgroundBlur}-${backgroundOpacity}-${backgroundBrightness}`}
           >
@@ -629,26 +629,42 @@ const Layout = () => {
               muted
               playsInline
               src={backgroundVideo}
-              style={{ 
+              style={{
                 transform: `translate(-50%, -50%) scale(${backgroundScale})`,
                 opacity: backgroundOpacity,
                 filter: `blur(${backgroundBlur}px) brightness(${backgroundBrightness}%)`,
-                transition: 'transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease',
+                transition:
+                  "transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease",
               }}
               onError={(e) => {
                 console.error("[Video Background] Error loading video:", e);
                 console.error("[Video Background] Video src:", backgroundVideo);
               }}
               onLoadedData={() => {
-                console.log("[Video Background] Video loaded successfully:", backgroundVideo);
-                console.log("[Video Background] Scale:", backgroundScale, "Blur:", backgroundBlur, "Opacity:", backgroundOpacity, "Brightness:", backgroundBrightness);
+                console.log(
+                  "[Video Background] Video loaded successfully:",
+                  backgroundVideo,
+                );
+                console.log(
+                  "[Video Background] Scale:",
+                  backgroundScale,
+                  "Blur:",
+                  backgroundBlur,
+                  "Opacity:",
+                  backgroundOpacity,
+                  "Brightness:",
+                  backgroundBrightness,
+                );
               }}
             />
           </div>
         )}
-        
+
         {/* 左侧底部窗口控制按钮 */}
         <NoticeManager />
+
+        {/* TUN 状态监控 */}
+        <TunStatusMonitor />
         <div
           style={{
             animation: "fadeIn 0.5s",
@@ -680,7 +696,10 @@ const Layout = () => {
           }}
           sx={[
             ({ palette }) => ({
-              bgcolor: backgroundType !== "none" ? "transparent" : palette.background.default,
+              bgcolor:
+                backgroundType !== "none"
+                  ? "transparent"
+                  : palette.background.default,
               backgroundImage: "none",
             }),
             OS === "linux"
@@ -702,8 +721,10 @@ const Layout = () => {
                   style={{
                     height: "32px",
                     width: "auto",
-                    filter: isDark ? "brightness(0) invert(1)" : "brightness(0) invert(0)",
-                    transition: "filter 0.2s ease"
+                    filter: isDark
+                      ? "brightness(0) invert(1)"
+                      : "brightness(0) invert(0)",
+                    transition: "filter 0.2s ease",
                   }}
                 />
                 <LogoSvg

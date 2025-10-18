@@ -23,7 +23,7 @@ export const ConnectionTable = (props: Props) => {
   const { t } = useTranslation();
   const { verge } = useVerge();
   const apiRef = useGridApiRef();
-  
+
   const connectionTableBlur = verge?.theme_setting?.connection_table_blur ?? 0;
   useEffect(() => {
     const PATCH_FLAG_KEY = "__clashPatchedPublishEvent" as const;

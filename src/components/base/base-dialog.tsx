@@ -47,23 +47,23 @@ export const BaseDialog: React.FC<Props> = ({
   onClose,
 }) => {
   return (
-    <Dialog 
+    <Dialog
       className="custom-dialog"
-      open={open} 
+      open={open}
       onClose={onClose}
       sx={{
-        '& .MuiBackdrop-root': {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        "& .MuiBackdrop-root": {
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
         },
-        '& .MuiDialog-container': {
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
+        "& .MuiDialog-container": {
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
         },
-        '& .MuiDialog-paper': {
-          margin: 'auto',
-          position: 'relative',
-          maxHeight: '90vh',
+        "& .MuiDialog-paper": {
+          margin: "auto",
+          position: "relative",
+          maxHeight: "90vh",
         },
       }}
       disablePortal={false}

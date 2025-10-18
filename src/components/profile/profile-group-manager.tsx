@@ -1,10 +1,5 @@
+import { DeleteRounded, EditRounded, FolderRounded } from "@mui/icons-material";
 import {
-  DeleteRounded,
-  EditRounded,
-  FolderRounded,
-} from "@mui/icons-material";
-import {
-  alpha,
   Box,
   IconButton,
   MenuItem,
@@ -126,7 +121,8 @@ export const ProfileGroupManager = forwardRef<
       const newGroups = groups.filter((g) => g.id !== groupId);
       await patchProfiles({ groups: newGroups });
 
-      const affectedItems = profiles?.items?.filter(item => item.group_id === groupId) || [];
+      const affectedItems =
+        profiles?.items?.filter((item) => item.group_id === groupId) || [];
       for (const item of affectedItems) {
         if (item.uid) {
           await patchProfile(item.uid, { group_id: undefined } as any);
@@ -153,7 +149,9 @@ export const ProfileGroupManager = forwardRef<
 
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+      <Box
+        sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}
+      >
         <Typography
           sx={{
             fontSize: 11,
@@ -168,7 +166,13 @@ export const ProfileGroupManager = forwardRef<
 
         <GlassSelect
           value={selectedGroup || "all"}
-          onChange={(e) => handleGroupSelect((e.target.value as string) === "all" ? null : (e.target.value as string))}
+          onChange={(e) =>
+            handleGroupSelect(
+              (e.target.value as string) === "all"
+                ? null
+                : (e.target.value as string),
+            )
+          }
           size="small"
           sx={{
             minWidth: 140,
@@ -225,7 +229,9 @@ export const ProfileGroupManager = forwardRef<
         onCancel={handleClose}
         onOk={handleSave}
       >
-        <EnhancedDialogTitle title={editingGroup ? t("Edit Group") : t("Manage Groups")} />
+        <EnhancedDialogTitle
+          title={editingGroup ? t("Edit Group") : t("Manage Groups")}
+        />
 
         {!editingGroup && groups.length > 0 && (
           <EnhancedFormGroup title={t("Existing Groups")}>
@@ -241,7 +247,7 @@ export const ProfileGroupManager = forwardRef<
                     borderRadius: "var(--cv-border-radius-sm)",
                     border: (theme) => `1px solid ${theme.palette.divider}`,
                     transition: "all 0.15s ease",
-                    "&:hover": { 
+                    "&:hover": {
                       borderColor: "primary.main",
                       bgcolor: "action.hover",
                     },
@@ -260,21 +266,25 @@ export const ProfileGroupManager = forwardRef<
                       <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
                         {group.name}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: 11 }}
+                      >
                         {groupCounts[group.id] || 0} {t("profiles")}
                       </Typography>
                     </Box>
                   </Box>
                   <Box sx={{ display: "flex", gap: 0.5 }}>
-                    <IconButton 
-                      size="small" 
+                    <IconButton
+                      size="small"
                       onClick={() => handleEdit(group)}
                       sx={{ width: 24, height: 24 }}
                     >
                       <EditRounded sx={{ fontSize: 16 }} />
                     </IconButton>
-                    <IconButton 
-                      size="small" 
+                    <IconButton
+                      size="small"
                       onClick={() => handleDelete(group.id)}
                       sx={{ width: 24, height: 24 }}
                     >
@@ -287,7 +297,9 @@ export const ProfileGroupManager = forwardRef<
           </EnhancedFormGroup>
         )}
 
-        <EnhancedFormGroup title={editingGroup ? t("Edit Group") : t("New Group")}>
+        <EnhancedFormGroup
+          title={editingGroup ? t("Edit Group") : t("New Group")}
+        >
           <EnhancedFormItem label={t("Group Name")} fullWidth>
             <TextField
               value={groupName}
@@ -317,7 +329,7 @@ export const ProfileGroupManager = forwardRef<
                         groupColor === color
                           ? `2px solid ${theme.palette.text.primary}`
                           : `1px solid ${theme.palette.divider}`,
-                      "&:hover": { 
+                      "&:hover": {
                         opacity: 0.8,
                       },
                       transition: "all 0.15s ease",
@@ -325,10 +337,14 @@ export const ProfileGroupManager = forwardRef<
                   />
                 ))}
               </Box>
-              
+
               {/* 自定义颜色 */}
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ minWidth: 80 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ minWidth: 80 }}
+                >
                   {t("Custom")}:
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -360,8 +376,8 @@ export const ProfileGroupManager = forwardRef<
                     onChange={(e) => {
                       let value = e.target.value;
                       // 自动添加 # 前缀
-                      if (!value.startsWith('#')) {
-                        value = '#' + value.replace(/[^0-9A-Fa-f]/g, '');
+                      if (!value.startsWith("#")) {
+                        value = "#" + value.replace(/[^0-9A-Fa-f]/g, "");
                       }
                       // 验证格式并限制长度
                       if (/^#[0-9A-Fa-f]{0,6}$/.test(value)) {
@@ -370,9 +386,9 @@ export const ProfileGroupManager = forwardRef<
                     }}
                     onBlur={(e) => {
                       // 失去焦点时补全为6位
-                      const value = e.target.value.replace('#', '');
+                      const value = e.target.value.replace("#", "");
                       if (value.length > 0 && value.length < 6) {
-                        setGroupColor('#' + value.padEnd(6, '0'));
+                        setGroupColor("#" + value.padEnd(6, "0"));
                       }
                     }}
                     placeholder="#7C3AED"

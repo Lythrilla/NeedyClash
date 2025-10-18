@@ -6,7 +6,7 @@ export const CUSTOM_THEMES_KEY = "custom_themes";
 // 检查主题是否完全匹配（所有颜色字段）
 export const isThemeActive = (
   theme: ThemeSetting,
-  preset: ThemePreset
+  preset: ThemePreset,
 ): boolean => {
   return (
     theme.primary_color === preset.primary_color &&
@@ -23,7 +23,7 @@ export const isThemeActive = (
 // 从预制主题创建主题设置
 export const createThemeFromPreset = (
   currentTheme: ThemeSetting,
-  preset: ThemePreset
+  preset: ThemePreset,
 ): ThemeSetting => {
   return {
     ...currentTheme,
@@ -41,7 +41,7 @@ export const createThemeFromPreset = (
 // 从当前主题设置创建预制主题
 export const createPresetFromTheme = (
   name: string,
-  theme: ThemeSetting
+  theme: ThemeSetting,
 ): ThemePreset => {
   return {
     name,
@@ -56,4 +56,3 @@ export const createPresetFromTheme = (
     isCustom: true,
   };
 };
-

@@ -3,16 +3,7 @@ import {
   ExpandMoreRounded,
   InboxRounded,
 } from "@mui/icons-material";
-import {
-  alpha,
-  Box,
-  ListItemText,
-  ListItemButton,
-  Typography,
-  styled,
-  Chip,
-  Tooltip,
-} from "@mui/material";
+import { alpha, Box, ListItemButton, Typography, styled } from "@mui/material";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";

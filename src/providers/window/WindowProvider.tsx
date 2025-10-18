@@ -2,6 +2,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getVergeConfig, patchVergeConfig } from "@/services/cmds";
+
 import { WindowContext } from "./WindowContext";
 
 export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -57,7 +58,7 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
     const newVal = !currentVal;
     await currentWindow.setDecorations(newVal);
     setDecorated(newVal);
-    
+
     // 保存到配置文件
     try {
       await patchVergeConfig({ window_use_system_titlebar: newVal });
@@ -68,15 +69,15 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     let active = true;
-    
+
     const initDecorations = async () => {
       try {
         // 从配置读取设置
         const config = await getVergeConfig();
         const useSysTitlebar = config.window_use_system_titlebar ?? false;
-        
+
         if (!active) return;
-        
+
         // 应用配置
         await currentWindow.setDecorations(useSysTitlebar);
         setDecorated(useSysTitlebar);
@@ -88,10 +89,10 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }
     };
-    
+
     initDecorations();
     currentWindow.setMinimizable?.(true);
-    
+
     return () => {
       active = false;
     };

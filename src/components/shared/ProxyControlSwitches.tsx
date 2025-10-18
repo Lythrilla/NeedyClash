@@ -14,11 +14,10 @@ import { TooltipIcon } from "@/components/base/base-tooltip-icon";
 import { GuardState } from "@/components/setting/mods/guard-state";
 import { SysproxyViewer } from "@/components/setting/mods/sysproxy-viewer";
 import { TunViewer } from "@/components/setting/mods/tun-viewer";
+import { useServiceManager } from "@/hooks/use-service-manager";
 import { useSystemProxyState } from "@/hooks/use-system-proxy-state";
 import { useSystemState } from "@/hooks/use-system-state";
 import { useVerge } from "@/hooks/use-verge";
-import { useServiceInstaller } from "@/hooks/useServiceInstaller";
-import { useServiceUninstaller } from "@/hooks/useServiceUninstaller";
 import { showNotice } from "@/services/noticeService";
 
 interface ProxySwitchProps {
@@ -119,8 +118,11 @@ const ProxyControlSwitches = ({
 }: ProxySwitchProps) => {
   const { t } = useTranslation();
   const { verge, mutateVerge, patchVerge } = useVerge();
-  const { installServiceAndRestartCore, reinstallServiceAndRestartCore } = useServiceInstaller();
-  const { uninstallServiceAndRestartCore } = useServiceUninstaller();
+  const {
+    installServiceAndRestartCore,
+    reinstallServiceAndRestartCore,
+    uninstallServiceAndRestartCore,
+  } = useServiceManager();
   const { actualState: systemProxyActualState, toggleSystemProxy } =
     useSystemProxyState();
   const {
@@ -155,7 +157,7 @@ const ProxyControlSwitches = ({
     try {
       await installServiceAndRestartCore();
       // 等待服务状态更新
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
     } catch (err) {
@@ -167,7 +169,7 @@ const ProxyControlSwitches = ({
     try {
       await reinstallServiceAndRestartCore();
       // 等待服务状态更新
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
     } catch (err) {
@@ -179,7 +181,7 @@ const ProxyControlSwitches = ({
     try {
       await uninstallServiceAndRestartCore();
       // 等待服务状态更新
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
     } catch (err) {
@@ -216,7 +218,7 @@ const ProxyControlSwitches = ({
             disabled={!isTunModeAvailable}
             highlight={!!enable_tun_mode}
           />
-          
+
           {/* 状态提示 - 极简设计 */}
           {!isTunModeAvailable && (
             <Typography
@@ -233,7 +235,7 @@ const ProxyControlSwitches = ({
               {t("TUN requires Service Mode or Admin Mode")}
             </Typography>
           )}
-          
+
           {/* 服务管理按钮 - 极简设计 */}
           <Box sx={{ mt: 1 }}>
             {!isServiceMode ? (
@@ -266,10 +268,12 @@ const ProxyControlSwitches = ({
                     textTransform: "none",
                     borderRadius: "var(--cv-border-radius-sm)",
                     color: "primary.main",
-                    backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),
+                    backgroundColor: (theme) =>
+                      alpha(theme.palette.primary.main, 0.06),
                     transition: "all 0.2s",
                     "&:hover": {
-                      backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                      backgroundColor: (theme) =>
+                        alpha(theme.palette.primary.main, 0.12),
                     },
                     "& .MuiButton-startIcon": {
                       marginRight: "6px",
@@ -310,10 +314,12 @@ const ProxyControlSwitches = ({
                       textTransform: "none",
                       borderRadius: "var(--cv-border-radius-sm)",
                       color: "success.main",
-                      backgroundColor: (theme) => alpha(theme.palette.success.main, 0.06),
+                      backgroundColor: (theme) =>
+                        alpha(theme.palette.success.main, 0.06),
                       transition: "all 0.2s",
                       "&:hover": {
-                        backgroundColor: (theme) => alpha(theme.palette.success.main, 0.12),
+                        backgroundColor: (theme) =>
+                          alpha(theme.palette.success.main, 0.12),
                       },
                       "& .MuiButton-startIcon": {
                         marginRight: "4px",
@@ -336,10 +342,12 @@ const ProxyControlSwitches = ({
                       textTransform: "none",
                       borderRadius: "var(--cv-border-radius-sm)",
                       color: "error.main",
-                      backgroundColor: (theme) => alpha(theme.palette.error.main, 0.06),
+                      backgroundColor: (theme) =>
+                        alpha(theme.palette.error.main, 0.06),
                       transition: "all 0.2s",
                       "&:hover": {
-                        backgroundColor: (theme) => alpha(theme.palette.error.main, 0.12),
+                        backgroundColor: (theme) =>
+                          alpha(theme.palette.error.main, 0.12),
                       },
                       "& .MuiButton-startIcon": {
                         marginRight: "4px",

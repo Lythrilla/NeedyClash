@@ -290,12 +290,7 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
             name="group_id"
             control={control}
             render={({ field }) => (
-              <GlassSelect
-                {...field}
-                size="small"
-                fullWidth
-                displayEmpty
-              >
+              <GlassSelect {...field} size="small" fullWidth displayEmpty>
                 <MenuItem value="">{t("No Group")}</MenuItem>
                 {(profiles?.groups || []).map((group) => (
                   <MenuItem key={group.id} value={group.id}>

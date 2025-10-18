@@ -1,5 +1,4 @@
 import {
-  ColorLensRounded,
   RefreshRounded,
   Brightness7Rounded,
   Brightness4Rounded,
@@ -29,7 +28,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Paper,
   Stack,
   Divider,
   Accordion,
@@ -37,13 +35,13 @@ import {
   AccordionDetails,
   InputAdornment,
 } from "@mui/material";
-import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { useLockFn } from "ahooks";
 import { useImperativeHandle, useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { BaseDialog, DialogRef, Switch } from "@/components/base";
+import { BaseDialog, DialogRef } from "@/components/base";
 import { EditorViewer } from "@/components/profile/editor-viewer";
 import { useVerge } from "@/hooks/use-verge";
 import { defaultDarkTheme, defaultTheme } from "@/pages/_theme";
@@ -53,7 +51,14 @@ import { safeGetStorage, safeSetStorage } from "@/utils/safe-storage";
 
 import { ThemePresetCard } from "./theme-preset-card";
 import THEME_PRESETS from "./theme-presets.json";
-import type { ThemePreset, ThemeMode, ThemeSetting, CustomThemes, IComponentStyle, ComponentKey } from "./theme-types";
+import type {
+  ThemePreset,
+  ThemeMode,
+  ThemeSetting,
+  CustomThemes,
+  IComponentStyle,
+  ComponentKey,
+} from "./theme-types";
 import {
   CUSTOM_THEMES_KEY,
   isThemeActive,
@@ -84,7 +89,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
       },
     });
   });
-  
+
   // 批量设置 state
   const [batchBlur, setBatchBlur] = useState(0);
   const [batchOpacity, setBatchOpacity] = useState(1);
@@ -110,19 +115,27 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   };
 
   // useCallback 性能优化
-  const handleBackgroundChange = useCallback((field: keyof ThemeSetting, value: any) => {
-    const newTheme = { ...theme, [field]: value };
-    setTheme(newTheme);
-    // 实时预览：立即应用到verge
-    patchVerge({ theme_setting: newTheme });
-  }, [theme, patchVerge]);
+  const handleBackgroundChange = useCallback(
+    (field: keyof ThemeSetting, value: any) => {
+      const newTheme = { ...theme, [field]: value };
+      setTheme(newTheme);
+      // 实时预览：立即应用到verge
+      patchVerge({ theme_setting: newTheme });
+    },
+    [theme, patchVerge],
+  );
 
   const handleSelectImage = useLockFn(async () => {
     try {
       const selected = await openDialog({
         directory: false,
         multiple: false,
-        filters: [{ name: "Images", extensions: ["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"] }],
+        filters: [
+          {
+            name: "Images",
+            extensions: ["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"],
+          },
+        ],
       });
       if (selected) {
         const assetUrl = convertFileSrc(selected as string);
@@ -144,7 +157,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
       const selected = await openDialog({
         directory: false,
         multiple: false,
-        filters: [{ name: "Videos", extensions: ["mp4", "webm", "ogg", "mov"] }],
+        filters: [
+          { name: "Videos", extensions: ["mp4", "webm", "ogg", "mov"] },
+        ],
       });
       if (selected) {
         const assetUrl = convertFileSrc(selected as string);
@@ -206,22 +221,25 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     }, 300);
   }, [patchVerge]);
 
-  const updateComponentStyle = useCallback((key: ComponentKey, style: Partial<IComponentStyle>) => {
-    const newComponentStyles = {
-      ...componentStyles,
-      [key]: {
-        ...(componentStyles[key] || {}),
-        ...style,
-      },
-    };
-    const newTheme = {
-      ...theme,
-      component_styles: newComponentStyles,
-    };
-    setTheme(newTheme);
-    // 防抖更新
-    debouncedPatchVerge(newTheme);
-  }, [theme, componentStyles, debouncedPatchVerge]);
+  const updateComponentStyle = useCallback(
+    (key: ComponentKey, style: Partial<IComponentStyle>) => {
+      const newComponentStyles = {
+        ...componentStyles,
+        [key]: {
+          ...(componentStyles[key] || {}),
+          ...style,
+        },
+      };
+      const newTheme = {
+        ...theme,
+        component_styles: newComponentStyles,
+      };
+      setTheme(newTheme);
+      // 防抖更新
+      debouncedPatchVerge(newTheme);
+    },
+    [theme, componentStyles, debouncedPatchVerge],
+  );
 
   const resetComponentStyle = async (key: ComponentKey) => {
     const newComponentStyles = { ...componentStyles };
@@ -245,11 +263,11 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     showNotice("success", t("All component styles reset"));
   };
 
-
   // 渲染组件样式控制器
   const renderComponentStyleControls = (key: ComponentKey) => {
     const style = componentStyles[key] || {};
-    const defaultBgColor = currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff";
+    const defaultBgColor =
+      currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff";
     const bgColor = style.background_color || defaultBgColor;
     const blur = style.blur ?? 25;
     const opacity = style.opacity ?? 0.7;
@@ -264,13 +282,23 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
             <input
               type="color"
               value={bgColor}
-              onChange={(e) => updateComponentStyle(key, { background_color: e.target.value })}
-              style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
+              onChange={(e) =>
+                updateComponentStyle(key, { background_color: e.target.value })
+              }
+              style={{
+                width: 50,
+                height: 40,
+                border: "1px solid rgba(0, 0, 0, 0.23)",
+                borderRadius: "var(--cv-border-radius-xs)",
+                cursor: "pointer",
+              }}
             />
             <TextField
               size="small"
               value={style.background_color || ""}
-              onChange={(e) => updateComponentStyle(key, { background_color: e.target.value })}
+              onChange={(e) =>
+                updateComponentStyle(key, { background_color: e.target.value })
+              }
               placeholder={defaultBgColor}
               fullWidth
             />
@@ -287,7 +315,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
             value={style.blur ?? ""}
             onChange={(e) => {
               const value = parseInt(e.target.value) || 0;
-              updateComponentStyle(key, { blur: Math.max(0, Math.min(100, value)) });
+              updateComponentStyle(key, {
+                blur: Math.max(0, Math.min(100, value)),
+              });
             }}
             placeholder="25"
             InputProps={{
@@ -303,7 +333,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
           </Typography>
           <Slider
             value={style.opacity ?? 0.7}
-            onChange={(_, value) => updateComponentStyle(key, { opacity: value as number })}
+            onChange={(_, value) =>
+              updateComponentStyle(key, { opacity: value as number })
+            }
             min={0}
             max={1}
             step={0.01}
@@ -328,7 +360,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   const applyPreset = useLockFn(async (preset: ThemePreset) => {
     const newTheme = createThemeFromPreset(theme, preset);
     setTheme(newTheme);
-    await patchVerge({ 
+    await patchVerge({
       theme_setting: newTheme,
       theme_mode: presetFilter,
     });
@@ -360,11 +392,11 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     const newCustomTheme = createPresetFromTheme(themeName, theme);
     const updated = { ...customThemes };
     updated[presetFilter] = [...updated[presetFilter], newCustomTheme];
-    
+
     const success = safeSetStorage(CUSTOM_THEMES_KEY, updated, (error) => {
       showNotice("error", t("Failed to save theme"));
     });
-    
+
     if (success) {
       setCustomThemes(updated);
       setSaveDialogOpen(false);
@@ -375,12 +407,14 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
 
   const deleteCustomTheme = useLockFn(async (preset: ThemePreset) => {
     const updated = { ...customThemes };
-    updated[presetFilter] = updated[presetFilter].filter((p) => p.name !== preset.name);
-    
+    updated[presetFilter] = updated[presetFilter].filter(
+      (p) => p.name !== preset.name,
+    );
+
     const success = safeSetStorage(CUSTOM_THEMES_KEY, updated, (error) => {
       showNotice("error", t("Failed to delete theme"));
     });
-    
+
     if (success) {
       setCustomThemes(updated);
       showNotice("success", t("Theme deleted"), 1000);
@@ -401,7 +435,20 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   const presets: ThemePreset[] = (THEME_PRESETS as any)[presetFilter];
   const customPresets = customThemes[presetFilter] || [];
   const backgroundType = (theme.background_type as string) || "none";
-  const blendModes = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"];
+  const blendModes = [
+    "normal",
+    "multiply",
+    "screen",
+    "overlay",
+    "darken",
+    "lighten",
+    "color-dodge",
+    "color-burn",
+    "hard-light",
+    "soft-light",
+    "difference",
+    "exclusion",
+  ];
 
   // 组件样式配置类型
   interface ComponentConfig {
@@ -411,12 +458,28 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   }
 
   const componentConfigs: ComponentConfig[] = [
-    { key: "select", label: "Select Dropdown", description: "Dropdown menu style" },
-    { key: "profile_card", label: "Profile Card", description: "Subscription profile card" },
+    {
+      key: "select",
+      label: "Select Dropdown",
+      description: "Dropdown menu style",
+    },
+    {
+      key: "profile_card",
+      label: "Profile Card",
+      description: "Subscription profile card",
+    },
     { key: "proxy_card", label: "Proxy Card", description: "Proxy node card" },
     { key: "textfield", label: "Text Field", description: "Input field style" },
-    { key: "analytics_chart", label: "Analytics Chart", description: "Traffic trend chart" },
-    { key: "analytics_header", label: "Analytics Header", description: "Top domains & processes header" },
+    {
+      key: "analytics_chart",
+      label: "Analytics Chart",
+      description: "Traffic trend chart",
+    },
+    {
+      key: "analytics_header",
+      label: "Analytics Header",
+      description: "Top domains & processes header",
+    },
     { key: "dialog", label: "Dialog", description: "Settings dialog window" },
   ];
 
@@ -462,9 +525,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
           <Typography sx={{ fontSize: 13, fontWeight: 500 }}>
             {label}
           </Typography>
-          <Typography 
-            sx={{ 
-              fontSize: 11, 
+          <Typography
+            sx={{
+              fontSize: 11,
               color: "text.secondary",
               fontFamily: "monospace",
             }}
@@ -483,9 +546,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
         title={t("Theme Settings")}
         okBtn={t("Save")}
         cancelBtn={t("Cancel")}
-        contentSx={{ 
+        contentSx={{
           width: 640,
-          maxHeight: "80vh", 
+          maxHeight: "80vh",
           p: 0,
           overflowY: "auto",
           "&::-webkit-scrollbar": {
@@ -502,10 +565,10 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
         onCancel={() => setOpen(false)}
         onOk={onSave}
       >
-        <Tabs 
-          value={tabValue} 
-          onChange={(_, v) => setTabValue(v)} 
-          sx={{ 
+        <Tabs
+          value={tabValue}
+          onChange={(_, v) => setTabValue(v)}
+          sx={{
             px: 2,
             pt: 2,
             borderBottom: 1,
@@ -523,7 +586,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
           <Tab label={t("Background")} />
           <Tab label={t("Layout")} />
         </Tabs>
-        
+
         <Box sx={{ p: 2.5 }}>
           {tabValue === 0 && (
             <Stack spacing={2.5}>
@@ -562,9 +625,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                   </ToggleButton>
                 </ToggleButtonGroup>
                 <Box sx={{ flex: 1 }} />
-                <Button 
-                  size="small" 
-                  onClick={resetToDefault} 
+                <Button
+                  size="small"
+                  onClick={resetToDefault}
                   startIcon={<RefreshRounded sx={{ fontSize: 16 }} />}
                   sx={{
                     textTransform: "none",
@@ -600,7 +663,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
 
           {tabValue === 1 && (
             <Stack spacing={2}>
-              <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+              <Box
+                sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
+              >
                 {renderColorItem(t("Primary"), "primary_color")}
                 {renderColorItem(t("Secondary"), "secondary_color")}
                 {renderColorItem(t("Info"), "info_color")}
@@ -610,7 +675,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                 {renderColorItem(t("Primary Text"), "primary_text")}
                 {renderColorItem(t("Secondary Text"), "secondary_text")}
               </Box>
-              
+
               <Divider />
 
               <Button
@@ -621,7 +686,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
               >
                 {t("Save as Custom")}
               </Button>
-              
+
               <TextField
                 size="small"
                 label={t("Font Family")}
@@ -646,7 +711,8 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                 value={backgroundType}
                 exclusive
                 onChange={(_, value) => {
-                  if (value !== null) handleBackgroundChange("background_type", value);
+                  if (value !== null)
+                    handleBackgroundChange("background_type", value);
                 }}
                 fullWidth
                 size="small"
@@ -662,13 +728,23 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                   <input
                     type="color"
                     value={theme.background_color || "#000000"}
-                    onChange={(e) => handleBackgroundChange("background_color", e.target.value)}
-                    style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
+                    onChange={(e) =>
+                      handleBackgroundChange("background_color", e.target.value)
+                    }
+                    style={{
+                      width: 50,
+                      height: 40,
+                      border: "1px solid rgba(0, 0, 0, 0.23)",
+                      borderRadius: "var(--cv-border-radius-xs)",
+                      cursor: "pointer",
+                    }}
                   />
                   <TextField
                     size="small"
                     value={theme.background_color || "#000000"}
-                    onChange={(e) => handleBackgroundChange("background_color", e.target.value)}
+                    onChange={(e) =>
+                      handleBackgroundChange("background_color", e.target.value)
+                    }
                     fullWidth
                   />
                 </Box>
@@ -676,16 +752,29 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
 
               {backgroundType === "image" && (
                 <>
-                  <Button variant="outlined" startIcon={<UploadFileRounded />} onClick={handleSelectImage} fullWidth>
+                  <Button
+                    variant="outlined"
+                    startIcon={<UploadFileRounded />}
+                    onClick={handleSelectImage}
+                    fullWidth
+                  >
                     {t("Select Local Image")}
                   </Button>
                   <TextField
                     size="small"
                     fullWidth
                     value={theme.background_image || ""}
-                    onChange={(e) => handleBackgroundChange("background_image", e.target.value)}
+                    onChange={(e) =>
+                      handleBackgroundChange("background_image", e.target.value)
+                    }
                     placeholder={t("Or enter image URL")}
-                    InputProps={{ startAdornment: <LinkRounded sx={{ mr: 1, opacity: 0.5, fontSize: 18 }} /> }}
+                    InputProps={{
+                      startAdornment: (
+                        <LinkRounded
+                          sx={{ mr: 1, opacity: 0.5, fontSize: 18 }}
+                        />
+                      ),
+                    }}
                   />
                   <Box sx={{ display: "flex", gap: 1 }}>
                     <FormControl size="small" fullWidth>
@@ -694,7 +783,12 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                         size="small"
                         value={theme.background_size || "cover"}
                         label={t("Size")}
-                        onChange={(e) => handleBackgroundChange("background_size", e.target.value)}
+                        onChange={(e) =>
+                          handleBackgroundChange(
+                            "background_size",
+                            e.target.value,
+                          )
+                        }
                       >
                         <MenuItem value="cover">{t("Cover")}</MenuItem>
                         <MenuItem value="contain">{t("Contain")}</MenuItem>
@@ -707,7 +801,12 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                         size="small"
                         value={theme.background_position || "center"}
                         label={t("Position")}
-                        onChange={(e) => handleBackgroundChange("background_position", e.target.value)}
+                        onChange={(e) =>
+                          handleBackgroundChange(
+                            "background_position",
+                            e.target.value,
+                          )
+                        }
                       >
                         <MenuItem value="center">{t("Center")}</MenuItem>
                         <MenuItem value="top">{t("Top")}</MenuItem>
@@ -720,16 +819,29 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
 
               {backgroundType === "video" && (
                 <>
-                  <Button variant="outlined" startIcon={<UploadFileRounded />} onClick={handleSelectVideo} fullWidth>
+                  <Button
+                    variant="outlined"
+                    startIcon={<UploadFileRounded />}
+                    onClick={handleSelectVideo}
+                    fullWidth
+                  >
                     {t("Select Local Video")}
                   </Button>
                   <TextField
                     size="small"
                     fullWidth
                     value={theme.background_video || ""}
-                    onChange={(e) => handleBackgroundChange("background_video", e.target.value)}
+                    onChange={(e) =>
+                      handleBackgroundChange("background_video", e.target.value)
+                    }
                     placeholder={t("Or enter video URL")}
-                    InputProps={{ startAdornment: <LinkRounded sx={{ mr: 1, opacity: 0.5, fontSize: 18 }} /> }}
+                    InputProps={{
+                      startAdornment: (
+                        <LinkRounded
+                          sx={{ mr: 1, opacity: 0.5, fontSize: 18 }}
+                        />
+                      ),
+                    }}
                   />
                 </>
               )}
@@ -738,44 +850,74 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                 <>
                   <Divider />
                   <Box>
-                    <Typography variant="body2" gutterBottom>{t("Opacity")}: {Math.round((theme.background_opacity ?? 1) * 100)}%</Typography>
+                    <Typography variant="body2" gutterBottom>
+                      {t("Opacity")}:{" "}
+                      {Math.round((theme.background_opacity ?? 1) * 100)}%
+                    </Typography>
                     <Slider
                       value={theme.background_opacity ?? 1}
-                      onChange={(_, value) => handleBackgroundChange("background_opacity", value)}
-                      min={0} max={1} step={0.01}
-                      size="small"
-                    />
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" gutterBottom>{t("Blur")}: {theme.background_blur ?? 0}px</Typography>
-                    <Slider
-                      value={theme.background_blur ?? 0}
-                      onChange={(_, value) => handleBackgroundChange("background_blur", value)}
-                      min={0} max={50} step={1}
-                      size="small"
-                    />
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" gutterBottom>{t("Brightness")}: {theme.background_brightness ?? 100}%</Typography>
-                    <Slider
-                      value={theme.background_brightness ?? 100}
-                      onChange={(_, value) => handleBackgroundChange("background_brightness", value)}
-                      min={0} max={200} step={1}
+                      onChange={(_, value) =>
+                        handleBackgroundChange("background_opacity", value)
+                      }
+                      min={0}
+                      max={1}
+                      step={0.01}
                       size="small"
                     />
                   </Box>
                   <Box>
                     <Typography variant="body2" gutterBottom>
-                      {t("Scale")}: {(theme.background_scale ?? 1.0).toFixed(2)}x
+                      {t("Blur")}: {theme.background_blur ?? 0}px
+                    </Typography>
+                    <Slider
+                      value={theme.background_blur ?? 0}
+                      onChange={(_, value) =>
+                        handleBackgroundChange("background_blur", value)
+                      }
+                      min={0}
+                      max={50}
+                      step={1}
+                      size="small"
+                    />
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" gutterBottom>
+                      {t("Brightness")}: {theme.background_brightness ?? 100}%
+                    </Typography>
+                    <Slider
+                      value={theme.background_brightness ?? 100}
+                      onChange={(_, value) =>
+                        handleBackgroundChange("background_brightness", value)
+                      }
+                      min={0}
+                      max={200}
+                      step={1}
+                      size="small"
+                    />
+                  </Box>
+                  <Box>
+                    <Typography variant="body2" gutterBottom>
+                      {t("Scale")}: {(theme.background_scale ?? 1.0).toFixed(2)}
+                      x
                     </Typography>
                     <Slider
                       value={theme.background_scale ?? 1.0}
-                      onChange={(_, value) => handleBackgroundChange("background_scale", value)}
-                      min={1.0} max={1.5} step={0.01}
+                      onChange={(_, value) =>
+                        handleBackgroundChange("background_scale", value)
+                      }
+                      min={1.0}
+                      max={1.5}
+                      step={0.01}
                       size="small"
                     />
-                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5 }}>
-                      {t("Increase scale to eliminate white edges when blur is enabled")}
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ display: "block", mt: 0.5 }}
+                    >
+                      {t(
+                        "Increase scale to eliminate white edges when blur is enabled",
+                      )}
                     </Typography>
                   </Box>
                   <FormControl size="small" fullWidth>
@@ -784,17 +926,30 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                       size="small"
                       value={theme.background_blend_mode || "normal"}
                       label={t("Blend Mode")}
-                      onChange={(e) => handleBackgroundChange("background_blend_mode", e.target.value)}
+                      onChange={(e) =>
+                        handleBackgroundChange(
+                          "background_blend_mode",
+                          e.target.value,
+                        )
+                      }
                     >
                       {blendModes.map((mode) => (
-                        <MenuItem key={mode} value={mode}>{mode}</MenuItem>
+                        <MenuItem key={mode} value={mode}>
+                          {mode}
+                        </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
                 </>
               )}
 
-              <Button variant="outlined" color="error" startIcon={<DeleteRounded />} onClick={resetBackground} fullWidth>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<DeleteRounded />}
+                onClick={resetBackground}
+                fullWidth
+              >
                 {t("Reset to Default")}
               </Button>
             </Stack>
@@ -829,7 +984,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                           setBatchBlur(Math.max(0, Math.min(100, value)));
                         }}
                         InputProps={{
-                          endAdornment: <InputAdornment position="end">px</InputAdornment>,
+                          endAdornment: (
+                            <InputAdornment position="end">px</InputAdornment>
+                          ),
                         }}
                         fullWidth
                       />
@@ -840,7 +997,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                       </Typography>
                       <Slider
                         value={batchOpacity}
-                        onChange={(_, value) => setBatchOpacity(value as number)}
+                        onChange={(_, value) =>
+                          setBatchOpacity(value as number)
+                        }
                         min={0}
                         max={1}
                         step={0.01}
@@ -854,7 +1013,11 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                     >
                       {t("Apply to All")}
                     </Button>
-                    <Typography variant="caption" color="text.secondary" sx={{ textAlign: "center" }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ textAlign: "center" }}
+                    >
                       {t("Apply blur and opacity to all elements below")}
                     </Typography>
                   </Stack>
@@ -884,28 +1047,58 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                       <Typography variant="body2" gutterBottom>
                         {t("Background Color")}
                       </Typography>
-                      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                      <Box
+                        sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                      >
                         <input
                           type="color"
-                          value={theme.sidebar_background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff")}
-                          onChange={(e) => handleBackgroundChange("sidebar_background_color", e.target.value)}
-                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
+                          value={
+                            theme.sidebar_background_color ||
+                            (currentTheme.palette.mode === "dark"
+                              ? "#1a1a1a"
+                              : "#ffffff")
+                          }
+                          onChange={(e) =>
+                            handleBackgroundChange(
+                              "sidebar_background_color",
+                              e.target.value,
+                            )
+                          }
+                          style={{
+                            width: 50,
+                            height: 40,
+                            border: "1px solid rgba(0, 0, 0, 0.23)",
+                            borderRadius: "var(--cv-border-radius-xs)",
+                            cursor: "pointer",
+                          }}
                         />
                         <TextField
                           size="small"
                           value={theme.sidebar_background_color || ""}
-                          onChange={(e) => handleBackgroundChange("sidebar_background_color", e.target.value)}
+                          onChange={(e) =>
+                            handleBackgroundChange(
+                              "sidebar_background_color",
+                              e.target.value,
+                            )
+                          }
                           placeholder={t("Background Color")}
                           fullWidth
                         />
                       </Box>
                     </Box>
                     <Box>
-                      <Typography variant="body2" gutterBottom>{t("Opacity")}: {Math.round((theme.sidebar_opacity ?? 1) * 100)}%</Typography>
+                      <Typography variant="body2" gutterBottom>
+                        {t("Opacity")}:{" "}
+                        {Math.round((theme.sidebar_opacity ?? 1) * 100)}%
+                      </Typography>
                       <Slider
                         value={theme.sidebar_opacity ?? 1}
-                        onChange={(_, value) => handleBackgroundChange("sidebar_opacity", value)}
-                        min={0} max={1} step={0.01}
+                        onChange={(_, value) =>
+                          handleBackgroundChange("sidebar_opacity", value)
+                        }
+                        min={0}
+                        max={1}
+                        step={0.01}
                         size="small"
                       />
                     </Box>
@@ -919,10 +1112,15 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                         value={theme.sidebar_blur ?? 0}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 0;
-                          handleBackgroundChange("sidebar_blur", Math.max(0, Math.min(100, value)));
+                          handleBackgroundChange(
+                            "sidebar_blur",
+                            Math.max(0, Math.min(100, value)),
+                          );
                         }}
                         InputProps={{
-                          endAdornment: <InputAdornment position="end">px</InputAdornment>,
+                          endAdornment: (
+                            <InputAdornment position="end">px</InputAdornment>
+                          ),
                         }}
                         fullWidth
                       />
@@ -948,28 +1146,58 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                       <Typography variant="body2" gutterBottom>
                         {t("Background Color")}
                       </Typography>
-                      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                      <Box
+                        sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                      >
                         <input
                           type="color"
-                          value={theme.header_background_color || (currentTheme.palette.mode === "dark" ? "#1a1a1a" : "#ffffff")}
-                          onChange={(e) => handleBackgroundChange("header_background_color", e.target.value)}
-                          style={{ width: 50, height: 40, border: "1px solid rgba(0, 0, 0, 0.23)", borderRadius: "var(--cv-border-radius-xs)", cursor: "pointer" }}
+                          value={
+                            theme.header_background_color ||
+                            (currentTheme.palette.mode === "dark"
+                              ? "#1a1a1a"
+                              : "#ffffff")
+                          }
+                          onChange={(e) =>
+                            handleBackgroundChange(
+                              "header_background_color",
+                              e.target.value,
+                            )
+                          }
+                          style={{
+                            width: 50,
+                            height: 40,
+                            border: "1px solid rgba(0, 0, 0, 0.23)",
+                            borderRadius: "var(--cv-border-radius-xs)",
+                            cursor: "pointer",
+                          }}
                         />
                         <TextField
                           size="small"
                           value={theme.header_background_color || ""}
-                          onChange={(e) => handleBackgroundChange("header_background_color", e.target.value)}
+                          onChange={(e) =>
+                            handleBackgroundChange(
+                              "header_background_color",
+                              e.target.value,
+                            )
+                          }
                           placeholder={t("Background Color")}
                           fullWidth
                         />
                       </Box>
                     </Box>
                     <Box>
-                      <Typography variant="body2" gutterBottom>{t("Opacity")}: {Math.round((theme.header_opacity ?? 1) * 100)}%</Typography>
+                      <Typography variant="body2" gutterBottom>
+                        {t("Opacity")}:{" "}
+                        {Math.round((theme.header_opacity ?? 1) * 100)}%
+                      </Typography>
                       <Slider
                         value={theme.header_opacity ?? 1}
-                        onChange={(_, value) => handleBackgroundChange("header_opacity", value)}
-                        min={0} max={1} step={0.01}
+                        onChange={(_, value) =>
+                          handleBackgroundChange("header_opacity", value)
+                        }
+                        min={0}
+                        max={1}
+                        step={0.01}
                         size="small"
                       />
                     </Box>
@@ -983,10 +1211,15 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                         value={theme.header_blur ?? 0}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 0;
-                          handleBackgroundChange("header_blur", Math.max(0, Math.min(100, value)));
+                          handleBackgroundChange(
+                            "header_blur",
+                            Math.max(0, Math.min(100, value)),
+                          );
                         }}
                         InputProps={{
-                          endAdornment: <InputAdornment position="end">px</InputAdornment>,
+                          endAdornment: (
+                            <InputAdornment position="end">px</InputAdornment>
+                          ),
                         }}
                         fullWidth
                       />
@@ -1009,11 +1242,24 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                 <AccordionDetails>
                   <Stack spacing={2}>
                     <Box>
-                      <Typography variant="body2" gutterBottom>{t("Opacity")}: {Math.round((theme.connection_table_opacity ?? 1) * 100)}%</Typography>
+                      <Typography variant="body2" gutterBottom>
+                        {t("Opacity")}:{" "}
+                        {Math.round(
+                          (theme.connection_table_opacity ?? 1) * 100,
+                        )}
+                        %
+                      </Typography>
                       <Slider
                         value={theme.connection_table_opacity ?? 1}
-                        onChange={(_, value) => handleBackgroundChange("connection_table_opacity", value)}
-                        min={0} max={1} step={0.01}
+                        onChange={(_, value) =>
+                          handleBackgroundChange(
+                            "connection_table_opacity",
+                            value,
+                          )
+                        }
+                        min={0}
+                        max={1}
+                        step={0.01}
                         size="small"
                       />
                     </Box>
@@ -1027,10 +1273,15 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                         value={theme.connection_table_blur ?? 0}
                         onChange={(e) => {
                           const value = parseInt(e.target.value) || 0;
-                          handleBackgroundChange("connection_table_blur", Math.max(0, Math.min(100, value)));
+                          handleBackgroundChange(
+                            "connection_table_blur",
+                            Math.max(0, Math.min(100, value)),
+                          );
                         }}
                         InputProps={{
-                          endAdornment: <InputAdornment position="end">px</InputAdornment>,
+                          endAdornment: (
+                            <InputAdornment position="end">px</InputAdornment>
+                          ),
                         }}
                         fullWidth
                       />
@@ -1042,7 +1293,14 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
               <Divider sx={{ my: 2 }} />
 
               {/* 组件样式设置 */}
-              <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Box
+                sx={{
+                  mb: 2,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <Typography variant="subtitle2" fontWeight={600}>
                   {t("Component Styles")}
                 </Typography>
@@ -1107,7 +1365,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSaveDialogOpen(false)}>{t("Cancel")}</Button>
+          <Button onClick={() => setSaveDialogOpen(false)}>
+            {t("Cancel")}
+          </Button>
           <Button onClick={saveCustomTheme} variant="contained">
             {t("Save")}
           </Button>

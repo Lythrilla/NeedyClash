@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
+import { showNotice } from "@/services/noticeService";
+
 import { useProfiles } from "./use-profiles";
 import { useVerge } from "./use-verge";
-import { showNotice } from "@/services/noticeService";
 
 const ONE_HOUR = 60 * 60 * 1000; // 1小时的毫秒数
 
@@ -53,7 +54,7 @@ export const useTrafficQuotaReminder = () => {
             usage: usagePercentage.toFixed(1),
             remaining: remainingPercentage.toFixed(1),
           }),
-          8000
+          8000,
         );
 
         // 更新最后提醒时间
@@ -67,4 +68,3 @@ export const useTrafficQuotaReminder = () => {
     }
   }, [current, verge, patchVerge, t]);
 };
-

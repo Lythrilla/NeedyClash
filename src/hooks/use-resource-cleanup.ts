@@ -1,20 +1,21 @@
-import { useEffect, useRef } from 'react';
-import { resourceManager } from '@/utils/resource-manager';
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
+import { useEffect, useRef } from "react";
+
+import { resourceManager } from "@/utils/resource-manager";
 
 /**
  * 自动管理资源清理的 Hook
  * 在组件卸载时自动清理资源
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
  *   const registerCleanup = useResourceCleanup('MyComponent');
- *   
+ *
  *   useEffect(() => {
  *     const ws = new WebSocket('ws://...');
  *     registerCleanup(() => ws.close(), 'WebSocket连接');
- *     
+ *
  *     return () => {
  *       // 可选：手动清理
  *     };
@@ -35,7 +36,7 @@ export function useResourceCleanup(componentName?: string) {
         } catch (error) {
           console.error(
             `[useResourceCleanup] 清理失败 (${componentIdRef.current}):`,
-            error
+            error,
           );
         }
       });
@@ -48,18 +49,24 @@ export function useResourceCleanup(componentName?: string) {
    */
   const registerCleanup = (
     cleanup: () => void | Promise<void>,
-    description?: string
+    description?: string,
   ) => {
     const resourceId = `${componentIdRef.current}-${nanoid(8)}`;
-    const unregister = resourceManager.register(resourceId, cleanup, description);
-    
+    const unregister = resourceManager.register(
+      resourceId,
+      cleanup,
+      description,
+    );
+
     // 保存清理函数
     cleanupFnsRef.current.push(unregister);
-    
+
     // 返回立即清理函数
     return () => {
       unregister();
-      cleanupFnsRef.current = cleanupFnsRef.current.filter((fn) => fn !== unregister);
+      cleanupFnsRef.current = cleanupFnsRef.current.filter(
+        (fn) => fn !== unregister,
+      );
     };
   };
 
@@ -68,17 +75,17 @@ export function useResourceCleanup(componentName?: string) {
 
 /**
  * 自动管理定时器的 Hook
- * 
+ *
  * @example
  * ```tsx
  * function MyComponent() {
  *   const { setTimeout, setInterval } = useSafeTimers();
- *   
+ *
  *   useEffect(() => {
  *     const timeoutId = setTimeout(() => {
  *       console.log('延迟执行');
  *     }, 1000);
- *     
+ *
  *     const intervalId = setInterval(() => {
  *       console.log('定期执行');
  *     }, 1000);
@@ -137,4 +144,3 @@ export function useSafeTimers() {
     clearInterval: clearSafeInterval,
   };
 }
-

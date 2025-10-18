@@ -20,7 +20,6 @@ import { HotkeyViewer } from "./mods/hotkey-viewer";
 import { LayoutViewer } from "./mods/layout-viewer";
 import { MiscViewer } from "./mods/misc-viewer";
 import { SettingItem, SettingList } from "./mods/setting-comp";
-import { ThemeModeSwitch } from "./mods/theme-mode-switch";
 import { ThemeViewer } from "./mods/theme-viewer";
 import { ThemeViewerEnhanced } from "./mods/theme-viewer-enhanced";
 import { UpdateViewer } from "./mods/update-viewer";
@@ -64,7 +63,7 @@ const SettingVergeBasic = ({ onError }: Props) => {
     start_page,
     traffic_quota_reminder,
   } = verge ?? {};
-  
+
   const reminderEnabled = traffic_quota_reminder?.enabled ?? false;
   const reminderThreshold = traffic_quota_reminder?.threshold ?? 80;
   const configRef = useRef<DialogRef>(null);
@@ -110,7 +109,7 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onGuard={(e) => patchVerge({ language: e })}
         >
           <GlassSelect>
-            {languageOptions.map(({ code, label}) => (
+            {languageOptions.map(({ code, label }) => (
               <MenuItem key={code} value={code}>
                 {label}
               </MenuItem>
@@ -190,13 +189,20 @@ const SettingVergeBasic = ({ onError }: Props) => {
           onChange={(e) => onChangeData({ startup_script: e })}
           onGuard={(e) => patchVerge({ startup_script: e })}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flexWrap: "nowrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+              flexWrap: "nowrap",
+            }}
+          >
             <Input
               value={startup_script}
               disabled
               disableUnderline
-              sx={{ 
-                minWidth: 80, 
+              sx={{
+                minWidth: 80,
                 maxWidth: 180,
                 fontSize: "13px",
               }}
@@ -242,7 +248,9 @@ const SettingVergeBasic = ({ onError }: Props) => {
       <SettingItem
         onClick={() => themeEnhancedRef.current?.open()}
         label={t("Theme Customization")}
-        secondary={t("Customize colors, apply preset themes, and set window background")}
+        secondary={t(
+          "Customize colors, apply preset themes, and set window background",
+        )}
       />
 
       <SettingItem
@@ -262,27 +270,33 @@ const SettingVergeBasic = ({ onError }: Props) => {
 
       <SettingItem
         label={t("Enable Traffic Quota Reminder")}
-        secondary={t("Get notified when subscription traffic usage reaches threshold")}
+        secondary={t(
+          "Get notified when subscription traffic usage reaches threshold",
+        )}
       >
         <GuardState
           value={reminderEnabled}
           valueProps="checked"
           onCatch={onError}
           onFormat={onSwitchFormat}
-          onChange={(e) => onChangeData({ 
-            traffic_quota_reminder: {
-              ...traffic_quota_reminder,
-              enabled: e,
-              last_reminder: 0,
-            }
-          })}
-          onGuard={(e) => patchVerge({ 
-            traffic_quota_reminder: {
-              ...traffic_quota_reminder,
-              enabled: e,
-              last_reminder: 0,
-            }
-          })}
+          onChange={(e) =>
+            onChangeData({
+              traffic_quota_reminder: {
+                ...traffic_quota_reminder,
+                enabled: e,
+                last_reminder: 0,
+              },
+            })
+          }
+          onGuard={(e) =>
+            patchVerge({
+              traffic_quota_reminder: {
+                ...traffic_quota_reminder,
+                enabled: e,
+                last_reminder: 0,
+              },
+            })
+          }
         >
           <Switch edge="end" />
         </GuardState>
@@ -294,18 +308,22 @@ const SettingVergeBasic = ({ onError }: Props) => {
             value={reminderThreshold}
             onCatch={onError}
             onFormat={(e: any) => Number(e.target.value)}
-            onChange={(e) => onChangeData({ 
-              traffic_quota_reminder: {
-                ...traffic_quota_reminder,
-                threshold: e,
-              }
-            })}
-            onGuard={(e) => patchVerge({ 
-              traffic_quota_reminder: {
-                ...traffic_quota_reminder,
-                threshold: e,
-              }
-            })}
+            onChange={(e) =>
+              onChangeData({
+                traffic_quota_reminder: {
+                  ...traffic_quota_reminder,
+                  threshold: e,
+                },
+              })
+            }
+            onGuard={(e) =>
+              patchVerge({
+                traffic_quota_reminder: {
+                  ...traffic_quota_reminder,
+                  threshold: e,
+                },
+              })
+            }
           >
             <GlassSelect sx={{ width: 85 }}>
               <MenuItem value={70}>70%</MenuItem>

@@ -1,10 +1,4 @@
-import {
-  styled,
-  Box,
-  ListItem,
-  ListItemText,
-  alpha,
-} from "@mui/material";
+import { styled, Box, ListItem, ListItemText, alpha } from "@mui/material";
 import type { ReactNode } from "react";
 
 import { SearchState } from "@/components/base/base-search-box";
@@ -97,10 +91,7 @@ const LogItem = ({ value, searchState }: Props) => {
   };
 
   return (
-    <ListItem
-      dense
-      sx={{ borderBottom: "1px solid var(--divider-color)" }}
-    >
+    <ListItem dense sx={{ borderBottom: "1px solid var(--divider-color)" }}>
       <ListItemText
         sx={{ userSelect: "text" }}
         primary={renderHighlightText(value.payload)}

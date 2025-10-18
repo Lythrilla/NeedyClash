@@ -56,14 +56,14 @@ interface IpInfo {
 }
 
 // IP检测服务响应数据结构 - 使用灵活的类型定义以支持不同API
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 type ServiceResponse = Record<string, any>;
 
 // IP检测服务配置
 interface ServiceConfig {
   url: string;
   mapping: (data: ServiceResponse) => IpInfo;
-  timeout?: number; 
+  timeout?: number;
 }
 
 // 可用的IP检测服务列表及字段映射
@@ -159,7 +159,7 @@ function shuffleServices(): ServiceConfig[] {
 
   for (let i = length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    
+
     // Swap elements
     const temp = shuffled[i];
     shuffled[i] = shuffled[j];
@@ -168,7 +168,6 @@ function shuffleServices(): ServiceConfig[] {
 
   return shuffled;
 }
-
 
 // 获取当前IP和地理位置信息
 export const getIpInfo = async (): Promise<IpInfo> => {

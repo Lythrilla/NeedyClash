@@ -6,7 +6,13 @@ import { getCardStyles, getSectionTitleStyles } from "./theme-tokens";
 interface BaseCardProps {
   title?: string;
   icon?: ReactNode;
-  iconColor?: "primary" | "secondary" | "success" | "error" | "info" | "warning";
+  iconColor?:
+    | "primary"
+    | "secondary"
+    | "success"
+    | "error"
+    | "info"
+    | "warning";
   action?: ReactNode;
   children: ReactNode;
   sx?: SxProps<Theme>;
@@ -120,5 +126,3 @@ export const BaseSection = ({
     </Box>
   );
 };
-
-

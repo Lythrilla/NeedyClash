@@ -119,7 +119,9 @@ const UnlockPage = () => {
   }, []);
 
   // 加载自定义项
-  const loadCustomItemsFromStorage = useCallback((): UnlockItemData[] | null => {
+  const loadCustomItemsFromStorage = useCallback(():
+    | UnlockItemData[]
+    | null => {
     try {
       const itemsJson = localStorage.getItem(UNLOCK_CUSTOM_ITEMS_KEY);
       if (itemsJson) {
@@ -260,7 +262,9 @@ const UnlockPage = () => {
       const result =
         await invokeWithTimeout<UnlockItemData[]>("check_media_unlock");
 
-      const targetItem = result.find((item: UnlockItemData) => item.name === name);
+      const targetItem = result.find(
+        (item: UnlockItemData) => item.name === name,
+      );
 
       if (targetItem) {
         const updatedItems = sortItemsByName(

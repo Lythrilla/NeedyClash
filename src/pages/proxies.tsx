@@ -4,14 +4,14 @@ import {
   LinkRounded,
   MultipleStopRounded,
 } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useLockFn } from "ahooks";
 import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 import { closeAllConnections, getBaseConfig } from "tauri-plugin-mihomo-api";
 
-import { BasePage, BaseModeSelector, ToolbarButtonGroup } from "@/components/base";
+import { BasePage, BaseModeSelector } from "@/components/base";
 import { ProviderButton } from "@/components/proxy/provider-button";
 import { ProxyGroups } from "@/components/proxy/proxy-groups";
 import { useVerge } from "@/hooks/use-verge";

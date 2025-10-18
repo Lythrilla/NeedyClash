@@ -41,7 +41,7 @@ export const useVerge = () => {
 
     if (enable_tun_mode && !isTunModeAvailable && !isLoading) {
       console.log("[useVerge] 检测到服务不可用，自动关闭TUN模式");
-      
+
       isProcessingRef.current = true;
 
       patchVergeConfig({ enable_tun_mode: false })

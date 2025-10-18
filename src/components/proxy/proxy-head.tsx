@@ -136,7 +136,9 @@ export const ProxyHead = ({
             "&:hover": { bgcolor: "action.hover" },
           }}
         >
-          {sortType !== 1 && sortType !== 2 && <SortRounded sx={{ fontSize: 18 }} />}
+          {sortType !== 1 && sortType !== 2 && (
+            <SortRounded sx={{ fontSize: 18 }} />
+          )}
           {sortType === 1 && <AccessTimeRounded sx={{ fontSize: 18 }} />}
           {sortType === 2 && <SortByAlphaRounded sx={{ fontSize: 18 }} />}
         </IconButton>

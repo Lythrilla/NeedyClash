@@ -1,21 +1,15 @@
 import {
   AccessTimeRounded,
   CloudUploadOutlined,
-  EventOutlined,
   LaunchOutlined,
-  SpeedRounded,
   StorageOutlined,
-  TrendingUpRounded,
   UpdateOutlined,
 } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Chip,
-  Divider,
   LinearProgress,
   Link,
-  Stack,
   Typography,
   alpha,
   keyframes,
@@ -99,9 +93,9 @@ const ProfileDetails = ({
   }, [current.extra, usedTraffic]);
 
   return (
-    <Box 
-      sx={{ 
-        display: "flex", 
+    <Box
+      sx={{
+        display: "flex",
         flexDirection: "column",
         gap: 2,
       }}
@@ -109,9 +103,27 @@ const ProfileDetails = ({
       {/* 第一行：订阅来源（加强版） */}
       <Box>
         {current.url && (
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0, flex: 1 }}>
-              <StorageOutlined sx={{ fontSize: 18, color: "primary.main", opacity: 0.8 }} />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 2,
+              mb: 1,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                minWidth: 0,
+                flex: 1,
+              }}
+            >
+              <StorageOutlined
+                sx={{ fontSize: 18, color: "primary.main", opacity: 0.8 }}
+              />
               {current.home ? (
                 <Link
                   component="button"
@@ -127,7 +139,7 @@ const ProfileDetails = ({
                     display: "flex",
                     alignItems: "center",
                     gap: 0.5,
-                    "&:hover": { 
+                    "&:hover": {
                       color: "primary.main",
                     },
                   }}
@@ -152,37 +164,42 @@ const ProfileDetails = ({
             </Box>
           </Box>
         )}
-        
+
         {/* 更新信息 */}
         {current.updated && (
-          <Box 
-            sx={{ 
-              display: "flex", 
+          <Box
+            sx={{
+              display: "flex",
               alignItems: "center",
               gap: 2,
               justifyContent: "space-between",
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <AccessTimeRounded sx={{ fontSize: 14, color: "text.disabled" }} />
+              <AccessTimeRounded
+                sx={{ fontSize: 14, color: "text.disabled" }}
+              />
               <Typography sx={{ fontSize: 11, color: "text.secondary" }}>
-                更新于 {dayjs(current.updated * 1000).format("YYYY-MM-DD HH:mm")}
+                更新于{" "}
+                {dayjs(current.updated * 1000).format("YYYY-MM-DD HH:mm")}
               </Typography>
             </Box>
-            
-            <Box 
-              sx={{ 
-                display: "flex", 
-                alignItems: "center", 
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
                 gap: 0.75,
                 cursor: "pointer",
                 px: 1.5,
                 py: 0.5,
                 borderRadius: "var(--cv-border-radius-sm)",
-                border: (theme) => `1px solid ${alpha(theme.palette.divider, 0.5)}`,
-                "&:hover": { 
+                border: (theme) =>
+                  `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+                "&:hover": {
                   borderColor: "primary.main",
-                  backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.05),
+                  backgroundColor: (theme) =>
+                    alpha(theme.palette.primary.main, 0.05),
                 },
               }}
               onClick={onUpdateProfile}
@@ -191,10 +208,14 @@ const ProfileDetails = ({
                 sx={{
                   fontSize: "0.85rem",
                   color: "text.secondary",
-                  animation: updating ? `${round} 1.5s linear infinite` : "none",
+                  animation: updating
+                    ? `${round} 1.5s linear infinite`
+                    : "none",
                 }}
               />
-              <Typography sx={{ fontSize: 11, fontWeight: 500, color: "text.secondary" }}>
+              <Typography
+                sx={{ fontSize: 11, fontWeight: 500, color: "text.secondary" }}
+              >
                 刷新
               </Typography>
             </Box>
@@ -204,82 +225,118 @@ const ProfileDetails = ({
 
       {/* 第二行：流量统计（分组展示） */}
       {current.extra && (
-        <Box 
-          sx={{ 
+        <Box
+          sx={{
             display: "flex",
             flexDirection: "column",
             gap: 1.5,
           }}
         >
           {/* 数据网格 */}
-          <Box 
-            sx={{ 
+          <Box
+            sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(4, 1fr)" },
               gap: 1.5,
             }}
           >
             {/* 已用流量 */}
-            <Box 
-              sx={{ 
+            <Box
+              sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 0.5,
               }}
             >
-              <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              <Typography
+                sx={{
+                  fontSize: 10,
+                  color: "text.disabled",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
                 已用流量
               </Typography>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}>
+              <Typography
+                sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}
+              >
                 {parseTraffic(usedTraffic)}
               </Typography>
             </Box>
 
             {/* 总流量 */}
-            <Box 
-              sx={{ 
+            <Box
+              sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 0.5,
               }}
             >
-              <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              <Typography
+                sx={{
+                  fontSize: 10,
+                  color: "text.disabled",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
                 总流量
               </Typography>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}>
+              <Typography
+                sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}
+              >
                 {parseTraffic(current.extra.total)}
               </Typography>
             </Box>
 
             {/* 剩余流量 */}
-            <Box 
-              sx={{ 
+            <Box
+              sx={{
                 display: "flex",
                 flexDirection: "column",
                 gap: 0.5,
               }}
             >
-              <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              <Typography
+                sx={{
+                  fontSize: 10,
+                  color: "text.disabled",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
                 剩余流量
               </Typography>
-              <Typography sx={{ fontSize: 16, fontWeight: 700, color: "success.main" }}>
+              <Typography
+                sx={{ fontSize: 16, fontWeight: 700, color: "success.main" }}
+              >
                 {parseTraffic(current.extra.total - usedTraffic)}
               </Typography>
             </Box>
 
             {/* 到期时间 */}
             {current.extra.expire > 0 && (
-              <Box 
-                sx={{ 
+              <Box
+                sx={{
                   display: "flex",
                   flexDirection: "column",
                   gap: 0.5,
                 }}
               >
-                <Typography sx={{ fontSize: 10, color: "text.disabled", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                <Typography
+                  sx={{
+                    fontSize: 10,
+                    color: "text.disabled",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                  }}
+                >
                   到期时间
                 </Typography>
-                <Typography sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}>
+                <Typography
+                  sx={{ fontSize: 16, fontWeight: 700, color: "text.primary" }}
+                >
                   {parseExpire(current.extra.expire)}
                 </Typography>
               </Box>
@@ -288,40 +345,51 @@ const ProfileDetails = ({
 
           {/* 进度条区域 */}
           <Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 0.75 }}>
-              <Typography sx={{ fontSize: 11, fontWeight: 600, color: "text.secondary" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 0.75,
+              }}
+            >
+              <Typography
+                sx={{ fontSize: 11, fontWeight: 600, color: "text.secondary" }}
+              >
                 使用进度
               </Typography>
-              <Typography 
-                sx={{ 
-                  fontSize: 13, 
+              <Typography
+                sx={{
+                  fontSize: 13,
                   fontWeight: 700,
-                  color: trafficPercentage > 90 
-                    ? "error.main" 
-                    : trafficPercentage > 70 
-                    ? "warning.main" 
-                    : "primary.main",
+                  color:
+                    trafficPercentage > 90
+                      ? "error.main"
+                      : trafficPercentage > 70
+                        ? "warning.main"
+                        : "primary.main",
                 }}
               >
                 {trafficPercentage}%
               </Typography>
             </Box>
-            
+
             <LinearProgress
               variant="determinate"
               value={trafficPercentage}
               sx={{
                 height: 8,
                 borderRadius: "var(--cv-border-radius-xs)",
-                backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                backgroundColor: (theme) =>
+                  alpha(theme.palette.primary.main, 0.08),
                 "& .MuiLinearProgress-bar": {
                   borderRadius: "var(--cv-border-radius-xs)",
-                  background: (theme) => 
+                  background: (theme) =>
                     trafficPercentage > 90
                       ? `linear-gradient(90deg, ${theme.palette.error.main}, ${theme.palette.error.dark})`
                       : trafficPercentage > 70
-                      ? `linear-gradient(90deg, ${theme.palette.warning.main}, ${theme.palette.warning.dark})`
-                      : `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                        ? `linear-gradient(90deg, ${theme.palette.warning.main}, ${theme.palette.warning.dark})`
+                        : `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
                 },
               }}
             />

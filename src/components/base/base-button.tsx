@@ -1,4 +1,10 @@
-import { Box, IconButton, Tooltip, Typography, type IconButtonProps } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Tooltip,
+  Typography,
+  type IconButtonProps,
+} from "@mui/material";
 import { ReactNode } from "react";
 
 import { getIconButtonStyles } from "./theme-tokens";
@@ -74,5 +80,3 @@ export const ToolbarButtonGroup = ({
     </Box>
   );
 };
-
-

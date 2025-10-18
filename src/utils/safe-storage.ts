@@ -14,18 +14,21 @@ interface StorageOptions<T> {
  */
 export function safeGetStorage<T>(options: StorageOptions<T>): T {
   const { key, defaultValue, onError } = options;
-  
+
   try {
     const item = localStorage.getItem(key);
     if (item === null) {
       return defaultValue;
     }
-    
+
     const parsed = JSON.parse(item);
     return parsed as T;
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
-    console.error(`[SafeStorage] Failed to get item from localStorage (key: ${key}):`, err);
+    console.error(
+      `[SafeStorage] Failed to get item from localStorage (key: ${key}):`,
+      err,
+    );
     onError?.(err);
     return defaultValue;
   }
@@ -45,7 +48,10 @@ export function safeSetStorage<T>(
     return true;
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
-    console.error(`[SafeStorage] Failed to set item to localStorage (key: ${key}):`, err);
+    console.error(
+      `[SafeStorage] Failed to set item to localStorage (key: ${key}):`,
+      err,
+    );
     onError?.(err);
     return false;
   }
@@ -63,7 +69,10 @@ export function safeRemoveStorage(
     return true;
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
-    console.error(`[SafeStorage] Failed to remove item from localStorage (key: ${key}):`, err);
+    console.error(
+      `[SafeStorage] Failed to remove item from localStorage (key: ${key}):`,
+      err,
+    );
     onError?.(err);
     return false;
   }
@@ -74,12 +83,11 @@ export function safeRemoveStorage(
  */
 export function isStorageAvailable(): boolean {
   try {
-    const testKey = '__storage_test__';
-    localStorage.setItem(testKey, 'test');
+    const testKey = "__storage_test__";
+    localStorage.setItem(testKey, "test");
     localStorage.removeItem(testKey);
     return true;
   } catch {
     return false;
   }
 }
-

@@ -1,4 +1,8 @@
-import { LanRounded, SettingsRounded, ExtensionOutlined } from "@mui/icons-material";
+import {
+  LanRounded,
+  SettingsRounded,
+  ExtensionOutlined,
+} from "@mui/icons-material";
 import { MenuItem, Select, TextField, Typography } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
 import { useLockFn } from "ahooks";
@@ -197,18 +201,20 @@ const SettingClash = ({ onError }: Props) => {
             return patchClash({ "log-level": e });
           }}
         >
-          <Select 
+          <Select
             className="custom-select"
-            size="small" 
+            size="small"
             sx={{ width: 100, "> div": { py: "5.5px", fontSize: "13px" } }}
             MenuProps={{
-              anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-              transformOrigin: { vertical: 'top', horizontal: 'left' },
+              anchorOrigin: { vertical: "bottom", horizontal: "left" },
+              transformOrigin: { vertical: "top", horizontal: "left" },
               PaperProps: {
                 sx: {
-                  position: 'fixed',
+                  position: "fixed",
                   backgroundColor: (theme) =>
-                    theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+                    theme.palette.mode === "light"
+                      ? "rgba(255, 255, 255, 0.95)"
+                      : "rgba(50, 50, 50, 0.95)",
                   backdropFilter: "blur(20px) saturate(180%)",
                   WebkitBackdropFilter: "blur(20px) saturate(180%)",
                   border: (theme) =>
@@ -233,7 +239,10 @@ const SettingClash = ({ onError }: Props) => {
           disabled={false}
           size="small"
           value={verge_mixed_port ?? 7897}
-          sx={{ width: 100, input: { py: "5.5px", fontSize: "13px", cursor: "pointer" } }}
+          sx={{
+            width: 100,
+            input: { py: "5.5px", fontSize: "13px", cursor: "pointer" },
+          }}
           onClick={(e) => {
             portRef.current?.open();
             (e.target as any).blur();
@@ -269,7 +278,9 @@ const SettingClash = ({ onError }: Props) => {
           />
         }
       >
-        <Typography sx={{ py: "5.5px", pr: 1, fontSize: "13px" }}>{version}</Typography>
+        <Typography sx={{ py: "5.5px", pr: 1, fontSize: "13px" }}>
+          {version}
+        </Typography>
       </SettingItem>
 
       {isWIN && (

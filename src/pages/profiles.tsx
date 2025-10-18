@@ -13,7 +13,6 @@ import {
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import {
-  AddRounded,
   ClearRounded,
   ContentPasteRounded,
   LocalFireDepartmentRounded,
@@ -27,10 +26,6 @@ import {
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
   TextField,
   Tooltip,
@@ -49,13 +44,13 @@ import useSWR, { mutate } from "swr";
 import { closeAllConnections } from "tauri-plugin-mihomo-api";
 
 import { BasePage, DialogRef } from "@/components/base";
+import { ProfileGroupManager } from "@/components/profile/profile-group-manager";
 import { ProfileItem } from "@/components/profile/profile-item";
 import { ProfileMore } from "@/components/profile/profile-more";
 import {
   ProfileViewer,
   ProfileViewerRef,
 } from "@/components/profile/profile-viewer";
-import { ProfileGroupManager } from "@/components/profile/profile-group-manager";
 import { ConfigViewer } from "@/components/setting/mods/config-viewer";
 import { useListen } from "@/hooks/use-listen";
 import { useProfiles } from "@/hooks/use-profiles";
@@ -73,7 +68,11 @@ import { showNotice } from "@/services/noticeService";
 import { useSetLoadingCache } from "@/services/states";
 
 // 记录profile切换状态
-const debugProfileSwitch = (action: string, profile: string, extra?: unknown) => {
+const debugProfileSwitch = (
+  action: string,
+  profile: string,
+  extra?: unknown,
+) => {
   const timestamp = new Date().toISOString().substring(11, 23);
   console.log(
     `[Profile-Debug][${timestamp}] ${action}: ${profile}`,
@@ -360,7 +359,8 @@ const ProfilePage = () => {
 
       showNotice("success", "数据已强制刷新", 2000);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       console.error("[紧急刷新] 失败:", error);
       showNotice("error", `紧急刷新失败: ${errorMessage}`, 4000);
     }
@@ -723,19 +723,21 @@ const ProfilePage = () => {
 
   const toggleProfileSelection = (uid: string, event?: React.MouseEvent) => {
     const currentIndex = profileItems.findIndex((item) => item.uid === uid);
-    
+
     // Shift 键范围多选
     if (event?.shiftKey && lastSelectedIndex !== -1 && currentIndex !== -1) {
       const start = Math.min(lastSelectedIndex, currentIndex);
       const end = Math.max(lastSelectedIndex, currentIndex);
-      const rangeUids = profileItems.slice(start, end + 1).map((item) => item.uid);
-      
+      const rangeUids = profileItems
+        .slice(start, end + 1)
+        .map((item) => item.uid);
+
       setSelectedProfiles((prev) => {
         const newSet = new Set(prev);
         rangeUids.forEach((id) => newSet.add(id));
         return newSet;
       });
-    } 
+    }
     // Ctrl/Cmd 键单个切换
     else if (event?.ctrlKey || event?.metaKey) {
       setSelectedProfiles((prev) => {
@@ -760,7 +762,7 @@ const ProfilePage = () => {
         return newSet;
       });
     }
-    
+
     setLastSelectedIndex(currentIndex);
   };
 
@@ -877,7 +879,10 @@ const ProfilePage = () => {
       unlistenPromise
         ?.then((unlisten) => unlisten())
         .catch((error) => {
-          console.error("[Profile] Failed to unlisten profile change event:", error);
+          console.error(
+            "[Profile] Failed to unlisten profile change event:",
+            error,
+          );
         });
     };
   }, [mutateProfiles]);
@@ -1133,7 +1138,9 @@ const ProfilePage = () => {
             }}
           >
             {/* 导入订阅 */}
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center", flex: 1 }}>
+            <Box
+              sx={{ display: "flex", gap: 1, alignItems: "center", flex: 1 }}
+            >
               <TextField
                 fullWidth
                 size="small"
@@ -1192,7 +1199,14 @@ const ProfilePage = () => {
 
           {profileItems.length > 0 ? (
             <Box sx={{ flex: 1, overflow: "auto", minWidth: 0, width: "100%" }}>
-              <Box sx={{ p: 2, minWidth: 0, width: "100%", boxSizing: "border-box" }}>
+              <Box
+                sx={{
+                  p: 2,
+                  minWidth: 0,
+                  width: "100%",
+                  boxSizing: "border-box",
+                }}
+              >
                 {/* Subscriptions */}
                 <Box sx={{ mb: 3 }}>
                   <Typography
@@ -1233,7 +1247,10 @@ const ProfilePage = () => {
                           onSelect={(f) => onSelect(item.uid, f)}
                           onEdit={() => viewerRef.current?.edit(item)}
                           onSave={async (prev, curr) => {
-                            if (prev !== curr && profiles.current === item.uid) {
+                            if (
+                              prev !== curr &&
+                              profiles.current === item.uid
+                            ) {
                               await onEnhance(false);
                             }
                           }}
@@ -1315,12 +1332,16 @@ const ProfilePage = () => {
                 flex: 1,
               }}
             >
-              <TextSnippetOutlined sx={{ fontSize: 64, color: "text.disabled", mb: 2 }} />
+              <TextSnippetOutlined
+                sx={{ fontSize: 64, color: "text.disabled", mb: 2 }}
+              />
               <Typography variant="h6" sx={{ mb: 1, color: "text.secondary" }}>
                 {t("No Profiles")}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {t("Import a subscription or create a new profile to get started")}
+                {t(
+                  "Import a subscription or create a new profile to get started",
+                )}
               </Typography>
             </Box>
           )}

@@ -9,9 +9,9 @@ import { useTranslation } from "react-i18next";
 import { Virtuoso } from "react-virtuoso";
 
 import { BaseEmpty, BasePage } from "@/components/base";
+import { GlassSelect } from "@/components/base";
 import { BaseSearchBox } from "@/components/base/base-search-box";
 import { SearchState } from "@/components/base/base-search-box";
-import { GlassSelect } from "@/components/base";
 import LogItem from "@/components/log/log-item";
 import { useLogData } from "@/hooks/use-log-data-new";
 import { toggleLogEnabled } from "@/services/global-log-service";
