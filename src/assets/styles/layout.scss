@@ -134,7 +134,6 @@
         position: absolute;
         inset: 0;
         overflow: auto;
-        /* 优化滚动性能 */
         will-change: scroll-position;
       }
     }

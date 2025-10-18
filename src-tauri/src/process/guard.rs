@@ -4,11 +4,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use tauri_plugin_shell::process::CommandChild;
 
 /// 进程守卫，确保进程在守卫销毁时被正确终止
-///
-/// # 改进点：
-/// - 添加了终止状态跟踪，防止重复终止
-/// - 改进了错误处理和日志记录
-/// - 添加了超时机制防止卡死
 #[derive(Debug)]
 pub struct CommandChildGuard {
     child: Option<CommandChild>,

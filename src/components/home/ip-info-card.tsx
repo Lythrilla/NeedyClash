@@ -99,7 +99,7 @@ export const IpInfoCard = () => {
   useEffect(() => {
     fetchIpInfo();
 
-    // 倒计时实现优化，减少不必要的重渲染
+    // 倒计时实现，减少不必要的重渲染
     let timer: number | null = null;
     let currentCount = IP_REFRESH_SECONDS;
 

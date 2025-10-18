@@ -31,7 +31,7 @@ use tauri::{
     tray::{MouseButton, MouseButtonState, TrayIconEvent},
 };
 
-// TODO: 是否需要将可变菜单抽离存储起来，后续直接更新对应菜单实例，无需重新创建菜单(待考虑)
+// 菜单实例缓存策略：考虑将可变菜单抽离存储，避免重复创建
 
 #[derive(Clone)]
 struct TrayState {}
@@ -204,7 +204,7 @@ impl Tray {
                 log::warn!(target: "app", "System tray creation failed: {}, Application will continue running without tray icon", e);
             }
         }
-        // TODO: 初始化时，暂时使用此方法更新系统托盘菜单，有效避免代理节点菜单空白
+        // 初始化时更新系统托盘菜单，确保代理节点菜单正常显示
         crate::core::timer::Timer::global().add_update_tray_menu_task()?;
         Ok(())
     }
@@ -690,7 +690,7 @@ async fn create_tray_menu(
     let proxy_submenus: Vec<Submenu<Wry>> = {
         let mut submenus: Vec<(String, usize, Submenu<Wry>)> = Vec::new();
 
-        // TODO: 应用启动时，内核还未启动完全，无法获取代理节点信息
+        // 应用启动阶段内核初始化未完成，代理节点信息暂不可用
         if let Ok(proxy_nodes_data) = proxy_nodes_data {
             for (group_name, group_data) in proxy_nodes_data.proxies.iter() {
                 // Filter groups based on mode

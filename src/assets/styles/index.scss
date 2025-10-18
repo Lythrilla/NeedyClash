@@ -82,7 +82,7 @@ body {
   --cv-border-color: #e2e8f0;
   --cv-divider-color: var(--cv-border-color);
 
-  /* 圆角系统 - 统一管理所有圆角值 */
+  /* 圆角系统 */
   --cv-border-radius-xs: 4px; /* 超小圆角：滚动条、小元素 */
   --cv-border-radius-sm: 6px; /* 小圆角：按钮、输入框 */
   --cv-border-radius-md: 8px; /* 中等圆角：卡片、导航项 */
@@ -144,7 +144,7 @@ body {
   background-color: var(--cv-scroller-color);
   border-radius: var(--cv-border-radius-full);
   transition: all var(--cv-transition-fast);
-  /* 添加轻微的内边距效果，让滚动条看起来更轻 */
+  /* 滚动条内边距效果 */
   border: 1px solid transparent;
   background-clip: padding-box;
 }

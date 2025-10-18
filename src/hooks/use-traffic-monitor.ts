@@ -5,7 +5,7 @@ import { useEffect, useRef, useCallback, useReducer } from "react";
 
 import { useTrafficData } from "./use-traffic-data";
 
-// 增强的流量数据点接口
+// 流量数据点接口
 export interface ITrafficDataPoint {
   up: number;
   down: number;

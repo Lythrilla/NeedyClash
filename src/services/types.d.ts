@@ -161,7 +161,7 @@ interface IFormattedMemoryData {
   is_fresh: boolean;
 }
 
-// 增强的类型安全接口定义，确保所有字段必需
+// 类型安全接口定义，确保所有字段必需
 interface ISystemMonitorOverview {
   traffic: {
     raw: {

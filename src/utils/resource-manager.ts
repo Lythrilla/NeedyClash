@@ -31,7 +31,7 @@ class ResourceManager {
     this.resources.set(id, entry);
     console.debug(`[ResourceManager] 注册资源: ${id}${description ? ` (${description})` : ''}`);
 
-    // 返回清理函数
+    // 返回移除函数
     return () => this.unregister(id);
   }
 
@@ -51,7 +51,7 @@ class ResourceManager {
       console.debug(`[ResourceManager] 清理资源: ${id}`);
     } catch (error) {
       console.error(`[ResourceManager] 清理资源失败: ${id}`, error);
-      // 即使清理失败，也移除记录以避免重复尝试
+      // 清理失败时移除记录
       this.resources.delete(id);
     }
   }
@@ -149,7 +149,7 @@ class ResourceManager {
 // 导出单例
 export const resourceManager = new ResourceManager();
 
-// 在页面卸载时清理所有资源
+// 页面卸载时清理资源
 if (typeof window !== 'undefined') {
   window.addEventListener('beforeunload', () => {
     resourceManager.cleanupAll().catch((error) => {

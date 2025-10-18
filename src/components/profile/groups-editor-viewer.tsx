@@ -191,7 +191,7 @@ export const GroupsEditorViewer = (props: Props) => {
     });
   }, [currData, visualization]);
 
-  // 优化：异步处理大数据yaml.dump，避免UI卡死
+  // 异步处理大数据yaml.dump，避免UI卡死
   useEffect(() => {
     if (prependSeq && appendSeq && deleteSeq) {
       const serialize = () => {

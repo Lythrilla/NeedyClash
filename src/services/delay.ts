@@ -67,7 +67,7 @@ class DelayManager {
     return val[0];
   }
 
-  /// 暂时修复provider的节点延迟排序的问题
+  /// 修复provider节点延迟排序问题
   getDelayFix(proxy: IProxyItem, group: string) {
     if (!proxy.provider) {
       const delay = this.getDelay(proxy.name, group);

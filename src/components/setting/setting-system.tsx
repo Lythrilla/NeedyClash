@@ -64,7 +64,7 @@ const SettingSystem = ({ onError }: Props) => {
   const onInstallService = useLockFn(async () => {
     try {
       await installServiceAndRestartCore();
-      // 等待一小段时间确保服务状态完全更新
+      // 等待服务状态更新
       await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
@@ -76,7 +76,7 @@ const SettingSystem = ({ onError }: Props) => {
   const onReinstallService = useLockFn(async () => {
     try {
       await reinstallServiceAndRestartCore();
-      // 等待一小段时间确保服务状态完全更新
+      // 等待服务状态更新
       await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
@@ -88,7 +88,7 @@ const SettingSystem = ({ onError }: Props) => {
   const onUninstallService = useLockFn(async () => {
     try {
       await uninstallServiceAndRestartCore();
-      // 等待一小段时间确保服务状态完全更新
+      // 等待服务状态更新
       await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
@@ -295,7 +295,7 @@ const SettingSystem = ({ onError }: Props) => {
           onCatch={onError}
           onFormat={onSwitchFormat}
           onChange={(e) => {
-            // 移除管理员模式检查提示
+            // 管理员模式检查
             onChangeData({ enable_auto_launch: e });
           }}
           onGuard={async (e) => {
@@ -307,7 +307,7 @@ const SettingSystem = ({ onError }: Props) => {
             }
 
             try {
-              // 先触发UI更新立即看到反馈
+              // 立即UI反馈
               onChangeData({ enable_auto_launch: e });
               await patchVerge({ enable_auto_launch: e });
               await mutate("getAutoLaunchStatus");

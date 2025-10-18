@@ -6,20 +6,12 @@ use std::panic::Location;
 use tauri::{async_runtime, async_runtime::JoinHandle};
 
 /// 异步任务处理器
-///
-/// # 改进点：
-/// - 添加了更好的任务追踪和错误处理
-/// - 统一的 spawn 接口确保任务被正确管理
-/// - 添加了超时和取消机制的支持
 pub struct AsyncHandler;
 
 impl AsyncHandler {
     /// 生成一个新的异步任务
     ///
-    /// # 特点
-    /// - 自动处理 panic 并记录日志
-    /// - 支持调用位置追踪（debug 模式下）
-    /// - 返回 JoinHandle 以便调用者可以等待或取消任务
+    /// 异步任务处理器，自动处理 panic 并记录日志
     #[track_caller]
     pub fn spawn<F, Fut>(f: F) -> JoinHandle<()>
     where

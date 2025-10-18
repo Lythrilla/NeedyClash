@@ -26,7 +26,6 @@ export const AppDataProvider = ({
 }) => {
   const { verge } = useVerge();
 
-  // 基础数据 - 中频率更新 (5秒)
   const { data: proxiesData, mutate: refreshProxy } = useSWR(
     "getProxies",
     calcuProxies,
@@ -35,7 +34,7 @@ export const AppDataProvider = ({
       revalidateOnFocus: true,
       suspense: false,
       errorRetryCount: 3,
-      dedupingInterval: 2000, // 添加去重间隔，避免重复请求
+      dedupingInterval: 2000,
     },
   );
 
@@ -43,15 +42,14 @@ export const AppDataProvider = ({
     "getClashConfig",
     getBaseConfig,
     {
-      refreshInterval: 60000, // 60秒刷新间隔，减少频繁请求
+      refreshInterval: 60000,
       revalidateOnFocus: false,
       suspense: false,
       errorRetryCount: 3,
-      dedupingInterval: 5000, // 添加去重间隔
+      dedupingInterval: 5000,
     },
   );
 
-  // 提供者数据
   const { data: proxyProviders, mutate: refreshProxyProviders } = useSWR(
     "getProxyProviders",
     calcuProxyProviders,
@@ -74,7 +72,6 @@ export const AppDataProvider = ({
     },
   );
 
-  // 低频率更新数据
   const { data: rulesData, mutate: refreshRules } = useSWR(
     "getRules",
     getRules,
@@ -85,7 +82,7 @@ export const AppDataProvider = ({
     },
   );
 
-  // 监听profile和clash配置变更事件
+  // 监听配置变更事件
   useEffect(() => {
     let lastProfileId: string | null = null;
     let lastUpdateTime = 0;
@@ -245,11 +242,11 @@ export const AppDataProvider = ({
     "getSystemProxy",
     getSystemProxy,
     {
-      revalidateOnFocus: false, // 减少启动时的请求
+      revalidateOnFocus: false,
       revalidateOnReconnect: true,
       suspense: false,
       errorRetryCount: 3,
-      dedupingInterval: 3000, // 添加去重间隔
+      dedupingInterval: 3000,
     },
   );
 
@@ -259,15 +256,13 @@ export const AppDataProvider = ({
     errorRetryCount: 3,
   });
 
-  // 高频率更新数据 (2秒)
   const { data: uptimeData } = useSWR("appUptime", getAppUptime, {
-    // TODO: 运行时间
     refreshInterval: 2000,
     revalidateOnFocus: false,
     suspense: false,
   });
 
-  // 提供统一的刷新方法
+  // 刷新方法
   const refreshAll = useCallback(async () => {
     await Promise.all([
       refreshProxy(),

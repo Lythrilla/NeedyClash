@@ -154,7 +154,7 @@ const ProxyControlSwitches = ({
   const onInstallService = useLockFn(async () => {
     try {
       await installServiceAndRestartCore();
-      // 等待一小段时间确保服务状态完全更新
+      // 等待服务状态更新
       await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
@@ -166,7 +166,7 @@ const ProxyControlSwitches = ({
   const onReinstallService = useLockFn(async () => {
     try {
       await reinstallServiceAndRestartCore();
-      // 等待一小段时间确保服务状态完全更新
+      // 等待服务状态更新
       await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();
@@ -178,7 +178,7 @@ const ProxyControlSwitches = ({
   const onUninstallService = useLockFn(async () => {
     try {
       await uninstallServiceAndRestartCore();
-      // 等待一小段时间确保服务状态完全更新
+      // 等待服务状态更新
       await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
       await mutateServiceOk();

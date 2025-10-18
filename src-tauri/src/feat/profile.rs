@@ -164,7 +164,7 @@ pub async fn update_profile(
     Ok(())
 }
 
-/// 增强配置
+/// 配置更新
 pub async fn enhance_profiles() -> Result<()> {
     crate::core::CoreManager::global()
         .update_config()

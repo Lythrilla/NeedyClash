@@ -300,7 +300,7 @@ const HomePage = () => {
         <Suspense fallback={<Skeleton variant="rectangular" height={160} />}>
           <LazyTestCard />
         </Suspense>,
-        3, // 网站测试
+        3, // 网站连通性测试
       ),
       renderCard(
         "ip",

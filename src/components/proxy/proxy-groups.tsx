@@ -161,7 +161,7 @@ export const ProxyGroups = (props: Props) => {
     [mode],
   );
 
-  // 使用改进的滚动处理
+  // 滚动处理逻辑
   const handleScroll = useMemo(
     () =>
       throttle((event: Event) => {

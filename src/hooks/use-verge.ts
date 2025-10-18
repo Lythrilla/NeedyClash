@@ -29,14 +29,12 @@ export const useVerge = () => {
 
   const { enable_tun_mode } = verge ?? {};
 
-  // 当服务不可用且TUN模式开启时自动关闭TUN
   useEffect(() => {
     const timeSinceInit = Date.now() - initTimeRef.current;
     if (timeSinceInit < 5000) {
       return;
     }
 
-    // 如果正在处理或已经通知过，跳过
     if (isProcessingRef.current || hasNotifiedRef.current) {
       return;
     }
@@ -49,7 +47,6 @@ export const useVerge = () => {
       patchVergeConfig({ enable_tun_mode: false })
         .then(() => {
           mutateVerge();
-          // 只显示一次通知
           if (!hasNotifiedRef.current) {
             showNotice(
               "info",

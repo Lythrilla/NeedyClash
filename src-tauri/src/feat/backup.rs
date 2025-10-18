@@ -111,7 +111,7 @@ pub async fn restore_webdav_backup(filename: String) -> Result<()> {
         )
         .await
     );
-    // 最后删除临时文件
+    // 清理临时文件
     backup_storage_path.remove_if_exists().await?;
     Ok(())
 }
@@ -136,7 +136,7 @@ pub async fn create_local_backup() -> Result<()> {
             Type::Backup,
             "Failed to move local backup file: {err:#?}"
         );
-        // 清理临时文件
+        // 删除临时文件
         if let Err(clean_err) = temp_file_path.remove_if_exists().await {
             logging!(
                 warn,

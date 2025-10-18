@@ -6,7 +6,7 @@ use tokio::runtime::Runtime;
 use app_lib::config::IVerge;
 use app_lib::utils::Draft as DraftNew;
 
-/// 创建测试数据
+/// 基准测试数据生成
 fn make_draft() -> DraftNew<Box<IVerge>> {
     let verge = Box::new(IVerge {
         enable_auto_launch: Some(true),

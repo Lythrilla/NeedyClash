@@ -185,7 +185,7 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
         setTimeout(() => reset(), 500);
         fileDataRef.current = null;
 
-        // 优化：UI先关闭，异步通知父组件
+        // UI先关闭，异步通知父组件
         setTimeout(() => {
           onChange(isActivating);
         }, 0);

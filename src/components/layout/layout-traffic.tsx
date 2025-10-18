@@ -132,7 +132,7 @@ export const LayoutTraffic = () => {
               }}
               color={"disabled"}
               onClick={async () => {
-                // isDebug && (await gc());
+                // 调试模式下执行垃圾回收
               }}
             >
               <MemoryRounded {...iconStyle} />

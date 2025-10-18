@@ -232,7 +232,7 @@ export const ProxyItem = (props: Props) => {
           )}
 
           {!proxy.provider && delay !== -2 && (
-            // provider的节点不支持检测
+            // provider节点不支持检测
             <Widget
               className="the-check"
               onClick={(e) => {

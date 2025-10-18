@@ -90,13 +90,12 @@ export const ProfileItem = (props: Props) => {
   const loadingCache = useLoadingCache();
   const setLoadingCache = useSetLoadingCache();
 
-  // 新增状态：是否显示下次更新时间
+  const [showNextUpdateTime, setShowNextUpdateTime] = useState(false);
   const [showNextUpdate, setShowNextUpdate] = useState(false);
   const [nextUpdateTime, setNextUpdateTime] = useState("");
 
   const { uid, name = "Profile", extra, updated = 0, option } = itemData;
 
-  // 获取下次更新时间的函数
   const fetchNextUpdateTime = useLockFn(async (forceRefresh = false) => {
     if (
       itemData.option?.update_interval &&
@@ -118,7 +117,6 @@ export const ProfileItem = (props: Props) => {
           const nextUpdateDate = dayjs(nextUpdate * 1000);
           const now = dayjs();
 
-          // 如果已经过期，显示"更新失败"
           if (nextUpdateDate.isBefore(now)) {
             setNextUpdateTime(t("Last Update failed"));
           } else {
@@ -162,7 +160,6 @@ export const ProfileItem = (props: Props) => {
     setShowNextUpdate(!showNextUpdate);
   };
 
-  // 当组件加载或更新间隔变化时更新下次更新时间
   useEffect(() => {
     if (showNextUpdate) {
       fetchNextUpdateTime();
@@ -174,15 +171,12 @@ export const ProfileItem = (props: Props) => {
     updated,
   ]);
 
-  // 订阅定时器更新事件
   useEffect(() => {
     let refreshTimeout: ReturnType<typeof setTimeout> | undefined;
-    // 处理定时器更新事件 - 这个事件专门用于通知定时器变更
     const handleTimerUpdate = (event: Event) => {
       const source = event as CustomEvent<string> & { payload?: string };
       const updatedUid = source.detail ?? source.payload;
 
-      // 只有当更新的是当前配置时才刷新显示
       if (updatedUid === itemData.uid && showNextUpdate) {
         console.log(`收到定时器更新事件: uid=${updatedUid}`);
         if (refreshTimeout) {
@@ -194,14 +188,13 @@ export const ProfileItem = (props: Props) => {
       }
     };
 
-    // 只注册定时器更新事件监听
     window.addEventListener("verge://timer-updated", handleTimerUpdate);
 
     return () => {
       if (refreshTimeout) {
         clearTimeout(refreshTimeout);
       }
-      // 清理事件监听
+      // 移除事件监听
       window.removeEventListener("verge://timer-updated", handleTimerUpdate);
     };
   }, [fetchNextUpdateTime, itemData.uid, showNextUpdate]);
@@ -324,7 +317,6 @@ export const ProfileItem = (props: Props) => {
     setAnchorEl(null);
     setLoadingCache((cache) => ({ ...cache, [itemData.uid]: true }));
 
-    // 根据类型设置初始更新选项
     const option: Partial<IProfileOption> = {};
     if (type === 0) {
       option.with_proxy = false;
@@ -340,14 +332,12 @@ export const ProfileItem = (props: Props) => {
     }
 
     try {
-      // 调用后端更新（后端会自动处理回退逻辑）
       await updateProfile(itemData.uid, option);
 
-      // 更新成功，刷新列表
       mutate("getProfiles");
-    } catch {
-      // 更新完全失败（包括后端的回退尝试）
-      // 不需要做处理，后端会通过事件通知系统发送错误
+    } catch (err) {
+      console.error("Profile update failed:", err);
+      // 后端会通过事件通知系统发送错误
     } finally {
       setLoadingCache((cache) => ({ ...cache, [itemData.uid]: false }));
     }
@@ -452,7 +442,6 @@ export const ProfileItem = (props: Props) => {
     },
   ];
 
-  // 监听自动更新事件
   useEffect(() => {
     const handleUpdateStarted = (event: Event) => {
       const customEvent = event as CustomEvent<{ uid?: string }>;
@@ -465,7 +454,6 @@ export const ProfileItem = (props: Props) => {
       const customEvent = event as CustomEvent<{ uid?: string }>;
       if (customEvent.detail?.uid === itemData.uid) {
         setLoadingCache((cache) => ({ ...cache, [itemData.uid]: false }));
-        // 更新完成后刷新显示
         if (showNextUpdate) {
           fetchNextUpdateTime();
         }
@@ -477,7 +465,7 @@ export const ProfileItem = (props: Props) => {
     window.addEventListener("profile-update-completed", handleUpdateCompleted);
 
     return () => {
-      // 清理事件监听
+      // 移除事件监听
       window.removeEventListener("profile-update-started", handleUpdateStarted);
       window.removeEventListener(
         "profile-update-completed",

@@ -45,7 +45,7 @@ pub async fn create_shortcut() -> Result<()> {
     let legacy_shortcut_path = startup_dir.join("Clash Verge.lnk");
     let new_shortcut_path = startup_dir.join("NeedyClash.lnk");
 
-    // 移除旧的快捷方式
+    // 清理旧快捷方式
     let _ = old_shortcut_path
         .remove_if_exists()
         .await
@@ -56,7 +56,7 @@ pub async fn create_shortcut() -> Result<()> {
             log::error!(target: "app", "移除旧启动快捷方式失败: {err}");
         });
 
-    // 移除legacy快捷方式
+    // 清理legacy快捷方式
     let _ = legacy_shortcut_path
         .remove_if_exists()
         .await
@@ -99,7 +99,7 @@ pub async fn create_shortcut() -> Result<()> {
     Ok(())
 }
 
-/// 删除快捷方式
+/// 移除快捷方式
 #[cfg(target_os = "windows")]
 pub async fn remove_shortcut() -> Result<()> {
     use crate::utils::dirs::PathBufExec;

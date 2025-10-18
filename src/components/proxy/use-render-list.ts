@@ -68,7 +68,7 @@ export interface IRenderItem {
   testUrl?: string;
 }
 
-// 优化列布局计算
+// 列布局计算
 const calculateColumns = (width: number, configCol: number): number => {
   if (configCol > 0 && configCol < 6) return configCol;
 
@@ -80,7 +80,7 @@ const calculateColumns = (width: number, configCol: number): number => {
   return 1;
 };
 
-// 优化分组逻辑
+// 分组逻辑
 const groupProxies = <T = any>(list: T[], size: number): T[][] => {
   return list.reduce((acc, item) => {
     const lastGroup = acc[acc.length - 1];
@@ -454,5 +454,3 @@ export const useRenderList = (
     currentColumns: col,
   };
 };
-
-// 优化建议：如有大数据量，建议用虚拟滚动（已在 ProxyGroups 组件中实现），此处无需额外处理。

@@ -521,7 +521,7 @@ export const reinstallService = async () => {
   return invoke<void>("reinstall_service");
 };
 
-// 修复系统服务
+// 系统服务管理
 export const repairService = async () => {
   return invoke<void>("repair_service");
 };

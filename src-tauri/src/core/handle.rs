@@ -225,11 +225,6 @@ impl NotificationSystem {
     }
 
     /// 优雅关闭通知系统
-    ///
-    /// # 改进点：
-    /// - 添加超时机制，避免无限等待
-    /// - 更完善的错误处理和清理
-    /// - 防止重复关闭
     fn shutdown(&mut self) {
         use std::time::Duration;
 
@@ -247,7 +242,7 @@ impl NotificationSystem {
             log::debug!("NotificationSystem sender dropped");
         }
 
-        // 等待工作线程完成，设置5秒超时避免无限等待
+        // 等待工作线程完成，设置5秒超时
         if let Some(handle) = self.worker_handle.take() {
             // 创建一个超时机制
             let join_result = std::thread::spawn(move || handle.join());
@@ -281,7 +276,7 @@ impl NotificationSystem {
             }
         }
 
-        // 清理统计信息
+        // 统计信息
         log::info!(
             "NotificationSystem shutdown completed. Stats: sent={}, errors={}",
             self.stats.total_sent.load(Ordering::SeqCst),
@@ -513,7 +508,7 @@ impl Handle {
             errors
         );
 
-        // 启动单独线程处理启动错误，避免阻塞主线程
+        // 启动错误处理线程
         let thread_result = thread::Builder::new()
             .name("startup-errors-sender".into())
             .spawn(move || {

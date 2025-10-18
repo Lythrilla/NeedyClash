@@ -218,7 +218,6 @@ pub(super) async fn init_service_manager() {
                 Type::Setup,
                 "Service manager initialized successfully"
             );
-            // 异步刷新服务状态，不阻塞启动流程
             AsyncHandler::spawn(|| async {
                 if let Err(e) = SERVICE_MANAGER.lock().await.refresh().await {
                     logging!(warn, Type::Setup, "Service refresh failed: {}", e);

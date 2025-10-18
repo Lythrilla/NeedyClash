@@ -130,4 +130,4 @@ setInterval(() => {
   if (keysToDelete.length > 0) {
     console.log(`[noticeService] 清理了 ${keysToDelete.length} 条过期的去重记录`);
   }
-}, 60000); // 每分钟清理一次
+}, 60000); // 定期清理

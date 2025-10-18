@@ -750,7 +750,7 @@ export const useCustomTheme = () => {
       document.body.style.backgroundColor = themeBackgroundColor;
       rootEle.style.backgroundColor = themeBackgroundColor;
 
-      // 优化暗色模式配色方案 - 温暖灰色系
+      // 暗色模式配色方案
       const backgroundColor =
         mode === "light" ? "#F8FAFC" : dt.background_color;
       const selectColor = mode === "light" ? "#F1F5F9" : "#3232326b";
@@ -781,7 +781,7 @@ export const useCustomTheme = () => {
         "--window-border-color",
         mode === "light" ? "#E2E8F0" : "#404040",
       );
-      // 统一滚动条颜色变量
+      // 滚动条颜色变量
       rootEle.style.setProperty(
         "--cv-scroller-color",
         mode === "light"
@@ -825,13 +825,13 @@ export const useCustomTheme = () => {
 
     if (styleElement) {
       const globalStyles = `
-        /* 背景处理 */
+        /* 背景 */
         body {
           position: relative;
           ${backgroundType === "none" ? `background-color: var(--background-color);` : "background-color: transparent;"}
         }
 
-        /* 对话框样式优化 - 始终应用，无论背景类型 */
+        /* 对话框样式 - 始终应用，无论背景类型 */
         .MuiDialog-paper {
           background-color: ${mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(40, 40, 40, 0.95)"} !important;
           backdrop-filter: blur(25px) saturate(180%) !important;
@@ -1165,9 +1165,9 @@ export const useCustomTheme = () => {
           position: fixed !important;
         }
 
-        /* 设置页面按钮和列表项样式优化 - 移除全局padding，使用组件内部控制 */
+        /* 设置页面按钮和列表项样式 */
         
-        /* Tab 组件优化 */
+        /* Tab 组件样式 */
         .MuiTab-root {
           text-transform: none;
           font-weight: 500;
@@ -1179,12 +1179,12 @@ export const useCustomTheme = () => {
           height: 3px;
         }
 
-        /* Divider 优化 */
+        /* Divider 样式 */
         .MuiDivider-root {
           border-color: ${mode === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)"};
         }
 
-        /* 原生 option 标签优化 */
+        /* 原生 option 标签样式 */
         option {
           background-color: ${mode === "light" ? "#FFFFFF" : "#3232326b"};
           color: ${mode === "light" ? "rgba(0, 0, 0, 0.87)" : "rgba(255, 255, 255, 0.87)"};
@@ -1196,18 +1196,18 @@ export const useCustomTheme = () => {
           background-color: ${mode === "light" ? "#F8FAFC" : "rgba(255, 255, 255, 0.08)"};
         }
 
-        /* MUI Select 组件优化 */
+        /* MUI Select 组件样式 */
         .MuiSelect-select,
         .MuiNativeSelect-select {
           transition: all 0.2s ease !important;
         }
 
-        /* TextField 和 Select 统一背景色 */
+        /* TextField 和 Select 背景色 */
         .MuiOutlinedInput-root {
           background-color: ${mode === "light" ? "#FFFFFF" : "rgba(255, 255, 255, 0.03)"} !important;
         }
 
-        /* TextField 和 Select 统一边框样式 */
+        /* TextField 和 Select 边框样式 */
         .MuiOutlinedInput-notchedOutline {
           border-color: ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.12)"} !important;
         }
@@ -1221,12 +1221,12 @@ export const useCustomTheme = () => {
           border-width: 2px !important;
         }
 
-        /* TextField 标签优化 */
+        /* TextField 标签样式 */
         .MuiInputLabel-root.Mui-focused {
           color: ${setting.primary_color || dt.primary_color};
         }
 
-        /* 数据网格优化 */
+        /* 数据网格样式 */
         .MuiDataGrid-root {
           border-color: ${mode === "light" ? "#E2E8F0" : "rgba(255, 255, 255, 0.1)"};
         }
@@ -1243,12 +1243,12 @@ export const useCustomTheme = () => {
           outline-offset: -1px;
         }
 
-        /* 移除焦点轮廓 */
+        /* 焦点轮廓 */
         * {
           outline: none !important;
         }
 
-        /* 优化选择器 */
+        /* 选择器样式 */
         ::selection {
           background-color: ${mode === "light" ? alpha(muiTheme.palette.primary.main, 0.2) : alpha(muiTheme.palette.primary.main, 0.3)};
           color: ${mode === "light" ? muiTheme.palette.text.primary : "#FFFFFF"};
@@ -1308,7 +1308,7 @@ export const useCustomTheme = () => {
             `);
           }
 
-          // Analytics 头部 - 固定位置组件，可以安全使用模糊
+          // Analytics 头部
           const analyticsHeaderStyle = getComponentStyle("analytics_header");
           if (analyticsHeaderStyle) {
             styles.push(`
@@ -1320,7 +1320,7 @@ export const useCustomTheme = () => {
             `);
           }
 
-          // Dialog 弹窗 - Portal组件，只用背景色，不破坏定位
+          // Dialog 弹窗
           const dialogStyle = getComponentStyle("dialog");
           if (dialogStyle) {
             styles.push(`

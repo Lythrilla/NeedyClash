@@ -91,8 +91,6 @@ export const SystemInfoCard = () => {
         console.error("[SystemInfo] Failed to get system info:", error);
       });
 
-    // 自动更新检查功能已禁用
-    // 获取最后检查更新时间（仅用于显示）
     const lastCheck = localStorage.getItem("last_check_update");
     if (lastCheck) {
       try {
@@ -114,15 +112,10 @@ export const SystemInfoCard = () => {
     };
   }, [dispatchSystemState]);
 
-  // 自动检查更新逻辑已禁用
-  // useSWR(...);
-
-  // 导航到设置页面
   const goToSettings = useCallback(() => {
     navigate("/settings");
   }, [navigate]);
 
-  // 切换自启动状态
   const toggleAutoLaunch = useCallback(async () => {
     if (!verge) return;
     try {
@@ -132,7 +125,6 @@ export const SystemInfoCard = () => {
     }
   }, [verge, patchVerge]);
 
-  // 检查更新
   const onCheckUpdate = useLockFn(async () => {
     try {
       const info = await checkUpdate();
@@ -147,16 +139,13 @@ export const SystemInfoCard = () => {
     }
   });
 
-  // 是否启用自启动
   const autoLaunchEnabled = useMemo(
     () => verge?.enable_auto_launch || false,
     [verge],
   );
 
-  // 运行模式样式
   const runningModeStyle = useMemo(
     () => ({
-      // Sidecar或纯管理员模式允许安装服务
       cursor:
         isSidecarMode || (isAdminMode && isSidecarMode) ? "pointer" : "default",
       textDecoration:
@@ -171,10 +160,8 @@ export const SystemInfoCard = () => {
     [isSidecarMode, isAdminMode],
   );
 
-  // 获取模式图标和文本
   const getModeIcon = () => {
     if (isAdminMode) {
-      // 判断是否为组合模式（管理员+服务）
       if (!isSidecarMode) {
         return (
           <>
@@ -212,10 +199,8 @@ export const SystemInfoCard = () => {
     }
   };
 
-  // 获取模式文本
   const getModeText = () => {
     if (isAdminMode) {
-      // 判断是否同时处于服务模式
       if (!isSidecarMode) {
         return t("Administrator + Service Mode");
       }
@@ -227,7 +212,6 @@ export const SystemInfoCard = () => {
     }
   };
 
-  // 只有当verge存在时才渲染内容
   if (!verge) return null;
 
   return (

@@ -105,7 +105,7 @@ pub async fn restart_core() -> CmdResult {
     result
 }
 
-/// 测试URL延迟
+/// URL延迟测试
 #[tauri::command]
 pub async fn test_delay(url: String) -> CmdResult<u32> {
     let result = match feat::test_delay(url).await {

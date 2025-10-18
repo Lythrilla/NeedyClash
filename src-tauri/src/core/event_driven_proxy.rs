@@ -198,7 +198,7 @@ impl EventDrivenProxyManager {
                     let event_clone = event.clone(); // 保存一份副本用于后续检查
                     Self::handle_event(&state, event).await;
 
-                    // 检查是否是配置变更事件，如果是，则可能需要更新定时器
+                    // 检查配置变更事件
                     if matches!(event_clone, ProxyEvent::ConfigChanged | ProxyEvent::AppStarted) {
                         let new_config = Self::get_proxy_config().await;
                         // 重新设置定时器间隔
@@ -330,11 +330,6 @@ impl EventDrivenProxyManager {
     }
 
     /// 检查并恢复 PAC 代理设置
-    ///
-    /// # 改进点：
-    /// - 添加重试机制
-    /// - 改进错误处理和日志
-    /// - 添加超时保护
     async fn check_and_restore_pac_proxy(state: &Arc<RwLock<ProxyState>>) {
         if handle::Handle::global().is_exiting() {
             log::debug!(target: "app", "应用正在退出，跳过PAC代理恢复检查");
@@ -403,11 +398,6 @@ impl EventDrivenProxyManager {
     }
 
     /// 检查并恢复系统代理设置
-    ///
-    /// # 改进点：
-    /// - 添加重试机制
-    /// - 改进错误处理和日志
-    /// - 添加超时保护
     async fn check_and_restore_sys_proxy(state: &Arc<RwLock<ProxyState>>) {
         if handle::Handle::global().is_exiting() {
             log::debug!(target: "app", "应用正在退出，跳过系统代理恢复检查");
@@ -566,7 +556,7 @@ impl EventDrivenProxyManager {
         }
     }
 
-    // 统一的状态更新方法
+    // 状态更新方法
     async fn update_state_timestamp<F>(state: &Arc<RwLock<ProxyState>>, update_fn: F)
     where
         F: FnOnce(&mut ProxyState),

@@ -475,7 +475,7 @@ const Layout = () => {
     const setupEventListener = async () => {
       try {
         console.log("[Layout] 开始监听启动完成事件");
-        // TODO: 监听启动完成事件的实现
+        // 监听启动完成事件
       } catch (err) {
         console.error("[Layout] 监听启动完成事件失败:", err);
       }

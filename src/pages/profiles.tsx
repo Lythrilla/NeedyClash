@@ -236,16 +236,16 @@ const ProfilePage = () => {
   // 防止重复切换
   const switchingProfileRef = useRef<string | null>(null);
 
-  // 支持中断当前切换操作
+  // 中断切换操作
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // 只处理最新的切换请求
+  // 处理最新切换请求
   const requestSequenceRef = useRef<number>(0);
 
-  // 待处理请求跟踪，取消排队的请求
+  // 待处理请求跟踪
   const pendingRequestRef = useRef<Promise<any> | null>(null);
 
-  // 处理profile切换中断
+  // profile切换中断处理
   const handleProfileInterrupt = useCallback(
     (previousSwitching: string, newProfile: string) => {
       debugProfileSwitch(
@@ -273,7 +273,7 @@ const ProfilePage = () => {
     [t],
   );
 
-  // 清理切换状态
+  // 切换状态清理
   const cleanupSwitchState = useCallback(
     (profile: string, sequence: number) => {
       setActivatings((prev) => prev.filter((id) => id !== profile));
@@ -340,7 +340,7 @@ const ProfilePage = () => {
     };
   }, [addListener, mutateProfiles, t]);
 
-  // 添加紧急恢复功能
+  // 紧急恢复功能
   const onEmergencyRefresh = useLockFn(async () => {
     console.log("[紧急刷新] 开始强制刷新所有数据");
 
@@ -354,7 +354,7 @@ const ProfilePage = () => {
         rollbackOnError: false,
       });
 
-      // 等待状态稳定后增强配置
+      // 等待状态稳定后更新配置
       await new Promise((resolve) => setTimeout(resolve, 500));
       await onEnhance(false);
 
@@ -489,7 +489,7 @@ const ProfilePage = () => {
       const currentSequence = ++requestSequenceRef.current;
       debugProfileSwitch("NEW_REQUEST", profile, `序列号: ${currentSequence}`);
 
-      // 处理中断逻辑
+      // 中断逻辑
       const previousSwitching = switchingProfileRef.current;
       if (previousSwitching && previousSwitching !== profile) {
         handleProfileInterrupt(previousSwitching, profile);
@@ -585,7 +585,7 @@ const ProfilePage = () => {
         console.error(`[Profile] 切换失败:`, err);
         showNotice("error", err?.message || err.toString(), 4000);
       } finally {
-        // 只有当前profile仍然是正在切换的profile且序列号匹配时才清理状态
+        // 序列号匹配时清理状态
         if (
           switchingProfileRef.current === profile &&
           currentSequence === requestSequenceRef.current
@@ -678,7 +678,7 @@ const ProfilePage = () => {
     }
   });
 
-  // 更新所有订阅
+  // 批量更新订阅
   const setLoadingCache = useSetLoadingCache();
   const onUpdateAll = useLockFn(async () => {
     const throttleMutate = throttle(mutateProfiles, 2000, {
@@ -697,7 +697,7 @@ const ProfilePage = () => {
 
     return new Promise((resolve) => {
       setLoadingCache((cache) => {
-        // 获取没有正在更新的订阅
+        // 获取待更新订阅
         const items = profileItems.filter(
           (e) => e.type === "remote" && !cache[e.uid],
         );
@@ -825,7 +825,7 @@ const ProfilePage = () => {
     }
   });
 
-  // 监听后端配置变更
+  // 配置变更监听
   useEffect(() => {
     let unlistenPromise: Promise<() => void> | undefined;
     let lastProfileId: string | null = null;
@@ -858,7 +858,7 @@ const ProfilePage = () => {
           window.clearTimeout(refreshTimer);
         }
 
-        // 使用异步调度避免阻塞事件处理
+        // 异步调度避免阻塞
         refreshTimer = window.setTimeout(() => {
           mutateProfiles().catch((error) => {
             console.error("[Profile] 配置数据刷新失败:", error);
@@ -882,7 +882,7 @@ const ProfilePage = () => {
     };
   }, [mutateProfiles]);
 
-  // 组件卸载时清理中断控制器
+  // 组件卸载清理
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -1332,7 +1332,7 @@ const ProfilePage = () => {
         ref={viewerRef}
         onChange={async (isActivating) => {
           mutateProfiles();
-          // 只有更改当前激活的配置时才触发全局重新加载
+          // 激活配置时触发重新加载
           if (isActivating) {
             await onEnhance(false);
           }

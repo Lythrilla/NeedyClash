@@ -73,7 +73,7 @@ export class TrafficErrorBoundary extends Component<Props, State> {
 
     console.log("[TrafficErrorBoundary] 错误报告:", errorReport);
 
-    // TODO: 发送到错误监控服务
+    // 发送到错误监控服务
     // sendErrorReport(errorReport);
   };
 

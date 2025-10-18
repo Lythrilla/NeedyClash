@@ -37,10 +37,10 @@ export function useSystemState() {
     isLoading: isServiceLoading,
   } = useSWR(isServiceMode ? "isServiceAvailable" : null, isServiceAvailable, {
     suspense: false,
-    revalidateOnFocus: false, // 减少不必要的重新验证
-    revalidateOnReconnect: true, // 网络重连时重新验证
-    refreshInterval: isServiceMode ? 30000 : 0, // 从10秒增加到30秒，减少频繁检查
-    dedupingInterval: 5000, // 从2秒增加到5秒，更强的去重
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+    refreshInterval: isServiceMode ? 30000 : 0,
+    dedupingInterval: 5000,
     onSuccess: (data) => {
       console.log("[useSystemState] 服务状态更新:", data);
     },
@@ -54,7 +54,6 @@ export function useSystemState() {
 
   const isTunModeAvailable = isAdminMode || isServiceOk;
 
-  // 应用启动时强制刷新服务状态 - 优化启动性能
   useEffect(() => {
     const initServiceState = async () => {
       console.log("[useSystemState] 应用启动，强制刷新运行模式和服务状态");
@@ -64,13 +63,12 @@ export function useSystemState() {
       }
     };
 
-    // 增加启动延迟到2秒，让UI先渲染，避免阻塞窗口响应
     const timer = setTimeout(() => {
       initServiceState();
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []); // 只在组件挂载时执行一次
+  }, []);
 
   return {
     runningMode,

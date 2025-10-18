@@ -25,9 +25,7 @@ use std::collections::VecDeque;
 use std::{fmt, path::PathBuf, sync::Arc};
 use tauri_plugin_shell::ShellExt;
 
-// TODO:
-// - 重构，提升模式切换速度
-// - 内核启动添加启动 IPC 启动参数, `-ext-ctl-unix` / `-ext-ctl-pipe`, 运行时配置需要删除相关配置项
+// 模式切换性能和内核启动参数配置
 
 #[derive(Debug)]
 pub struct CoreManager {
@@ -282,7 +280,7 @@ impl CoreManager {
             };
 
             logging!(info, Type::Config, "-------- 验证结束 --------");
-            Ok((false, error_msg)) // 返回错误消息给调用者处理
+            Ok((false, error_msg))
         } else {
             logging!(info, Type::Config, "验证成功");
             logging!(info, Type::Config, "-------- 验证结束 --------");
@@ -310,7 +308,7 @@ impl CoreManager {
                 Ok((true, String::new()))
             }
             Err(err) => {
-                // 使用标准化的前缀，以便错误处理函数能正确识别
+                // 使用标准化错误前缀
                 let error_msg = format!("YAML syntax error: {err}");
                 logging!(error, Type::Config, "YAML语法错误: {}", error_msg);
                 Ok((false, error_msg))
@@ -424,17 +422,12 @@ impl CoreManager {
 
 impl CoreManager {
     /// 清理多余的 mihomo 进程
-    ///
-    /// # 改进点：
-    /// - 添加超时保护，避免清理过程卡死
-    /// - 更完善的错误处理和日志记录
-    /// - 防止清理过程中的进程 ID 冲突
     async fn cleanup_orphaned_mihomo_processes(&self) -> Result<()> {
         use tokio::time::{Duration, timeout};
 
         logging!(info, Type::Core, "开始清理多余的 mihomo 进程");
 
-        // 整个清理过程添加30秒超时保护
+        // 清理过程超时保护
         let cleanup_result = timeout(Duration::from_secs(30), async {
             // 获取当前管理的进程 PID
             let current_pid = {
@@ -886,7 +879,7 @@ impl CoreManager {
     pub async fn init(&self) -> Result<()> {
         logging!(info, Type::Core, "Initializing core");
 
-        // 应用启动时先清理任何遗留的 mihomo 进程
+        // 启动时清理遗留进程
         if let Err(e) = self.cleanup_orphaned_mihomo_processes().await {
             logging!(
                 warn,

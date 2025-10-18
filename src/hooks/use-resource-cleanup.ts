@@ -16,7 +16,7 @@ import { nanoid } from 'nanoid';
  *     registerCleanup(() => ws.close(), 'WebSocket连接');
  *     
  *     return () => {
- *       // 可选：也可以在这里手动清理
+ *       // 可选：手动清理
  *     };
  *   }, []);
  * }
@@ -27,7 +27,7 @@ export function useResourceCleanup(componentName?: string) {
   const componentIdRef = useRef(componentName || `component-${nanoid(8)}`);
 
   useEffect(() => {
-    // 组件卸载时执行所有清理函数
+    // 组件卸载时执行清理
     return () => {
       cleanupFnsRef.current.forEach((cleanup) => {
         try {
@@ -53,7 +53,7 @@ export function useResourceCleanup(componentName?: string) {
     const resourceId = `${componentIdRef.current}-${nanoid(8)}`;
     const unregister = resourceManager.register(resourceId, cleanup, description);
     
-    // 保存清理函数引用
+    // 保存清理函数
     cleanupFnsRef.current.push(unregister);
     
     // 返回立即清理函数
@@ -97,7 +97,7 @@ export function useSafeTimers() {
 
   useEffect(() => {
     return () => {
-      // 清理所有定时器
+      // 清理定时器
       timersRef.current.timeouts.forEach((id) => clearTimeout(id));
       timersRef.current.intervals.forEach((id) => clearInterval(id));
       timersRef.current.timeouts.clear();

@@ -1,7 +1,7 @@
 use super::CmdResult;
 use crate::{logging, utils::logging::Type};
 
-// TODO: 前端通过 emit 发送更新事件, tray 监听更新事件
+// 前端事件驱动更新：通过 emit 发送更新事件，托盘监听更新事件
 /// 同步托盘和GUI的代理选择状态
 #[tauri::command]
 pub async fn sync_tray_proxy_selection() -> CmdResult<()> {

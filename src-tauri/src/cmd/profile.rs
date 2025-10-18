@@ -81,7 +81,7 @@ pub async fn get_profiles() -> CmdResult<IProfiles> {
     Ok(IProfiles::new().await)
 }
 
-/// 增强配置文件
+/// 配置文件处理
 #[tauri::command]
 pub async fn enhance_profiles() -> CmdResult {
     match feat::enhance_profiles().await {

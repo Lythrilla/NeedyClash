@@ -159,7 +159,7 @@ fn test_script() {
     assert!(box_yaml_config_size < yaml_config_size);
 }
 
-// 测试特殊字符转义功能
+// 特殊字符转义处理
 #[test]
 #[allow(clippy::expect_used)]
 fn test_escape_unescape() {

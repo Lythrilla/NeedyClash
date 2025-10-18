@@ -52,7 +52,7 @@ declare global {
   }
 }
 
-// 统计卡片组件 - 使用memo优化
+// 统计卡片组件 - 使用memo提升性能
 const CompactStatCard = memo(
   ({ icon, title, value, unit, color, onClick }: StatCardProps) => {
     const theme = useTheme();

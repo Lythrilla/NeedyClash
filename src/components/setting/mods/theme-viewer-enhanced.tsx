@@ -109,7 +109,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     setTheme(newTheme);
   };
 
-  // 使用 useCallback 优化性能
+  // useCallback 性能优化
   const handleBackgroundChange = useCallback((field: keyof ThemeSetting, value: any) => {
     const newTheme = { ...theme, [field]: value };
     setTheme(newTheme);
@@ -199,7 +199,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   const componentStyles = theme.component_styles || {};
   const globalStyle = componentStyles.global || {};
 
-  // 使用防抖优化实时更新
+  // 防抖实时更新
   const debouncedPatchVerge = useMemo(() => {
     return debounce((theme: ThemeSetting) => {
       patchVerge({ theme_setting: theme });
@@ -219,7 +219,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
       component_styles: newComponentStyles,
     };
     setTheme(newTheme);
-    // 使用防抖的实时更新
+    // 防抖更新
     debouncedPatchVerge(newTheme);
   }, [theme, componentStyles, debouncedPatchVerge]);
 

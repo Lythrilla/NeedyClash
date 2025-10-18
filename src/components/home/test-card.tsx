@@ -117,7 +117,7 @@ export const TestCard = () => {
         const [removed] = newList.splice(old_index, 1);
         newList.splice(new_index, 0, removed);
 
-        // 优化：先本地更新，再异步 patch，避免UI卡死
+        // 先本地更新，再异步 patch，避免UI卡死
         mutateVerge({ ...verge, test_list: newList }, false);
         const patchFn = () => {
           try {
@@ -141,7 +141,7 @@ export const TestCard = () => {
     }
   }, [verge, patchVerge]);
 
-  // 使用useMemo优化UI内容，减少渲染计算
+  // 使用useMemo减少渲染计算
   const renderTestItems = useMemo(
     () => (
       <Grid container spacing={0.75} columns={12}>

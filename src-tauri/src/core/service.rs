@@ -308,7 +308,7 @@ async fn reinstall_service() -> Result<()> {
     }
 }
 
-/// 强制重装服务（UI修复按钮）
+/// 强制重装服务
 pub async fn force_reinstall_service() -> Result<()> {
     logging!(info, Type::Service, "用户请求强制重装服务");
     reinstall_service().await.map_err(|err| {

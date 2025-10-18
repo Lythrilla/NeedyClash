@@ -63,7 +63,7 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
     verge?.verge_tproxy_enabled ?? false,
   );
 
-  // 添加保存请求，防止GUI卡死
+  const saveRequest = useLockFn(async () => {
   const { loading, run: saveSettings } = useRequest(
     async (params: { clashConfig: any; vergeConfig: any }) => {
       const { clashConfig, vergeConfig } = params;
