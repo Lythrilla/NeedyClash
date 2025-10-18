@@ -1,14 +1,9 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-use crate::{
-    config::Config,
-    core::handle::Handle,
-    logging,
-    utils::logging::Type,
-};
+use crate::{config::Config, core::handle::Handle, logging, utils::logging::Type};
 
 /// TUN 模式状态
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -23,6 +18,18 @@ pub enum TunStatus {
     Disabling,
     /// TUN 错误状态
     Error(String),
+}
+
+impl std::fmt::Display for TunStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TunStatus::Enabled => write!(f, "Enabled"),
+            TunStatus::Disabled => write!(f, "Disabled"),
+            TunStatus::Enabling => write!(f, "Enabling"),
+            TunStatus::Disabling => write!(f, "Disabling"),
+            TunStatus::Error(msg) => write!(f, "Error({})", msg),
+        }
+    }
 }
 
 /// TUN 模式管理器
@@ -54,7 +61,7 @@ impl TunManager {
         // 检查是否在服务模式或管理员模式下运行
         use crate::core::CoreManager;
         let running_mode = CoreManager::global().get_running_mode();
-        
+
         #[cfg(target_os = "windows")]
         {
             use deelevate::{PrivilegeLevel, Token};
@@ -62,7 +69,7 @@ impl TunManager {
                 .and_then(|token| token.privilege_level())
                 .map(|level| level != PrivilegeLevel::NotPrivileged)
                 .unwrap_or(false);
-            
+
             if running_mode != crate::core::RunningMode::Service && !is_admin {
                 bail!("TUN mode requires Service Mode or Administrator privileges");
             }
@@ -71,7 +78,7 @@ impl TunManager {
         #[cfg(not(target_os = "windows"))]
         {
             let is_root = unsafe { libc::geteuid() } == 0;
-            
+
             if running_mode != crate::core::RunningMode::Service && !is_root {
                 bail!("TUN mode requires Service Mode or root privileges");
             }
@@ -125,8 +132,12 @@ impl TunManager {
 
     /// 应用 TUN 配置到 Clash 核心
     async fn apply_tun_config(&self, enable: bool) -> Result<()> {
-        use tokio::time::{timeout, Duration};
+        use tokio::time::{Duration, timeout};
         
+        // 配置超时时间常量
+        const CONFIG_TIMEOUT_SECS: u64 = 10;
+        const CONFIG_STABILIZATION_MS: u64 = 100;
+
         // 构建 TUN 配置
         let tun_config = serde_json::json!({
             "tun": {
@@ -136,15 +147,15 @@ impl TunManager {
 
         // 通过 Handle 应用配置（带超时保护）
         timeout(
-            Duration::from_secs(10),
-            Handle::mihomo().await.patch_base_config(&tun_config)
+            Duration::from_secs(CONFIG_TIMEOUT_SECS),
+            Handle::mihomo().await.patch_base_config(&tun_config),
         )
         .await
         .map_err(|_| anyhow::anyhow!("TUN 配置应用超时"))?
         .map_err(|e| anyhow::anyhow!("TUN 配置应用失败: {}", e))?;
 
-        // 使用更短的延迟，大多数系统可以更快完成
-        tokio::time::sleep(Duration::from_millis(100)).await;
+        // 等待配置生效
+        tokio::time::sleep(Duration::from_millis(CONFIG_STABILIZATION_MS)).await;
 
         Ok(())
     }
@@ -184,7 +195,12 @@ impl TunManager {
         let enable_tun = verge_config.latest_ref().enable_tun_mode.unwrap_or(false);
         drop(verge_config);
 
-        logging!(info, Type::System, "强制重新应用 TUN 配置: enable={}", enable_tun);
+        logging!(
+            info,
+            Type::System,
+            "强制重新应用 TUN 配置: enable={}",
+            enable_tun
+        );
 
         if enable_tun {
             self.enable_tun().await
@@ -196,4 +212,3 @@ impl TunManager {
 
 /// 全局 TUN 管理器实例
 pub static TUN_MANAGER: Lazy<TunManager> = Lazy::new(TunManager::default);
-

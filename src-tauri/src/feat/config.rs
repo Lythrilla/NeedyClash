@@ -80,7 +80,7 @@ impl std::ops::BitOrAssign for UpdateFlags {
 
 impl std::ops::BitOr for UpdateFlags {
     type Output = Self;
-    
+
     fn bitor(self, rhs: Self) -> Self::Output {
         Self(self.0 | rhs.0)
     }
@@ -135,9 +135,9 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
 
         // Build update flags based on configuration changes
         if tun_mode.is_some() {
-            update_flags |= UpdateFlags::CLASH_CONFIG 
-                | UpdateFlags::SYSTRAY_MENU 
-                | UpdateFlags::SYSTRAY_TOOLTIP 
+            update_flags |= UpdateFlags::CLASH_CONFIG
+                | UpdateFlags::SYSTRAY_MENU
+                | UpdateFlags::SYSTRAY_TOOLTIP
                 | UpdateFlags::SYSTRAY_ICON;
         }
         if enable_global_hotkey.is_some() || home_cards {
@@ -151,7 +151,13 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
         if tproxy_enabled || tproxy_port {
             update_flags |= UpdateFlags::RESTART_CORE;
         }
-        if socks_enabled || http_enabled || socks_port || http_port || mixed_port || enable_external_controller {
+        if socks_enabled
+            || http_enabled
+            || socks_port
+            || http_port
+            || mixed_port
+            || enable_external_controller
+        {
             update_flags |= UpdateFlags::RESTART_CORE;
         }
         if auto_launch.is_some() {
@@ -159,9 +165,9 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
         }
 
         if system_proxy.is_some() {
-            update_flags |= UpdateFlags::SYS_PROXY 
-                | UpdateFlags::SYSTRAY_MENU 
-                | UpdateFlags::SYSTRAY_TOOLTIP 
+            update_flags |= UpdateFlags::SYS_PROXY
+                | UpdateFlags::SYSTRAY_MENU
+                | UpdateFlags::SYSTRAY_TOOLTIP
                 | UpdateFlags::SYSTRAY_ICON;
         }
 
@@ -172,7 +178,13 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
         if language {
             update_flags |= UpdateFlags::SYSTRAY_MENU;
         }
-        if common_tray_icon || sysproxy_tray_icon || tun_tray_icon || tray_icon || enable_tray_speed || enable_tray_icon {
+        if common_tray_icon
+            || sysproxy_tray_icon
+            || tun_tray_icon
+            || tray_icon
+            || enable_tray_speed
+            || enable_tray_icon
+        {
             update_flags |= UpdateFlags::SYSTRAY_ICON;
         }
 
@@ -196,7 +208,7 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
         if update_flags.contains(UpdateFlags::CLASH_CONFIG) {
             CoreManager::global().update_config().await?;
             handle::Handle::refresh_clash();
-            
+
             // 如果是 TUN 模式更改，使用 TUN Manager 处理
             if tun_mode.is_some() {
                 use crate::core::tun_manager::TUN_MANAGER;

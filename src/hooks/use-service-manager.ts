@@ -1,5 +1,5 @@
 import { t } from "i18next";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import {
   installService,
@@ -23,6 +23,13 @@ interface ServiceManagerState {
   isUninstalling: boolean;
 }
 
+// 延迟时间常量
+const TIMING = {
+  SERVICE_STABILIZATION: 800, // 服务稳定等待时间
+  CORE_STOP: 400, // 核心停止等待时间
+  STATE_UPDATE: 500, // 状态更新等待时间
+} as const;
+
 /**
  * 统一的服务管理 Hook
  * 整合了服务安装、重装、卸载的所有逻辑，减少代码重复
@@ -36,6 +43,9 @@ export const useServiceManager = () => {
     isUninstalling: false,
   });
 
+  // 使用 ref 来追踪操作状态，避免依赖项问题
+  const operatingRef = useRef(false);
+
   /**
    * 通用服务操作执行器
    */
@@ -45,14 +55,15 @@ export const useServiceManager = () => {
       steps: ServiceOperationStep[],
       completionMsg: string,
     ) => {
-      // 检查是否有操作正在进行
-      if (Object.values(state).some(Boolean)) {
+      // 检查是否有操作正在进行（使用 ref 避免依赖 state）
+      if (operatingRef.current) {
         console.warn(
           `[useServiceManager] 操作正在进行中，忽略新的 ${operationType} 请求`,
         );
         return;
       }
 
+      operatingRef.current = true;
       setState((prev) => ({ ...prev, [operationType]: true }));
 
       try {
@@ -72,7 +83,8 @@ export const useServiceManager = () => {
           throw new Error(result.error || `${operationType} failed`);
         }
 
-        // 更新运行模式和服务状态
+        // 等待状态稳定后更新
+        await waitForStateStabilization(TIMING.STATE_UPDATE);
         await Promise.all([mutateRunningMode(), mutateServiceOk()]);
 
         showNotice("success", t(completionMsg));
@@ -81,10 +93,11 @@ export const useServiceManager = () => {
         showNotice("error", msg);
         throw err;
       } finally {
+        operatingRef.current = false;
         setState((prev) => ({ ...prev, [operationType]: false }));
       }
     },
-    [state, mutateRunningMode, mutateServiceOk, isAdminMode],
+    [mutateRunningMode, mutateServiceOk, isAdminMode],
   );
 
   /**
@@ -99,7 +112,7 @@ export const useServiceManager = () => {
         successMsg: "Service Installed Successfully",
       },
       {
-        fn: () => waitForStateStabilization(800),
+        fn: () => waitForStateStabilization(TIMING.SERVICE_STABILIZATION),
         name: "WaitForServiceStabilization",
       },
       {
@@ -129,7 +142,7 @@ export const useServiceManager = () => {
         successMsg: "Service Reinstalled Successfully",
       },
       {
-        fn: () => waitForStateStabilization(800),
+        fn: () => waitForStateStabilization(TIMING.SERVICE_STABILIZATION),
         name: "WaitForServiceStabilization",
       },
       {
@@ -159,7 +172,7 @@ export const useServiceManager = () => {
         isOptional: true,
       },
       {
-        fn: () => waitForStateStabilization(400),
+        fn: () => waitForStateStabilization(TIMING.CORE_STOP),
         name: "WaitForCoreStop",
       },
       {

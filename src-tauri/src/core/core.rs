@@ -430,7 +430,11 @@ impl CoreManager {
         // 清理过程超时保护
         let cleanup_result = timeout(Duration::from_secs(30), async {
             // 获取当前管理的进程 PID（缩短锁持有时间）
-            let current_pid = self.child_sidecar.lock().as_ref().and_then(|child| child.pid());
+            let current_pid = self
+                .child_sidecar
+                .lock()
+                .as_ref()
+                .and_then(|child| child.pid());
 
             if let Some(pid) = current_pid {
                 logging!(debug, Type::Core, "当前管理的进程 PID: {}", pid);

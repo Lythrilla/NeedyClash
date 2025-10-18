@@ -1,6 +1,6 @@
 use super::CmdResult;
-use crate::core::tun_manager::{TunManager, TUN_MANAGER};
 use crate::config::Config;
+use crate::core::tun_manager::{TUN_MANAGER, TunManager};
 use crate::utils::i18n::t;
 
 /// 检查是否可以启用 TUN 模式
@@ -76,10 +76,7 @@ pub async fn reapply_tun_config() -> CmdResult {
 #[tauri::command]
 pub async fn toggle_tun_mode() -> CmdResult<bool> {
     let verge_config = Config::verge().await;
-    let current_state = verge_config
-        .latest_ref()
-        .enable_tun_mode
-        .unwrap_or(false);
+    let current_state = verge_config.latest_ref().enable_tun_mode.unwrap_or(false);
     drop(verge_config);
 
     let new_state = !current_state;
@@ -92,9 +89,9 @@ pub async fn toggle_tun_mode() -> CmdResult<bool> {
     }
 
     // 更新配置
-    use crate::feat::patch_verge;
     use crate::config::IVerge;
-    
+    use crate::feat::patch_verge;
+
     let patch = IVerge {
         enable_tun_mode: Some(new_state),
         ..Default::default()
@@ -106,4 +103,3 @@ pub async fn toggle_tun_mode() -> CmdResult<bool> {
 
     Ok(new_state)
 }
-

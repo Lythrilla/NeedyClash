@@ -125,13 +125,7 @@ const ProxyControlSwitches = ({
   } = useServiceManager();
   const { actualState: systemProxyActualState, toggleSystemProxy } =
     useSystemProxyState();
-  const {
-    isAdminMode,
-    isServiceMode,
-    isTunModeAvailable,
-    mutateRunningMode,
-    mutateServiceOk,
-  } = useSystemState();
+  const { isAdminMode, isServiceMode, isTunModeAvailable } = useSystemState();
 
   const sysproxyRef = useRef<DialogRef>(null);
   const tunRef = useRef<DialogRef>(null);
@@ -153,39 +147,29 @@ const ProxyControlSwitches = ({
     await patchVerge({ enable_tun_mode: value });
   };
 
+  // 服务操作已经包含状态更新逻辑，无需额外处理
   const onInstallService = useLockFn(async () => {
     try {
       await installServiceAndRestartCore();
-      // 等待服务状态更新
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await mutateRunningMode();
-      await mutateServiceOk();
     } catch (err) {
-      showNotice("error", (err as Error).message || String(err));
+      // 错误已在 Hook 中处理，这里只记录日志
+      console.error("[ProxyControlSwitches] 安装服务失败:", err);
     }
   });
 
   const onReinstallService = useLockFn(async () => {
     try {
       await reinstallServiceAndRestartCore();
-      // 等待服务状态更新
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await mutateRunningMode();
-      await mutateServiceOk();
     } catch (err) {
-      showNotice("error", (err as Error).message || String(err));
+      console.error("[ProxyControlSwitches] 重装服务失败:", err);
     }
   });
 
   const onUninstallService = useLockFn(async () => {
     try {
       await uninstallServiceAndRestartCore();
-      // 等待服务状态更新
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await mutateRunningMode();
-      await mutateServiceOk();
     } catch (err) {
-      showNotice("error", (err as Error).message || String(err));
+      console.error("[ProxyControlSwitches] 卸载服务失败:", err);
     }
   });
 

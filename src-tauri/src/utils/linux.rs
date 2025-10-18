@@ -525,4 +525,3 @@ pub fn configure_environment() {
         );
     }
 }
-
