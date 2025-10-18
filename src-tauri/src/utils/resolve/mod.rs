@@ -196,7 +196,7 @@ pub(super) async fn init_service_manager() {
     clash_verge_service_ipc::set_config(ServiceManager::config()).await;
 
     // 减少重试次数和等待时间，避免阻塞窗口响应
-    let max_retries = 2;  // 从3减少到2
+    let max_retries = 2; // 从3减少到2
     let mut retry_count = 0;
 
     while retry_count < max_retries {
@@ -210,7 +210,7 @@ pub(super) async fn init_service_manager() {
             );
             retry_count += 1;
             if retry_count < max_retries {
-                tokio::time::sleep(tokio::time::Duration::from_millis(300)).await;  // 从1000ms减少到300ms
+                tokio::time::sleep(tokio::time::Duration::from_millis(300)).await; // 从1000ms减少到300ms
                 continue;
             }
             return;
@@ -237,7 +237,7 @@ pub(super) async fn init_service_manager() {
                 );
                 retry_count += 1;
                 if retry_count < max_retries {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(300)).await;  // 从1000ms减少到300ms
+                    tokio::time::sleep(tokio::time::Duration::from_millis(300)).await; // 从1000ms减少到300ms
                 }
             }
         }
