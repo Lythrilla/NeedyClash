@@ -19,6 +19,28 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* 亮色模式背景 - 默认 */
+html,
+body {
+  background-color: #FAFAFA;
+  transition: background-color 0.3s ease;
+}
+
+/* 暗色模式背景 */
+[data-theme="dark"] html,
+[data-theme="dark"] body,
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  background-color: #0F0F0F;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]),
+  body:not([data-theme]) {
+    background-color: #0F0F0F;
+  }
+}
+
 body {
   margin: 0;
   padding: 0;

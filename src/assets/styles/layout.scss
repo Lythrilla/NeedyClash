@@ -68,12 +68,9 @@
     /* 导航菜单 */
     .the-menu {
       flex: 1 1 auto;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
       margin: 0;
       padding: 0;
-      scrollbar-width: thin;
-      -ms-overflow-style: none;
     }
 
     /* 流量统计 */

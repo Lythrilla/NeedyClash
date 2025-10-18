@@ -642,6 +642,14 @@ export const useCustomTheme = () => {
 
     const rootEle = document.documentElement;
     if (rootEle) {
+      // 立即设置 data-theme 属性，确保主题样式立即生效
+      rootEle.setAttribute("data-theme", mode);
+      
+      // 立即设置背景色，防止闪烁
+      const themeBackgroundColor = mode === "light" ? "#FAFAFA" : "#0F0F0F";
+      document.body.style.backgroundColor = themeBackgroundColor;
+      rootEle.style.backgroundColor = themeBackgroundColor;
+      
       // 优化暗色模式配色方案 - 温暖灰色系
       const backgroundColor =
         mode === "light" ? "#F8FAFC" : dt.background_color;
