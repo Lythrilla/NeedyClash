@@ -169,7 +169,8 @@ const SettingPage = () => {
                       ? "rgba(255, 255, 255, 0.04)"
                       : "rgba(0, 0, 0, 0.04)"
                   }`,
-                pl: { xs: 1.5, sm: 2 },
+                px: { xs: 1.5, sm: 2, md: 0 },
+                pl: { md: 2 },
                 pb: { xs: 1.5, sm: 2 },
               }}
             >
@@ -179,7 +180,8 @@ const SettingPage = () => {
             <Box
               className="settings-section"
               sx={{
-                pl: { xs: 1.5, sm: 2 },
+                px: { xs: 1.5, sm: 2, md: 0 },
+                pl: { md: 2 },
                 pt: { xs: 1.5, sm: 2 },
               }}
             >
