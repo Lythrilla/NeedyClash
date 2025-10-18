@@ -1,6 +1,6 @@
 {
   "name": "needyclash",
-  "version": "2.4.3",
+  "version": "1.0.0",
   "description": "NeedyClash - A secondary development version based on NeedyClash Rev",
   "author": "Lythrilla",
   "license": "GPL-3.0-only",
@@ -14,7 +14,7 @@
     "build:fast": "cross-env NODE_OPTIONS='--max-old-space-size=4096' tauri build -- --profile fast-release",
     "tauri": "tauri",
     "web:dev": "vite",
-    "web:build": "tsc --noEmit && vite build",
+    "web:build": "cross-env NODE_OPTIONS='--max-old-space-size=8192' tsc --noEmit && vite build",
     "web:serve": "vite preview",
     "prebuild": "node scripts/prebuild.mjs",
     "updater": "node scripts/updater.mjs",

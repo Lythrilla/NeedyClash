@@ -162,7 +162,7 @@ jobs:
             target: aarch64-apple-darwin
           - os: macos-latest
             target: x86_64-apple-darwin
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             target: x86_64-unknown-linux-gnu
 
     runs-on: ${{ matrix.os }}
@@ -183,7 +183,7 @@ jobs:
           save-if: false
 
       - name: Install dependencies (ubuntu only)
-        if: matrix.os == 'ubuntu-22.04'
+        if: matrix.os == 'ubuntu-24.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libxslt1.1 libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
@@ -242,10 +242,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             target: aarch64-unknown-linux-gnu
             arch: arm64
-          - os: ubuntu-22.04
+          - os: ubuntu-24.04
             target: armv7-unknown-linux-gnueabihf
             arch: armhf
     runs-on: ${{ matrix.os }}
@@ -285,18 +285,26 @@ jobs:
           sudo ls -lR /etc/apt/
 
           cat > /tmp/sources.list << EOF
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-security main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-updates main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-backports main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-security main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-updates main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-backports main multiverse universe restricted
 
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-security main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-backports main multiverse universe restricted
           EOF
 
-          sudo mv /etc/apt/sources.list /etc/apt/sources.list.default
+          # Backup original sources
+          if [ -f /etc/apt/sources.list ]; then
+            sudo mv /etc/apt/sources.list /etc/apt/sources.list.default
+          fi
+          if [ -d /etc/apt/sources.list.d ]; then
+            sudo mkdir -p /etc/apt/sources.list.d.backup
+            sudo mv /etc/apt/sources.list.d/* /etc/apt/sources.list.d.backup/ || true
+          fi
+          
           sudo mv /tmp/sources.list /etc/apt/sources.list
 
           sudo dpkg --add-architecture ${{ matrix.arch }}
