@@ -6,7 +6,7 @@
 </h1>
 
 <h3 align="center">
-A secondary development version based on <a href="https://github.com/clash-verge-rev/clash-verge-rev">NeedyClash Rev</a>
+A secondary development version based on <a href="https://github.com/clash-verge-rev/clash-verge-rev">NeedyClash</a>
 <br>
 Clash Meta GUI based on <a href="https://github.com/tauri-apps/tauri">Tauri</a>.
 </h3>
@@ -34,6 +34,7 @@ Supports Windows (x64/x86), Linux (x64/arm64) and macOS 10.15+ (intel/apple).
 ### Original Project
 
 This project is based on **NeedyClash Rev**. For the original project, please visit:
+
 - GitHub: [clash-verge-rev/clash-verge-rev](https://github.com/clash-verge-rev/clash-verge-rev)
 - Documentation: [clash-verge-rev.github.io](https://clash-verge-rev.github.io/)
 - Telegram: [@clash_verge_rev](https://t.me/clash_verge_re)
