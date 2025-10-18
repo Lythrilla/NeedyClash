@@ -1,10 +1,10 @@
 use anyhow::Result;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use tauri_plugin_shell::process::CommandChild;
 
 /// 进程守卫，确保进程在守卫销毁时被正确终止
-/// 
+///
 /// # 改进点：
 /// - 添加了终止状态跟踪，防止重复终止
 /// - 改进了错误处理和日志记录
@@ -42,7 +42,7 @@ impl CommandChildGuard {
     }
 
     /// 终止子进程
-    /// 
+    ///
     /// # 返回值
     /// - `Ok(())` 如果进程成功终止或已经不存在
     /// - `Err(_)` 如果终止失败
@@ -60,7 +60,7 @@ impl CommandChildGuard {
         if let Some(child) = self.child.take() {
             let pid = child.pid();
             log::info!(target: "app", "Attempting to kill process PID: {}", pid);
-            
+
             match child.kill() {
                 Ok(_) => {
                     log::info!(target: "app", "Successfully sent kill signal to process PID: {}", pid);

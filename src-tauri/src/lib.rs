@@ -569,9 +569,9 @@ pub fn run() {
             }
             tauri::RunEvent::ExitRequested { api, code, .. } => {
                 use std::time::Duration;
-                
+
                 let handle = core::handle::Handle::global();
-                
+
                 // 如果已经在退出流程中，直接允许退出
                 if handle.is_exiting() {
                     logging!(
@@ -592,7 +592,7 @@ pub fn run() {
 
                 // 有退出码的请求，执行清理操作
                 logging!(info, Type::System, "收到退出请求，开始清理资源");
-                
+
                 // 使用超时保护清理WebSocket连接
                 let ws_cleanup = tauri::async_runtime::spawn(async move {
                     match tokio::time::timeout(Duration::from_secs(3), async {
@@ -622,7 +622,7 @@ pub fn run() {
             }
             tauri::RunEvent::Exit => {
                 use std::time::Duration;
-                
+
                 let handle = core::handle::Handle::global();
 
                 if handle.is_exiting() {
@@ -633,25 +633,25 @@ pub fn run() {
                     );
                 } else {
                     logging!(info, Type::System, "Exit事件触发，开始执行清理流程");
-                    
+
                     // 标记为正在退出
                     handle.set_is_exiting();
-                    
+
                     // 通知代理管理器应用即将停止
                     EventDrivenProxyManager::global().notify_app_stopping();
-                    
+
                     // 执行特性清理，使用超时保护
                     let cleanup_start = std::time::Instant::now();
                     feat::clean();
                     let cleanup_duration = cleanup_start.elapsed();
-                    
+
                     logging!(
                         info,
                         Type::System,
                         "清理流程完成，耗时: {:?}",
                         cleanup_duration
                     );
-                    
+
                     // 如果清理时间过长，记录警告
                     if cleanup_duration > Duration::from_secs(5) {
                         logging!(

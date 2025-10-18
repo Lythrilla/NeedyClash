@@ -6,7 +6,7 @@ use std::panic::Location;
 use tauri::{async_runtime, async_runtime::JoinHandle};
 
 /// 异步任务处理器
-/// 
+///
 /// # 改进点：
 /// - 添加了更好的任务追踪和错误处理
 /// - 统一的 spawn 接口确保任务被正确管理
@@ -15,7 +15,7 @@ pub struct AsyncHandler;
 
 impl AsyncHandler {
     /// 生成一个新的异步任务
-    /// 
+    ///
     /// # 特点
     /// - 自动处理 panic 并记录日志
     /// - 支持调用位置追踪（debug 模式下）
@@ -28,17 +28,17 @@ impl AsyncHandler {
     {
         #[cfg(feature = "tokio-trace")]
         Self::log_task_info(&f);
-        
+
         #[cfg(feature = "tokio-trace")]
         let location = Location::caller();
-        
+
         async_runtime::spawn(async move {
             #[cfg(feature = "tokio-trace")]
             log::trace!(target: "app", "Task started at {}:{}:{}", 
                 location.file(), location.line(), location.column());
-            
+
             f().await;
-            
+
             #[cfg(feature = "tokio-trace")]
             log::trace!(target: "app", "Task completed at {}:{}:{}", 
                 location.file(), location.line(), location.column());
@@ -46,7 +46,7 @@ impl AsyncHandler {
     }
 
     /// 生成一个阻塞任务（在专用的阻塞线程池中运行）
-    /// 
+    ///
     /// # 注意
     /// - 此方法应该用于 CPU 密集型或会阻塞的同步操作
     /// - 不要在这里执行异步操作
@@ -58,27 +58,27 @@ impl AsyncHandler {
     {
         #[cfg(feature = "tokio-trace")]
         Self::log_task_info(&f);
-        
+
         #[cfg(feature = "tokio-trace")]
         let location = Location::caller();
-        
+
         async_runtime::spawn_blocking(move || {
             #[cfg(feature = "tokio-trace")]
             log::trace!(target: "app", "Blocking task started at {}:{}:{}", 
                 location.file(), location.line(), location.column());
-            
+
             let result = f();
-            
+
             #[cfg(feature = "tokio-trace")]
             log::trace!(target: "app", "Blocking task completed at {}:{}:{}", 
                 location.file(), location.line(), location.column());
-            
+
             result
         })
     }
 
     /// 在当前线程阻塞直到 future 完成
-    /// 
+    ///
     /// # 警告
     /// - 不要在异步上下文中调用此方法，会导致 panic
     /// - 仅在初始化或特殊情况下使用

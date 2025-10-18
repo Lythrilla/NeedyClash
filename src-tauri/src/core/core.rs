@@ -424,14 +424,14 @@ impl CoreManager {
 
 impl CoreManager {
     /// 清理多余的 mihomo 进程
-    /// 
+    ///
     /// # 改进点：
     /// - 添加超时保护，避免清理过程卡死
     /// - 更完善的错误处理和日志记录
     /// - 防止清理过程中的进程 ID 冲突
     async fn cleanup_orphaned_mihomo_processes(&self) -> Result<()> {
-        use tokio::time::{timeout, Duration};
-        
+        use tokio::time::{Duration, timeout};
+
         logging!(info, Type::Core, "开始清理多余的 mihomo 进程");
 
         // 整个清理过程添加30秒超时保护
@@ -459,7 +459,7 @@ impl CoreManager {
                 process_futures.push(async move {
                     timeout(
                         Duration::from_secs(5),
-                        self.find_processes_by_name(process_name.clone(), target)
+                        self.find_processes_by_name(process_name.clone(), target),
                     )
                     .await
                     .unwrap_or_else(|_| {
@@ -504,7 +504,12 @@ impl CoreManager {
                 return Ok(());
             }
 
-            logging!(info, Type::Core, "发现 {} 个需要清理的进程", pids_to_kill.len());
+            logging!(
+                info,
+                Type::Core,
+                "发现 {} 个需要清理的进程",
+                pids_to_kill.len()
+            );
 
             // 并行终止所有目标进程，每个终止操作也有超时
             let mut kill_futures = Vec::new();
@@ -514,11 +519,17 @@ impl CoreManager {
                 kill_futures.push(async move {
                     timeout(
                         Duration::from_secs(3),
-                        self.kill_process_with_verification(pid, process_name.clone())
+                        self.kill_process_with_verification(pid, process_name.clone()),
                     )
                     .await
                     .unwrap_or_else(|_| {
-                        logging!(warn, Type::Core, "终止进程 {} (PID: {}) 超时", process_name, pid);
+                        logging!(
+                            warn,
+                            Type::Core,
+                            "终止进程 {} (PID: {}) 超时",
+                            process_name,
+                            pid
+                        );
                         false
                     })
                 });

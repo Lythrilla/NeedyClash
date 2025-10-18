@@ -225,14 +225,14 @@ impl NotificationSystem {
     }
 
     /// 优雅关闭通知系统
-    /// 
+    ///
     /// # 改进点：
     /// - 添加超时机制，避免无限等待
     /// - 更完善的错误处理和清理
     /// - 防止重复关闭
     fn shutdown(&mut self) {
         use std::time::Duration;
-        
+
         if !self.is_running {
             log::debug!("NotificationSystem already shut down, skipping");
             return;
@@ -250,14 +250,12 @@ impl NotificationSystem {
         // 等待工作线程完成，设置5秒超时避免无限等待
         if let Some(handle) = self.worker_handle.take() {
             // 创建一个超时机制
-            let join_result = std::thread::spawn(move || {
-                handle.join()
-            });
+            let join_result = std::thread::spawn(move || handle.join());
 
             // 等待最多5秒
             let timeout_duration = Duration::from_secs(5);
             let start = std::time::Instant::now();
-            
+
             while !join_result.is_finished() {
                 if start.elapsed() > timeout_duration {
                     log::warn!("NotificationSystem worker thread join timeout after 5 seconds");
