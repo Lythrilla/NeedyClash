@@ -4192,7 +4192,7 @@ dependencies = [
 
 [[package]]
 name = "needyclash"
-version = "2.4.3"
+version = "1.0.0"
 dependencies = [
  "aes-gcm",
  "anyhow",
@@ -7241,7 +7241,7 @@ dependencies = [
 
 [[package]]
 name = "tauri-plugin-deep-link"
-version = "2.4.3"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd67112fb1131834c2a7398ffcba520dbbf62c17de3b10329acd1a3554b1a9bb"
 dependencies = [
