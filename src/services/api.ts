@@ -1,7 +1,11 @@
 import { fetch } from "@tauri-apps/plugin-http";
 import axios, { AxiosInstance } from "axios";
 
+import { getLogger } from "@/utils/logger";
+
 import { getClashInfo } from "./cmds";
+
+const logger = getLogger("API");
 
 let instancePromise: Promise<AxiosInstance> = null!;
 
@@ -149,7 +153,7 @@ function shuffleServices(): ServiceConfig[] {
   );
 
   if (validServices.length === 0) {
-    console.error("No valid services found in IP_CHECK_SERVICES");
+    logger.error("No valid services found in IP_CHECK_SERVICES");
     return [];
   }
 
@@ -170,16 +174,10 @@ function shuffleServices(): ServiceConfig[] {
 }
 
 // 获取当前IP和地理位置信息
-export const getIpInfo = async (): Promise<IpInfo> => {
+export const getIpInfo = async (signal?: AbortSignal): Promise<IpInfo> => {
   // 配置参数
-  const maxRetries = 3;
-  const serviceTimeout = 8000; // 增加单个服务超时时间
-  const overallTimeout = 30000; // 增加总超时时间
-
-  const overallTimeoutController = new AbortController();
-  const overallTimeoutId = setTimeout(() => {
-    overallTimeoutController.abort();
-  }, overallTimeout);
+  const maxRetries = 2; // 减少重试次数，提高响应速度
+  const serviceTimeout = 10000;
 
   try {
     const shuffledServices = shuffleServices();
@@ -187,22 +185,41 @@ export const getIpInfo = async (): Promise<IpInfo> => {
     const failedServices: string[] = [];
 
     for (const service of shuffledServices) {
-      console.log(`尝试IP检测服务: ${service.url}`);
+      // 检查是否已被取消
+      if (signal?.aborted) {
+        throw new Error("请求已取消");
+      }
+
+      logger.debug(`尝试IP检测服务: ${service.url}`);
 
       for (let attempt = 0; attempt < maxRetries; attempt++) {
         let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
         try {
+          // 检查是否已被取消
+          if (signal?.aborted) {
+            throw new Error("请求已取消");
+          }
+
           const timeoutController = new AbortController();
           timeoutId = setTimeout(() => {
             timeoutController.abort();
           }, service.timeout || serviceTimeout);
 
+          // 组合信号：如果外部信号取消或超时信号触发，都会取消请求
+          const combinedSignal = signal
+            ? AbortSignal.any
+              ? AbortSignal.any([signal, timeoutController.signal])
+              : timeoutController.signal
+            : timeoutController.signal;
+
           const response = await fetch(service.url, {
             method: "GET",
-            signal: timeoutController.signal,
+            signal: combinedSignal,
             connectTimeout: service.timeout || serviceTimeout,
           });
+
+          if (timeoutId) clearTimeout(timeoutId);
 
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -210,10 +227,8 @@ export const getIpInfo = async (): Promise<IpInfo> => {
 
           const data = await response.json();
 
-          if (timeoutId) clearTimeout(timeoutId);
-
           if (data && data.ip) {
-            console.log(`IP检测成功，使用服务: ${service.url}`);
+            logger.info(`IP检测成功，使用服务: ${service.url}`);
             return service.mapping(data);
           } else {
             throw new Error(`无效的响应格式 from ${service.url}`);
@@ -221,26 +236,28 @@ export const getIpInfo = async (): Promise<IpInfo> => {
         } catch (error: any) {
           if (timeoutId) clearTimeout(timeoutId);
 
+          // 如果是外部取消信号，立即停止所有尝试
+          if (signal?.aborted || error.message === "请求已取消") {
+            throw new Error("请求已取消");
+          }
+
           lastError = error;
           const errorMsg =
             error.name === "AbortError"
               ? "请求超时"
               : error.message || error.toString();
 
-          console.warn(
+          logger.warn(
             `尝试 ${attempt + 1}/${maxRetries} 失败 (${service.url}): ${errorMsg}`,
           );
 
-          // 如果是超时或网络错误，继续重试；如果是致命错误，跳过该服务
-          if (error.name === "AbortError" || errorMsg.includes("超时")) {
-            if (attempt < maxRetries - 1) {
-              await new Promise((resolve) => setTimeout(resolve, 500));
-              continue;
-            }
+          // 如果是最后一次重试，跳到下一个服务
+          if (attempt >= maxRetries - 1) {
+            break;
           }
 
-          // 最后一次尝试失败，跳出重试循环，尝试下一个服务
-          break;
+          // 短暂延迟后重试
+          await new Promise((resolve) => setTimeout(resolve, 300));
         }
       }
 
@@ -250,9 +267,13 @@ export const getIpInfo = async (): Promise<IpInfo> => {
     // 所有服务都失败
     const errorMsg = lastError?.message || lastError?.toString() || "未知错误";
     throw new Error(
-      `所有IP检测服务都失败 (已尝试 ${failedServices.length} 个服务):\n最后错误: ${errorMsg}`,
+      `所有IP检测服务都失败 (已尝试 ${failedServices.length} 个服务): ${errorMsg}`,
     );
-  } finally {
-    clearTimeout(overallTimeoutId);
+  } catch (error: any) {
+    // 改进错误消息
+    if (error.message === "请求已取消") {
+      throw error;
+    }
+    throw error;
   }
 };

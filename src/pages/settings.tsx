@@ -134,8 +134,7 @@ const SettingPage = () => {
                       ? "rgba(255, 255, 255, 0.04)"
                       : "rgba(0, 0, 0, 0.04)"
                   }`,
-                pr: { xs: 1.5, sm: 2 },
-                pb: { xs: 1.5, sm: 2 },
+                py: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingSystem onError={onError} />
@@ -144,8 +143,7 @@ const SettingPage = () => {
             <Box
               className="settings-section"
               sx={{
-                pr: { xs: 1.5, sm: 2 },
-                pt: { xs: 1.5, sm: 2 },
+                py: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingClash onError={onError} />
@@ -169,9 +167,7 @@ const SettingPage = () => {
                       ? "rgba(255, 255, 255, 0.04)"
                       : "rgba(0, 0, 0, 0.04)"
                   }`,
-                px: { xs: 1.5, sm: 2, md: 0 },
-                pl: { md: 2 },
-                pb: { xs: 1.5, sm: 2 },
+                py: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingVergeBasic onError={onError} />
@@ -180,9 +176,7 @@ const SettingPage = () => {
             <Box
               className="settings-section"
               sx={{
-                px: { xs: 1.5, sm: 2, md: 0 },
-                pl: { md: 2 },
-                pt: { xs: 1.5, sm: 2 },
+                py: { xs: 1.5, sm: 2 },
               }}
             >
               <SettingVergeAdvanced onError={onError} />

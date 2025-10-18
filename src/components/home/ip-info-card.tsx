@@ -5,12 +5,15 @@ import {
   VisibilityOffOutlined,
 } from "@mui/icons-material";
 import { Box, Typography, Button, Skeleton, IconButton } from "@mui/material";
-import { useState, useEffect, useCallback, memo } from "react";
+import { useState, useEffect, useCallback, memo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { getIpInfo } from "@/services/api";
+import { getLogger } from "@/utils/logger";
 
 import { EnhancedCard } from "./enhanced-card";
+
+const logger = getLogger("IpInfoCard");
 
 // 定义刷新时间（秒）
 const IP_REFRESH_SECONDS = 300;
@@ -79,51 +82,86 @@ export const IpInfoCard = () => {
   const [showIp, setShowIp] = useState(false);
   const [countdown, setCountdown] = useState(IP_REFRESH_SECONDS);
 
-  // 获取IP信息
-  const fetchIpInfo = useCallback(async () => {
+  // 使用 ref 管理 AbortController，避免组件卸载时请求继续
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // 获取IP信息 - 使用 ref 来稳定函数引用
+  const fetchIpInfoRef = useRef<(() => Promise<void>) | undefined>(undefined);
+  fetchIpInfoRef.current = async () => {
     try {
+      // 取消之前的请求
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // 创建新的 AbortController
+      abortControllerRef.current = new AbortController();
+
       setLoading(true);
       setError("");
-      const data = await getIpInfo();
+
+      const data = await getIpInfo(abortControllerRef.current.signal);
+
       setIpInfo(data);
       setCountdown(IP_REFRESH_SECONDS);
     } catch (err: any) {
+      // 忽略取消错误
+      if (err.message === "请求已取消" || err.name === "AbortError") {
+        logger.debug("IP检测请求被取消");
+        return;
+      }
       setError(err.message || t("Failed to get IP info"));
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  };
+
+  // 暴露一个稳定的函数给外部使用
+  const fetchIpInfo = useCallback(() => {
+    fetchIpInfoRef.current?.();
+  }, []);
 
   // 组件加载时获取IP信息
   useEffect(() => {
-    fetchIpInfo();
-
-    // 倒计时实现，减少不必要的重渲染
+    let mounted = true;
     let timer: number | null = null;
     let currentCount = IP_REFRESH_SECONDS;
 
-    // 只在必要时更新状态，减少重渲染次数
+    // 初始加载
+    if (mounted) {
+      fetchIpInfoRef.current?.();
+    }
+
+    // 倒计时和自动刷新
     const startCountdown = () => {
       timer = window.setInterval(() => {
+        if (!mounted) return;
+
         currentCount -= 1;
 
         if (currentCount <= 0) {
-          fetchIpInfo();
+          fetchIpInfoRef.current?.();
           currentCount = IP_REFRESH_SECONDS;
         }
 
-        // 每5秒或倒计时结束时才更新UI
-        if (currentCount % 5 === 0 || currentCount <= 0) {
+        // 每5秒更新UI显示
+        if (currentCount % 5 === 0) {
           setCountdown(currentCount);
         }
       }, 1000);
     };
 
     startCountdown();
+
     return () => {
+      mounted = false;
       if (timer) clearInterval(timer);
+      // 组件卸载时取消正在进行的请求
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
     };
-  }, [fetchIpInfo]);
+  }, []); // 移除 fetchIpInfo 依赖，避免循环
 
   const toggleShowIp = useCallback(() => {
     setShowIp((prev) => !prev);
