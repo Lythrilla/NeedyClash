@@ -63,7 +63,6 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
     verge?.verge_tproxy_enabled ?? false,
   );
 
-  const saveRequest = useLockFn(async () => {
   const { loading, run: saveSettings } = useRequest(
     async (params: { clashConfig: any; vergeConfig: any }) => {
       const { clashConfig, vergeConfig } = params;
