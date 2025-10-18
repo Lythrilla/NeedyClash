@@ -42,7 +42,7 @@ pub fn resolve_setup_async() {
 
     AsyncHandler::spawn(|| async {
         let start_time = std::time::Instant::now();
-        
+
         #[cfg(not(feature = "tauri-dev"))]
         resolve_setup_logger().await;
         logging!(
@@ -89,7 +89,7 @@ pub fn resolve_setup_async() {
             "所有异步设置任务完成，总耗时: {:?}",
             elapsed
         );
-        
+
         if elapsed.as_secs() > 10 {
             logging!(warn, Type::Setup, "异步设置任务耗时较长({:?})", elapsed);
         }
