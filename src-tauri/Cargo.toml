@@ -90,6 +90,7 @@ clash_verge_logger = { version = "0.1.0", git = "https://github.com/clash-verge-
 clash_verge_service_ipc = { version = "2.0.16", features = [
   "client",
 ], git = "https://github.com/clash-verge-rev/clash-verge-service-ipc" }
+env_logger = { version = "0.11", optional = true }
 async-trait = "0.1.89"
 # clash_verge_service_ipc = { version = "2.0.16", features = [
 #   "client",
@@ -139,7 +140,7 @@ tauri-plugin-updater = "2.9.0"
 [features]
 default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
-verge-dev = ["clash_verge_logger/color"]
+verge-dev = ["clash_verge_logger/color", "env_logger"]
 tauri-dev = []
 tokio-trace = ["console-subscriber"]
 clippy = ["tauri/test"]

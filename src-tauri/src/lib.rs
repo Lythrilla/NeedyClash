@@ -225,6 +225,15 @@ mod app_init {
 }
 
 pub fn run() {
+    // Initialize basic logging for verge-dev feature
+    #[cfg(feature = "verge-dev")]
+    {
+        use log::LevelFilter;
+        env_logger::Builder::from_default_env()
+            .filter_level(LevelFilter::Info)
+            .init();
+    }
+
     // Setup singleton check
     if app_init::init_singleton_check().is_err() {
         return;

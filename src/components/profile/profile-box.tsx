@@ -26,20 +26,12 @@ export const ProfileBox = styled(Box)(({
   const borderSelect = {
     "light-true": {
       borderLeft: `3px solid ${primary.main}`,
-      width: `calc(100% + 3px)`,
-      marginLeft: `-3px`,
     },
-    "light-false": {
-      width: "100%",
-    },
+    "light-false": {},
     "dark-true": {
       borderLeft: `3px solid ${primary.main}`,
-      width: `calc(100% + 3px)`,
-      marginLeft: `-3px`,
     },
-    "dark-false": {
-      width: "100%",
-    },
+    "dark-false": {},
   }[key];
 
   return {
@@ -49,14 +41,21 @@ export const ProfileBox = styled(Box)(({
     textAlign: "left",
     padding: "10px 14px",
     boxSizing: "border-box",
-    backgroundColor: mode === "light" ? "#ffffff" : alpha(theme.palette.background.paper, 0.7), /* 暗色模式半透明 */
+    width: "100%",
+    backgroundColor:
+      mode === "light"
+        ? "#ffffff"
+        : alpha(theme.palette.background.paper, 0.7) /* 暗色模式半透明 */,
     ...borderSelect,
-    border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(51, 65, 85, 0.5)"}`, /* 添加边框 */
-    borderRadius: "var(--cv-border-radius-md)", /* 添加圆角 */
+    border: `1px solid ${mode === "light" ? "#E2E8F0" : "rgba(51, 65, 85, 0.5)"}` /* 添加边框 */,
+    borderRadius: "var(--cv-border-radius-md)" /* 添加圆角 */,
     color,
     transition: "all 0.2s ease",
     "&:hover": {
-      backgroundColor: mode === "light" ? "#FAFAFA" : alpha(theme.palette.background.paper, 0.9),
+      backgroundColor:
+        mode === "light"
+          ? "#FAFAFA"
+          : alpha(theme.palette.background.paper, 0.9),
       borderColor: mode === "light" ? primary.main : alpha(primary.main, 0.5),
     },
     "& h2": { color: h2color },
