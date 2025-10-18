@@ -107,7 +107,7 @@
   "Use Clash proxy for subscription requests": "订阅请求使用 Clash 代理",
   "Skip SSL certificate verification (insecure)": "跳过 SSL 证书验证（不安全）",
   "Import": "导入",
-  "Importing...": "导入中...",
+  "Importing...": "导入中",
   "Import Profile": "导入订阅",
   "From": "来自",
   "Update Time": "更新时间",
