@@ -323,7 +323,7 @@ async fn check_service_version() -> Result<String> {
         logging!(info, Type::Service, "开始检查服务版本 (IPC)");
         let response = clash_verge_service_ipc::get_version()
             .await
-            .context("无法连接到Clash Verge Service")?;
+            .context("无法连接到NeedyClash Service")?;
         if response.code > 0 {
             let err_msg = response.message;
             logging!(error, Type::Service, "获取服务版本失败: {}", err_msg);
@@ -370,7 +370,7 @@ pub(super) async fn start_with_existing_service(config_file: &PathBuf) -> Result
 
     let response = clash_verge_service_ipc::start_clash(&payload)
         .await
-        .context("无法连接到Clash Verge Service")?;
+        .context("无法连接到NeedyClash Service")?;
 
     if response.code > 0 {
         let err_msg = response.message;
@@ -399,7 +399,7 @@ pub(super) async fn get_clash_logs_by_service() -> Result<VecDeque<CompactString
 
     let response = clash_verge_service_ipc::get_clash_logs()
         .await
-        .context("无法连接到Clash Verge Service")?;
+        .context("无法连接到NeedyClash Service")?;
 
     if response.code > 0 {
         let err_msg = response.message;
@@ -422,7 +422,7 @@ pub(super) async fn stop_core_by_service() -> Result<()> {
 
     let response = clash_verge_service_ipc::stop_clash()
         .await
-        .context("无法连接到Clash Verge Service")?;
+        .context("无法连接到NeedyClash Service")?;
 
     if response.code > 0 {
         let err_msg = response.message;

@@ -28,6 +28,7 @@ export const TestBox = styled(Box)(({ theme, "aria-selected": selected }) => {
     cursor: "pointer",
     textAlign: "left",
     boxShadow: theme.shadows[1],
+    borderRadius: "var(--cv-border-radius-sm)",
     padding: "8px 16px",
     boxSizing: "border-box",
     backgroundColor,

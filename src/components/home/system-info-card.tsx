@@ -24,7 +24,7 @@ import useSWR from "swr";
 
 import { useSystemState } from "@/hooks/use-system-state";
 import { useVerge } from "@/hooks/use-verge";
-import { useServiceInstaller } from "@/hooks/useServiceInstaller";
+
 import { getSystemInfo } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
 import { version as appVersion } from "@root/package.json";
@@ -59,7 +59,6 @@ export const SystemInfoCard = () => {
   const { verge, patchVerge } = useVerge();
   const navigate = useNavigate();
   const { isAdminMode, isSidecarMode } = useSystemState();
-  const { installServiceAndRestartCore } = useServiceInstaller();
 
   // 系统信息状态
   const [systemState, dispatchSystemState] = useReducer(systemStateReducer, {
@@ -166,13 +165,6 @@ export const SystemInfoCard = () => {
       console.error("切换开机自启动状态失败:", err);
     }
   }, [verge, patchVerge]);
-
-  // 点击运行模式处理,Sidecar或纯管理员模式允许安装服务
-  const handleRunningModeClick = useCallback(() => {
-    if (isSidecarMode || (isAdminMode && isSidecarMode)) {
-      installServiceAndRestartCore();
-    }
-  }, [isSidecarMode, isAdminMode, installServiceAndRestartCore]);
 
   // 检查更新
   const onCheckUpdate = useLockFn(async () => {

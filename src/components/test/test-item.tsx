@@ -138,6 +138,7 @@ export const TestItem = ({
           padding: "6px",
           border: "1px solid",
           borderColor: "divider",
+          borderRadius: "var(--cv-border-radius-sm)",
           backgroundColor: "transparent",
           display: "flex",
           flexDirection: "column",

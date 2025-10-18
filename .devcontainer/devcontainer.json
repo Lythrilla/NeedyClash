@@ -1,5 +1,5 @@
 {
-  "name": "Clash Verge Rev Development Environment",
+  "name": "NeedyClash Rev Development Environment",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
 
   "features": {

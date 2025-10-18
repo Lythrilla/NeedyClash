@@ -1,5 +1,5 @@
-import { ComputerOutlined, BuildRounded } from "@mui/icons-material";
-import { Button, alpha, Box } from "@mui/material";
+import { ComputerOutlined, BuildRounded, DeleteOutlined, RefreshRounded } from "@mui/icons-material";
+import { Button, alpha, Box, Stack, Typography } from "@mui/material";
 import { useLockFn } from "ahooks";
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import { useSystemProxyState } from "@/hooks/use-system-proxy-state";
 import { useSystemState } from "@/hooks/use-system-state";
 import { useVerge } from "@/hooks/use-verge";
 import { useServiceInstaller } from "@/hooks/useServiceInstaller";
+import { useServiceUninstaller } from "@/hooks/useServiceUninstaller";
 import { showNotice } from "@/services/noticeService";
 
 import { GuardState } from "./mods/guard-state";
@@ -26,7 +27,8 @@ const SettingSystem = ({ onError }: Props) => {
   const { t } = useTranslation();
 
   const { verge, mutateVerge, patchVerge } = useVerge();
-  const { installServiceAndRestartCore } = useServiceInstaller();
+  const { installServiceAndRestartCore, reinstallServiceAndRestartCore } = useServiceInstaller();
+  const { uninstallServiceAndRestartCore } = useServiceUninstaller();
   const { actualState: systemProxyActualState, toggleSystemProxy } = useSystemProxyState();
   const { 
     isAdminMode, 
@@ -62,6 +64,30 @@ const SettingSystem = ({ onError }: Props) => {
   const onInstallService = useLockFn(async () => {
     try {
       await installServiceAndRestartCore();
+      // 等待一小段时间确保服务状态完全更新
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await mutateRunningMode();
+      await mutateServiceOk();
+    } catch (err) {
+      showNotice("error", (err as Error).message || String(err));
+    }
+  });
+
+  const onReinstallService = useLockFn(async () => {
+    try {
+      await reinstallServiceAndRestartCore();
+      // 等待一小段时间确保服务状态完全更新
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await mutateRunningMode();
+      await mutateServiceOk();
+    } catch (err) {
+      showNotice("error", (err as Error).message || String(err));
+    }
+  });
+
+  const onUninstallService = useLockFn(async () => {
+    try {
+      await uninstallServiceAndRestartCore();
       // 等待一小段时间确保服务状态完全更新
       await new Promise(resolve => setTimeout(resolve, 500));
       await mutateRunningMode();
@@ -124,43 +150,133 @@ const SettingSystem = ({ onError }: Props) => {
         </GuardState>
       </SettingItem>
 
-      {!isServiceMode && (
-        <Box
-          sx={{
-            py: 1.25,
-            px: 2,
-            mb: 0,
-            borderBottom: (theme) =>
-              `1px solid ${theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
-          }}
-        >
-          <Button
-            variant="text"
-            size="small"
-            startIcon={<BuildRounded sx={{ fontSize: "14px" }} />}
-            onClick={onInstallService}
-            sx={{
-              width: "100%",
-              py: 0.75,
-              px: 1.5,
-              fontSize: "12px",
-              fontWeight: 500,
-              textTransform: "none",
-              color: "primary.main",
-              backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
-              transition: "all 0.2s",
-              "&:hover": {
-                backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.15),
-              },
-              "& .MuiButton-startIcon": {
-                marginRight: "8px",
-              },
-            }}
-          >
-            {t("Install Service")}
-          </Button>
-        </Box>
-      )}
+      {/* 服务管理按钮区域 */}
+      <Box
+        sx={{
+          py: 1.25,
+          px: 2,
+          mb: 0,
+          borderBottom: (theme) =>
+            `1px solid ${theme.palette.mode === "dark" ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.03)"}`,
+        }}
+      >
+        {!isServiceMode ? (
+          <Stack spacing={1}>
+            {/* 提示文本 */}
+            {!isAdminMode && (
+              <Typography
+                variant="caption"
+                sx={{
+                  fontSize: "10px",
+                  color: "warning.main",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                }}
+              >
+                {t("Service Installation Requires Administrator")}
+              </Typography>
+            )}
+            {/* 安装服务按钮 */}
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<BuildRounded sx={{ fontSize: "14px" }} />}
+              onClick={onInstallService}
+              sx={{
+                width: "100%",
+                py: 0.75,
+                px: 1.5,
+                fontSize: "12px",
+                fontWeight: 500,
+                textTransform: "none",
+                color: "primary.main",
+                backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                transition: "all 0.2s",
+                "&:hover": {
+                  backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.15),
+                },
+                "& .MuiButton-startIcon": {
+                  marginRight: "8px",
+                },
+              }}
+            >
+              {t("Install Service")}
+            </Button>
+          </Stack>
+        ) : (
+          <Stack spacing={1}>
+            {/* 提示文本 */}
+            {!isAdminMode && (
+              <Typography
+                variant="caption"
+                sx={{
+                  fontSize: "10px",
+                  color: "warning.main",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                }}
+              >
+                {t("Service Management Requires Administrator")}
+              </Typography>
+            )}
+            {/* 重装和卸载按钮 */}
+            <Stack direction="row" spacing={1}>
+              <Button
+                variant="text"
+                size="small"
+                startIcon={<RefreshRounded sx={{ fontSize: "14px" }} />}
+                onClick={onReinstallService}
+                sx={{
+                  flex: 1,
+                  py: 0.75,
+                  px: 1.5,
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  textTransform: "none",
+                  color: "success.main",
+                  backgroundColor: (theme) => alpha(theme.palette.success.main, 0.08),
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    backgroundColor: (theme) => alpha(theme.palette.success.main, 0.15),
+                  },
+                  "& .MuiButton-startIcon": {
+                    marginRight: "6px",
+                  },
+                }}
+              >
+                {t("Reinstall Service")}
+              </Button>
+              <Button
+                variant="text"
+                size="small"
+                startIcon={<DeleteOutlined sx={{ fontSize: "14px" }} />}
+                onClick={onUninstallService}
+                sx={{
+                  flex: 1,
+                  py: 0.75,
+                  px: 1.5,
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  textTransform: "none",
+                  color: "error.main",
+                  backgroundColor: (theme) => alpha(theme.palette.error.main, 0.08),
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    backgroundColor: (theme) => alpha(theme.palette.error.main, 0.15),
+                  },
+                  "& .MuiButton-startIcon": {
+                    marginRight: "6px",
+                  },
+                }}
+              >
+                {t("Uninstall Service")}
+              </Button>
+            </Stack>
+          </Stack>
+        )}
+      </Box>
 
       <SettingItem
         label={t("Auto Launch")}

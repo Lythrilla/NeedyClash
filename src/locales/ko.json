@@ -399,6 +399,16 @@
   "View Profile-Merge": "프로필-병합 보기",
   "Update Successful": "업데이트 성공",
   "Update Failed": "업데이트 실패",
+  "Installing Service...": "서비스 설치 중...",
+  "Uninstalling Service...": "서비스 제거 중...",
+  "Reinstalling Service...": "서비스 재설치 중...",
+  "Service Installed Successfully": "서비스가 성공적으로 설치되었습니다",
+  "Service Uninstalled Successfully": "서비스가 성공적으로 제거되었습니다",
+  "Service Reinstalled Successfully": "서비스가 성공적으로 재설치되었습니다",
+  "Reinstall Service": "서비스 재설치",
+  "Service Installation Requires Administrator": "서비스 설치에는 관리자 권한이 필요합니다",
+  "Service Management Requires Administrator": "서비스 관리에는 관리자 권한이 필요합니다",
+  "Service Uninstallation Requires Administrator": "서비스 제거에는 관리자 권한이 필요합니다",
   "Auto Delay Detection": "자동 지연 감지",
   "Auto Delay Detection Info": "백그라운드에서 현재 노드의 지연을 주기적으로 검사합니다"
 }

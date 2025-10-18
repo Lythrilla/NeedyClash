@@ -25,9 +25,14 @@ const executeWithErrorHandling = async (
 };
 
 export const useServiceUninstaller = () => {
-  const { mutateRunningMode, mutateServiceOk } = useSystemState();
+  const { mutateRunningMode, mutateServiceOk, isAdminMode } = useSystemState();
 
   const uninstallServiceAndRestartCore = useCallback(async () => {
+    // 如果不是管理员模式，提示需要管理员权限
+    if (!isAdminMode) {
+      showNotice("info", t("Service Uninstallation Requires Administrator"));
+    }
+
     await executeWithErrorHandling(() => stopCore(), "Stopping Core...");
 
     await executeWithErrorHandling(
@@ -37,9 +42,12 @@ export const useServiceUninstaller = () => {
     );
 
     await executeWithErrorHandling(() => restartCore(), "Restarting Core...");
+    
+    // 等待一小段时间确保服务状态完全更新
+    await new Promise(resolve => setTimeout(resolve, 500));
     await mutateRunningMode();
     await mutateServiceOk();
-  }, [mutateRunningMode, mutateServiceOk]);
+  }, [mutateRunningMode, mutateServiceOk, isAdminMode]);
 
   return { uninstallServiceAndRestartCore };
 };

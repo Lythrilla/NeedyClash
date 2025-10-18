@@ -675,13 +675,14 @@ export const useCustomTheme = () => {
         "--window-border-color",
         mode === "light" ? "#E2E8F0" : "#404040",
       );
+      // 统一滚动条颜色变量
       rootEle.style.setProperty(
-        "--scrollbar-bg",
-        mode === "light" ? "#F1F5F9" : "transparent",
+        "--cv-scroller-color",
+        mode === "light" ? "rgba(148, 163, 184, 0.4)" : "rgba(148, 163, 184, 0.3)",
       );
       rootEle.style.setProperty(
-        "--scrollbar-thumb",
-        mode === "light" ? "#CBD5E1" : "#475569",
+        "--cv-scroller-hover-color",
+        mode === "light" ? "rgba(100, 116, 139, 0.6)" : "rgba(148, 163, 184, 0.5)",
       );
       // 自定义背景CSS变量
       rootEle.style.setProperty("--bg-type", backgroundType);
@@ -712,20 +713,6 @@ export const useCustomTheme = () => {
 
     if (styleElement) {
       const globalStyles = `
-        /* 优化滚动条样式 */
-        ::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-          background-color: var(--scrollbar-bg);
-        }
-        ::-webkit-scrollbar-thumb {
-          background-color: var(--scrollbar-thumb);
-          transition: background-color 0.2s ease;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-          background-color: ${mode === "light" ? "#94A3B8" : "#6A6A6A"};
-        }
-
         /* 背景处理 */
         body {
           position: relative;

@@ -1,7 +1,7 @@
 {
   "name": "needyclash",
   "version": "2.4.3",
-  "description": "NeedyClash - A secondary development version based on Clash Verge Rev",
+  "description": "NeedyClash - A secondary development version based on NeedyClash Rev",
   "author": "Lythrilla",
   "license": "GPL-3.0-only",
   "scripts": {

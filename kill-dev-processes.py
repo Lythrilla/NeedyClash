@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-超级强力进程终止工具 - Clash Verge Dev
+超级强力进程终止工具 - NeedyClash Dev
 支持多种终止策略、子进程清理、端口释放、文件锁处理
 """
 
@@ -320,12 +320,12 @@ def main():
     killer = ProcessKiller()
     
     print("=" * 70)
-    print("  🔥 超级强力进程终止工具 - Clash Verge Dev 🔥")
+    print("  🔥 超级强力进程终止工具 - NeedyClash Dev 🔥")
     print("=" * 70)
     
-    # 0. 优先终止 Clash Verge 和 Mihomo 相关进程
+    # 0. 优先终止 NeedyClash 和 Mihomo 相关进程
     print("\n" + "─" * 70)
-    print("🎯 第零阶段: 清理 Clash Verge 和 Mihomo 进程")
+    print("🎯 第零阶段: 清理 NeedyClash 和 Mihomo 进程")
     print("─" * 70)
     
     clash_verge_processes = [

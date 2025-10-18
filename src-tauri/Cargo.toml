@@ -1,8 +1,8 @@
 [package]
 name = "needyclash"
 version = "2.4.3"
-description = "NeedyClash - A secondary development version based on Clash Verge Rev"
-authors = ["Lythrilla", "Based on: Clash Verge Rev by zzzgydi, Tunglies, wonfen, MystiPanda"]
+description = "NeedyClash - A secondary development version based on NeedyClash Rev"
+authors = ["Lythrilla", "Based on: NeedyClash Rev by zzzgydi, Tunglies, wonfen, MystiPanda"]
 license = "GPL-3.0-only"
 repository = "https://github.com/clash-verge-rev/clash-verge-rev.git"
 default-run = "needyclash"
@@ -135,7 +135,7 @@ harness = false
 
 [profile.release]
 panic = "abort"
-codegen-units = 16
+codegen-units = 32
 lto = "thin"
 opt-level = 2
 debug = false
@@ -158,8 +158,8 @@ inherits = "release"
 incremental = true
 codegen-units = 64
 lto = false
-opt-level = 0
-debug = true
+opt-level = 1
+debug = false
 strip = false
 
 [lib]

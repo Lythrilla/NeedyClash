@@ -203,7 +203,7 @@ async function processRelease(github, options, tag, isAlpha) {
     Object.entries(updateDataNew.platforms).forEach(([key, value]) => {
       if (value.url) {
         updateDataNew.platforms[key].url =
-          "https://download.clashverge.dev/" + value.url;
+          "https://download.NeedyClash.dev/" + value.url;
       } else {
         console.log(`[Error]: updateDataNew.platforms.${key} is null`);
       }

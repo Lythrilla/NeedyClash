@@ -1191,8 +1191,8 @@ const ProfilePage = () => {
           </Box>
 
           {profileItems.length > 0 ? (
-            <Box sx={{ flex: 1, overflow: "auto" }}>
-              <Box sx={{ p: 2 }}>
+            <Box sx={{ flex: 1, overflow: "auto", minWidth: 0 }}>
+              <Box sx={{ p: 2, minWidth: 0 }}>
                 {/* Subscriptions */}
                 <Box sx={{ mb: 3 }}>
                   <Typography
@@ -1214,10 +1214,7 @@ const ProfilePage = () => {
                       display: "grid",
                       gridTemplateColumns: {
                         xs: "1fr",
-                        sm: "repeat(2, 1fr)",
-                        md: "repeat(3, 1fr)",
-                        lg: "repeat(4, 1fr)",
-                        xl: "repeat(5, 1fr)",
+                        sm: "repeat(auto-fill, minmax(280px, 1fr))",
                       },
                       gap: { xs: 1.5, sm: 2 },
                     }}
@@ -1276,10 +1273,7 @@ const ProfilePage = () => {
                       display: "grid",
                       gridTemplateColumns: {
                         xs: "1fr",
-                        sm: "repeat(2, 1fr)",
-                        md: "repeat(3, 1fr)",
-                        lg: "repeat(4, 1fr)",
-                        xl: "repeat(5, 1fr)",
+                        sm: "repeat(auto-fill, minmax(280px, 1fr))",
                       },
                       gap: 2,
                     }}

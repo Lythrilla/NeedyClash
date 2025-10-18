@@ -140,7 +140,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
-          name: "Clash Verge Rev ${{ env.TAG_NAME }}"
+          name: "NeedyClash Rev ${{ env.TAG_NAME }}"
           body_path: release.txt
           draft: false
           prerelease: false
@@ -227,7 +227,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: "Clash Verge Rev ${{ github.ref_name }}"
+          releaseName: "NeedyClash Rev ${{ github.ref_name }}"
           releaseBody: "Draft release, will be updated later."
           releaseDraft: true
           prerelease: false
@@ -351,7 +351,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{env.VERSION}}
-          name: "Clash Verge Rev v${{env.VERSION}}"
+          name: "NeedyClash Rev v${{env.VERSION}}"
           body: "See release notes for detailed changelog."
           token: ${{ secrets.GITHUB_TOKEN }}
           files: |
@@ -443,7 +443,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{steps.build.outputs.appVersion}}
-          name: "Clash Verge Rev v${{steps.build.outputs.appVersion}}"
+          name: "NeedyClash Rev v${{steps.build.outputs.appVersion}}"
           body: "See release notes for detailed changelog."
           token: ${{ secrets.GITHUB_TOKEN }}
           files: src-tauri/target/${{ matrix.target }}/release/bundle/nsis/*setup*
@@ -521,7 +521,7 @@ jobs:
       - name: Submit to Winget
         uses: vedantmgoyal9/winget-releaser@main
         with:
-          identifier: ClashVergeRev.ClashVergeRev
+          identifier: NeedyClashRev.NeedyClashRev
           version: ${{env.VERSION}}
           release-tag: v${{env.VERSION}}
           installers-regex: '_(arm64|x64|x86)-setup\.exe$'

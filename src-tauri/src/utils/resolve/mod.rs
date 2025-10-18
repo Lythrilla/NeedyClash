@@ -46,7 +46,7 @@ pub fn resolve_setup_async() {
         resolve_setup_logger().await;
         logging!(
             info,
-            Type::ClashVergeRev,
+            Type::NeedyClashRev,
             "Version: {}",
             env!("CARGO_PKG_VERSION")
         );

@@ -42,22 +42,34 @@ pub async fn create_shortcut() -> Result<()> {
     let exe_path = get_exe_path()?;
     let startup_dir = get_startup_dir()?;
     let old_shortcut_path = startup_dir.join("Clash-Verge.lnk");
-    let new_shortcut_path = startup_dir.join("Clash Verge.lnk");
+    let legacy_shortcut_path = startup_dir.join("Clash Verge.lnk");
+    let new_shortcut_path = startup_dir.join("NeedyClash.lnk");
 
     // 移除旧的快捷方式
     let _ = old_shortcut_path
         .remove_if_exists()
         .await
         .inspect(|_| {
-            info!(target: "app", "成功移除旧启动快捷方式");
+            info!(target: "app", "成功移除旧启动快捷方式 (Clash-Verge.lnk)");
         })
         .inspect_err(|err| {
             log::error!(target: "app", "移除旧启动快捷方式失败: {err}");
         });
 
+    // 移除legacy快捷方式
+    let _ = legacy_shortcut_path
+        .remove_if_exists()
+        .await
+        .inspect(|_| {
+            info!(target: "app", "成功移除legacy启动快捷方式 (Clash Verge.lnk)");
+        })
+        .inspect_err(|err| {
+            log::error!(target: "app", "移除legacy启动快捷方式失败: {err}");
+        });
+
     // 如果新快捷方式已存在，直接返回成功
     if new_shortcut_path.exists() {
-        info!(target: "app", "启动快捷方式已存在");
+        info!(target: "app", "启动快捷方式已存在 (NeedyClash.lnk)");
         return Ok(());
     }
 
@@ -94,7 +106,8 @@ pub async fn remove_shortcut() -> Result<()> {
 
     let startup_dir = get_startup_dir()?;
     let old_shortcut_path = startup_dir.join("Clash-Verge.lnk");
-    let new_shortcut_path = startup_dir.join("Clash Verge.lnk");
+    let legacy_shortcut_path = startup_dir.join("Clash Verge.lnk");
+    let new_shortcut_path = startup_dir.join("NeedyClash.lnk");
 
     let mut removed_any = false;
 
@@ -102,18 +115,29 @@ pub async fn remove_shortcut() -> Result<()> {
         .remove_if_exists()
         .await
         .inspect(|_| {
-            info!(target: "app", "成功删除旧启动快捷方式");
+            info!(target: "app", "成功删除旧启动快捷方式 (Clash-Verge.lnk)");
             removed_any = true;
         })
         .inspect_err(|err| {
             log::error!(target: "app", "删除旧启动快捷方式失败: {err}");
         });
 
+    let _ = legacy_shortcut_path
+        .remove_if_exists()
+        .await
+        .inspect(|_| {
+            info!(target: "app", "成功删除legacy启动快捷方式 (Clash Verge.lnk)");
+            removed_any = true;
+        })
+        .inspect_err(|err| {
+            log::error!(target: "app", "删除legacy启动快捷方式失败: {err}");
+        });
+
     let _ = new_shortcut_path
         .remove_if_exists()
         .await
         .inspect(|_| {
-            info!(target: "app", "成功删除启动快捷方式");
+            info!(target: "app", "成功删除启动快捷方式 (NeedyClash.lnk)");
             removed_any = true;
         })
         .inspect_err(|err| {
@@ -127,7 +151,7 @@ pub async fn remove_shortcut() -> Result<()> {
 #[cfg(target_os = "windows")]
 pub fn is_shortcut_enabled() -> Result<bool> {
     let startup_dir = get_startup_dir()?;
-    let new_shortcut_path = startup_dir.join("Clash Verge.lnk");
+    let new_shortcut_path = startup_dir.join("NeedyClash.lnk");
 
     Ok(new_shortcut_path.exists())
 }

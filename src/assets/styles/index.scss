@@ -49,8 +49,8 @@ body {
   --cv-primary-main: #7C3AED;
   --cv-text-primary: #0F172A;
   --cv-selection-color: #EEF2FF;
-  --cv-scroller-color: #9CA3AF;
-  --cv-scroller-hover-color: #6B7280;
+  --cv-scroller-color: rgba(148, 163, 184, 0.4);
+  --cv-scroller-hover-color: rgba(100, 116, 139, 0.6);
   --cv-background-color: #F8FAFC;
   --cv-background-color-alpha: rgba(124, 58, 237, 0.05);
   --cv-card-background: #FFFFFF;
@@ -76,7 +76,10 @@ body {
   --cv-titlebar-height: 36px;
   --cv-header-height: 56px;
   --cv-content-max-width: 1400px;
-  --cv-scrollbar-size: 8px;
+  
+  /* 滚动条样式变量 */
+  --cv-scrollbar-size: 6px;
+  --cv-scrollbar-size-hover: 8px;
   
   /* 动画 */
   --cv-transition-fast: 0.2s ease;
@@ -105,43 +108,44 @@ body {
 }
 
 /* ========================================
-   滚动条样式 - 仅应用于特定容器
+   滚动条样式 - 全局统一样式
    ======================================== */
 
-/* 主内容区域滚动条 */
-.the-content::-webkit-scrollbar,
-.base-container section::-webkit-scrollbar,
-.the-menu::-webkit-scrollbar {
+/* 全局滚动条 - 轻量简洁设计 */
+::-webkit-scrollbar {
   width: var(--cv-scrollbar-size);
   height: var(--cv-scrollbar-size);
   background: transparent;
 }
 
-.the-content::-webkit-scrollbar-thumb,
-.base-container section::-webkit-scrollbar-thumb,
-.the-menu::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background-color: var(--cv-scroller-color);
-  border-radius: var(--cv-border-radius-xs);
-  transition: background-color var(--cv-transition-fast);
+  border-radius: var(--cv-border-radius-full);
+  transition: all var(--cv-transition-fast);
+  /* 添加轻微的内边距效果，让滚动条看起来更轻 */
+  border: 1px solid transparent;
+  background-clip: padding-box;
 }
 
-.the-content::-webkit-scrollbar-thumb:hover,
-.base-container section::-webkit-scrollbar-thumb:hover,
-.the-menu::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background-color: var(--cv-scroller-hover-color);
+  /* hover时稍微增大宽度，提升交互体验 */
+  width: var(--cv-scrollbar-size-hover);
 }
 
-.the-content::-webkit-scrollbar-corner,
-.base-container section::-webkit-scrollbar-corner,
-.the-menu::-webkit-scrollbar-corner {
+::-webkit-scrollbar-track {
+  background: transparent;
+  margin: calc(var(--cv-spacing-unit) / 2) 0;
+}
+
+::-webkit-scrollbar-corner {
   background-color: transparent;
 }
 
-.the-content::-webkit-scrollbar-track,
-.base-container section::-webkit-scrollbar-track,
-.the-menu::-webkit-scrollbar-track {
-  background: transparent;
-  margin: calc(var(--cv-spacing-unit) / 2) 0;
+/* Firefox 滚动条样式 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cv-scroller-color) transparent;
 }
 
 /* ========================================
