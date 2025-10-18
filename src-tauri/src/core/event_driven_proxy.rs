@@ -329,6 +329,12 @@ impl EventDrivenProxyManager {
         }
     }
 
+    /// 检查并恢复 PAC 代理设置
+    /// 
+    /// # 改进点：
+    /// - 添加重试机制
+    /// - 改进错误处理和日志
+    /// - 添加超时保护
     async fn check_and_restore_pac_proxy(state: &Arc<RwLock<ProxyState>>) {
         if handle::Handle::global().is_exiting() {
             log::debug!(target: "app", "应用正在退出，跳过PAC代理恢复检查");
@@ -344,22 +350,64 @@ impl EventDrivenProxyManager {
         .await;
 
         if !current.enable || current.url != expected.url {
-            log::info!(target: "app", "PAC代理设置异常，正在恢复...");
-            if let Err(e) = Self::restore_pac_proxy(&expected.url).await {
-                log::error!(target: "app", "恢复PAC代理失败: {}", e);
+            log::info!(target: "app", "PAC代理设置异常，正在恢复... (当前: enable={}, url={}, 期望: url={})",
+                current.enable, current.url, expected.url);
+            
+            // 尝试恢复，最多重试3次
+            let mut retry_count = 0;
+            const MAX_RETRIES: u32 = 3;
+            let mut last_error = None;
+            
+            while retry_count < MAX_RETRIES {
+                match Self::restore_pac_proxy(&expected.url).await {
+                    Ok(_) => {
+                        log::info!(target: "app", "PAC代理恢复成功");
+                        break;
+                    }
+                    Err(e) => {
+                        retry_count += 1;
+                        last_error = Some(e);
+                        if retry_count < MAX_RETRIES {
+                            log::warn!(target: "app", "恢复PAC代理失败 (尝试 {}/{}), 重试中...", 
+                                retry_count, MAX_RETRIES);
+                            sleep(Duration::from_millis(200)).await;
+                        }
+                    }
+                }
+            }
+            
+            if let Some(e) = last_error {
+                log::error!(target: "app", "恢复PAC代理失败，已重试 {} 次: {}", MAX_RETRIES, e);
             }
 
+            // 等待一小段时间让系统应用设置
             sleep(Duration::from_millis(500)).await;
+            
+            // 验证恢复结果
             let restored = Self::get_auto_proxy_with_timeout().await;
+            let is_restored = restored.enable && restored.url == expected.url;
 
             Self::update_state_timestamp(state, |s| {
-                s.is_healthy = restored.enable && restored.url == expected.url;
-                s.auto_proxy = restored;
+                s.is_healthy = is_restored;
+                s.auto_proxy = restored.clone();
             })
             .await;
+            
+            if is_restored {
+                log::info!(target: "app", "PAC代理恢复验证成功");
+            } else {
+                log::warn!(target: "app", "PAC代理恢复验证失败: enable={}, url={}", 
+                    restored.enable, restored.url);
+            }
         }
     }
 
+    /// 检查并恢复系统代理设置
+    /// 
+    /// # 改进点：
+    /// - 添加重试机制
+    /// - 改进错误处理和日志
+    /// - 添加超时保护
     async fn check_and_restore_sys_proxy(state: &Arc<RwLock<ProxyState>>) {
         if handle::Handle::global().is_exiting() {
             log::debug!(target: "app", "应用正在退出，跳过系统代理恢复检查");
@@ -375,21 +423,57 @@ impl EventDrivenProxyManager {
         .await;
 
         if !current.enable || current.host != expected.host || current.port != expected.port {
-            log::info!(target: "app", "系统代理设置异常，正在恢复...");
-            if let Err(e) = Self::restore_sys_proxy(&expected).await {
-                log::error!(target: "app", "恢复系统代理失败: {}", e);
+            log::info!(target: "app", "系统代理设置异常，正在恢复... (当前: enable={}, {}:{}, 期望: {}:{})",
+                current.enable, current.host, current.port, expected.host, expected.port);
+            
+            // 尝试恢复，最多重试3次
+            let mut retry_count = 0;
+            const MAX_RETRIES: u32 = 3;
+            let mut last_error = None;
+            
+            while retry_count < MAX_RETRIES {
+                match Self::restore_sys_proxy(&expected).await {
+                    Ok(_) => {
+                        log::info!(target: "app", "系统代理恢复成功");
+                        break;
+                    }
+                    Err(e) => {
+                        retry_count += 1;
+                        last_error = Some(e);
+                        if retry_count < MAX_RETRIES {
+                            log::warn!(target: "app", "恢复系统代理失败 (尝试 {}/{}), 重试中...", 
+                                retry_count, MAX_RETRIES);
+                            sleep(Duration::from_millis(200)).await;
+                        }
+                    }
+                }
+            }
+            
+            if let Some(e) = last_error {
+                log::error!(target: "app", "恢复系统代理失败，已重试 {} 次: {}", MAX_RETRIES, e);
             }
 
+            // 等待一小段时间让系统应用设置
             sleep(Duration::from_millis(500)).await;
+            
+            // 验证恢复结果
             let restored = Self::get_sys_proxy_with_timeout().await;
+            let is_restored = restored.enable
+                && restored.host == expected.host
+                && restored.port == expected.port;
 
             Self::update_state_timestamp(state, |s| {
-                s.is_healthy = restored.enable
-                    && restored.host == expected.host
-                    && restored.port == expected.port;
-                s.sys_proxy = restored;
+                s.is_healthy = is_restored;
+                s.sys_proxy = restored.clone();
             })
             .await;
+            
+            if is_restored {
+                log::info!(target: "app", "系统代理恢复验证成功");
+            } else {
+                log::warn!(target: "app", "系统代理恢复验证失败: enable={}, {}:{}", 
+                    restored.enable, restored.host, restored.port);
+            }
         }
     }
 

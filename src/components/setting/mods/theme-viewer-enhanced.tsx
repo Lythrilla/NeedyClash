@@ -40,7 +40,7 @@ import {
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { useLockFn } from "ahooks";
-import { useImperativeHandle, useState } from "react";
+import { useImperativeHandle, useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { BaseDialog, DialogRef, Switch } from "@/components/base";
@@ -48,10 +48,12 @@ import { EditorViewer } from "@/components/profile/editor-viewer";
 import { useVerge } from "@/hooks/use-verge";
 import { defaultDarkTheme, defaultTheme } from "@/pages/_theme";
 import { showNotice } from "@/services/noticeService";
+import debounce from "@/utils/debounce";
+import { safeGetStorage, safeSetStorage } from "@/utils/safe-storage";
 
 import { ThemePresetCard } from "./theme-preset-card";
 import THEME_PRESETS from "./theme-presets.json";
-import type { ThemePreset, ThemeMode, ThemeSetting, CustomThemes } from "./theme-types";
+import type { ThemePreset, ThemeMode, ThemeSetting, CustomThemes, IComponentStyle, ComponentKey } from "./theme-types";
 import {
   CUSTOM_THEMES_KEY,
   isThemeActive,
@@ -74,8 +76,13 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   const { theme_setting } = verge ?? {};
   const [theme, setTheme] = useState<ThemeSetting>(theme_setting || {});
   const [customThemes, setCustomThemes] = useState<CustomThemes>(() => {
-    const saved = localStorage.getItem(CUSTOM_THEMES_KEY);
-    return saved ? JSON.parse(saved) : { light: [], dark: [] };
+    return safeGetStorage({
+      key: CUSTOM_THEMES_KEY,
+      defaultValue: { light: [], dark: [] },
+      onError: (error) => {
+        showNotice("error", t("Failed to load custom themes"));
+      },
+    });
   });
   
   // 批量设置 state
@@ -102,12 +109,13 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     setTheme(newTheme);
   };
 
-  const handleBackgroundChange = (field: keyof ThemeSetting, value: any) => {
+  // 使用 useCallback 优化性能
+  const handleBackgroundChange = useCallback((field: keyof ThemeSetting, value: any) => {
     const newTheme = { ...theme, [field]: value };
     setTheme(newTheme);
     // 实时预览：立即应用到verge
     patchVerge({ theme_setting: newTheme });
-  };
+  }, [theme, patchVerge]);
 
   const handleSelectImage = useLockFn(async () => {
     try {
@@ -191,7 +199,14 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   const componentStyles = theme.component_styles || {};
   const globalStyle = componentStyles.global || {};
 
-  const updateComponentStyle = (key: ComponentKey, style: Partial<IComponentStyle>) => {
+  // 使用防抖优化实时更新
+  const debouncedPatchVerge = useMemo(() => {
+    return debounce((theme: ThemeSetting) => {
+      patchVerge({ theme_setting: theme });
+    }, 300);
+  }, [patchVerge]);
+
+  const updateComponentStyle = useCallback((key: ComponentKey, style: Partial<IComponentStyle>) => {
     const newComponentStyles = {
       ...componentStyles,
       [key]: {
@@ -204,9 +219,9 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
       component_styles: newComponentStyles,
     };
     setTheme(newTheme);
-    // 实时更新，但不显示提示
-    patchVerge({ theme_setting: newTheme });
-  };
+    // 使用防抖的实时更新
+    debouncedPatchVerge(newTheme);
+  }, [theme, componentStyles, debouncedPatchVerge]);
 
   const resetComponentStyle = async (key: ComponentKey) => {
     const newComponentStyles = { ...componentStyles };
@@ -345,20 +360,31 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     const newCustomTheme = createPresetFromTheme(themeName, theme);
     const updated = { ...customThemes };
     updated[presetFilter] = [...updated[presetFilter], newCustomTheme];
-    setCustomThemes(updated);
-    localStorage.setItem(CUSTOM_THEMES_KEY, JSON.stringify(updated));
     
-    setSaveDialogOpen(false);
-    setThemeName("");
-    showNotice("success", t("Theme saved successfully"), 1000);
+    const success = safeSetStorage(CUSTOM_THEMES_KEY, updated, (error) => {
+      showNotice("error", t("Failed to save theme"));
+    });
+    
+    if (success) {
+      setCustomThemes(updated);
+      setSaveDialogOpen(false);
+      setThemeName("");
+      showNotice("success", t("Theme saved successfully"), 1000);
+    }
   });
 
   const deleteCustomTheme = useLockFn(async (preset: ThemePreset) => {
     const updated = { ...customThemes };
     updated[presetFilter] = updated[presetFilter].filter((p) => p.name !== preset.name);
-    setCustomThemes(updated);
-    localStorage.setItem(CUSTOM_THEMES_KEY, JSON.stringify(updated));
-    showNotice("success", t("Theme deleted"), 1000);
+    
+    const success = safeSetStorage(CUSTOM_THEMES_KEY, updated, (error) => {
+      showNotice("error", t("Failed to delete theme"));
+    });
+    
+    if (success) {
+      setCustomThemes(updated);
+      showNotice("success", t("Theme deleted"), 1000);
+    }
   });
 
   const onSave = useLockFn(async () => {
@@ -378,8 +404,6 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
   const blendModes = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion"];
 
   // 组件样式配置类型
-  type ComponentKey = "select" | "profile_card" | "proxy_card" | "textfield" | "analytics_chart" | "analytics_header" | "dialog";
-
   interface ComponentConfig {
     key: ComponentKey;
     label: string;
@@ -553,28 +577,12 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
                 </Button>
               </Box>
 
-              {/* 主题网格 - 优化间距和布局 */}
+              {/* 主题网格 */}
               <Box
                 sx={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
                   gap: 2,
-                  maxHeight: 440,
-                  overflowY: "auto",
-                  pr: 0.5,
-                  "&::-webkit-scrollbar": {
-                    width: "6px",
-                  },
-                  "&::-webkit-scrollbar-track": {
-                    background: "transparent",
-                  },
-                  "&::-webkit-scrollbar-thumb": {
-                    background: "rgba(128, 128, 128, 0.2)",
-                    borderRadius: "var(--cv-border-radius-xs)",
-                    "&:hover": {
-                      background: "rgba(128, 128, 128, 0.3)",
-                    },
-                  },
                 }}
               >
                 {[...presets, ...customPresets].map((preset, index) => (

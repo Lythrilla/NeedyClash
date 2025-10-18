@@ -424,82 +424,132 @@ impl CoreManager {
 
 impl CoreManager {
     /// 清理多余的 mihomo 进程
+    /// 
+    /// # 改进点：
+    /// - 添加超时保护，避免清理过程卡死
+    /// - 更完善的错误处理和日志记录
+    /// - 防止清理过程中的进程 ID 冲突
     async fn cleanup_orphaned_mihomo_processes(&self) -> Result<()> {
+        use tokio::time::{timeout, Duration};
+        
         logging!(info, Type::Core, "开始清理多余的 mihomo 进程");
 
-        // 获取当前管理的进程 PID
-        let current_pid = {
-            let child_guard = self.child_sidecar.lock();
-            child_guard.as_ref().map(|child| child.pid())
-        };
-
-        let target_processes = ["verge-mihomo", "verge-mihomo-alpha"];
-
-        // 并行查找所有目标进程
-        let mut process_futures = Vec::new();
-        for &target in &target_processes {
-            let process_name = if cfg!(windows) {
-                format!("{target}.exe")
-            } else {
-                target.into()
+        // 整个清理过程添加30秒超时保护
+        let cleanup_result = timeout(Duration::from_secs(30), async {
+            // 获取当前管理的进程 PID
+            let current_pid = {
+                let child_guard = self.child_sidecar.lock();
+                child_guard.as_ref().and_then(|child| child.pid())
             };
-            process_futures.push(self.find_processes_by_name(process_name, target));
-        }
 
-        let process_results = futures::future::join_all(process_futures).await;
+            if let Some(pid) = current_pid {
+                logging!(debug, Type::Core, "当前管理的进程 PID: {}", pid);
+            }
 
-        // 收集所有需要终止的进程PID
-        let mut pids_to_kill = Vec::new();
-        for result in process_results {
-            match result {
-                Ok((pids, process_name)) => {
-                    for pid in pids {
-                        // 跳过当前管理的进程
-                        if let Some(current) = current_pid
-                            && Some(pid) == current
-                        {
-                            logging!(
-                                debug,
-                                Type::Core,
-                                "跳过当前管理的进程: {} (PID: {})",
-                                process_name,
-                                pid
-                            );
-                            continue;
+            let target_processes = ["verge-mihomo", "verge-mihomo-alpha"];
+
+            // 并行查找所有目标进程（每个查找也有超时）
+            let mut process_futures = Vec::new();
+            for &target in &target_processes {
+                let process_name = if cfg!(windows) {
+                    format!("{target}.exe")
+                } else {
+                    target.into()
+                };
+                process_futures.push(async move {
+                    timeout(
+                        Duration::from_secs(5),
+                        self.find_processes_by_name(process_name.clone(), target)
+                    )
+                    .await
+                    .unwrap_or_else(|_| {
+                        logging!(warn, Type::Core, "查找进程 {} 超时", process_name);
+                        Ok((Vec::new(), process_name))
+                    })
+                });
+            }
+
+            let process_results = futures::future::join_all(process_futures).await;
+
+            // 收集所有需要终止的进程PID
+            let mut pids_to_kill = Vec::new();
+            for result in process_results {
+                match result {
+                    Ok((pids, process_name)) => {
+                        for pid in pids {
+                            // 跳过当前管理的进程
+                            if let Some(current) = current_pid {
+                                if pid == current {
+                                    logging!(
+                                        debug,
+                                        Type::Core,
+                                        "跳过当前管理的进程: {} (PID: {})",
+                                        process_name,
+                                        pid
+                                    );
+                                    continue;
+                                }
+                            }
+                            pids_to_kill.push((pid, process_name.clone()));
                         }
-                        pids_to_kill.push((pid, process_name.clone()));
+                    }
+                    Err(e) => {
+                        logging!(debug, Type::Core, "查找进程时发生错误: {}", e);
                     }
                 }
-                Err(e) => {
-                    logging!(debug, Type::Core, "查找进程时发生错误: {}", e);
-                }
+            }
+
+            if pids_to_kill.is_empty() {
+                logging!(debug, Type::Core, "未发现多余的 mihomo 进程");
+                return Ok(());
+            }
+
+            logging!(info, Type::Core, "发现 {} 个需要清理的进程", pids_to_kill.len());
+
+            // 并行终止所有目标进程，每个终止操作也有超时
+            let mut kill_futures = Vec::new();
+            for (pid, process_name) in &pids_to_kill {
+                let pid = *pid;
+                let process_name = process_name.clone();
+                kill_futures.push(async move {
+                    timeout(
+                        Duration::from_secs(3),
+                        self.kill_process_with_verification(pid, process_name.clone())
+                    )
+                    .await
+                    .unwrap_or_else(|_| {
+                        logging!(warn, Type::Core, "终止进程 {} (PID: {}) 超时", process_name, pid);
+                        false
+                    })
+                });
+            }
+
+            let kill_results = futures::future::join_all(kill_futures).await;
+
+            let killed_count = kill_results.into_iter().filter(|&success| success).count();
+
+            if killed_count > 0 {
+                logging!(
+                    info,
+                    Type::Core,
+                    "清理完成，共终止了 {} 个多余的 mihomo 进程",
+                    killed_count
+                );
+            } else {
+                logging!(warn, Type::Core, "清理过程完成，但没有成功终止任何进程");
+            }
+
+            Ok(())
+        })
+        .await;
+
+        match cleanup_result {
+            Ok(result) => result,
+            Err(_) => {
+                logging!(error, Type::Core, "清理 mihomo 进程总体超时（30秒）");
+                Err(anyhow::anyhow!("清理进程超时"))
             }
         }
-
-        if pids_to_kill.is_empty() {
-            logging!(debug, Type::Core, "未发现多余的 mihomo 进程");
-            return Ok(());
-        }
-
-        let mut kill_futures = Vec::new();
-        for (pid, process_name) in &pids_to_kill {
-            kill_futures.push(self.kill_process_with_verification(*pid, process_name.clone()));
-        }
-
-        let kill_results = futures::future::join_all(kill_futures).await;
-
-        let killed_count = kill_results.into_iter().filter(|&success| success).count();
-
-        if killed_count > 0 {
-            logging!(
-                info,
-                Type::Core,
-                "清理完成，共终止了 {} 个多余的 mihomo 进程",
-                killed_count
-            );
-        }
-
-        Ok(())
     }
 
     /// 根据进程名查找进程PID列

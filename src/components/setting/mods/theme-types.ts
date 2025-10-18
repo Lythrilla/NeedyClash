@@ -67,6 +67,16 @@ export interface ThemeSetting {
   };
 }
 
+// 组件样式接口
+export interface IComponentStyle {
+  background_color?: string;
+  blur?: number;
+  opacity?: number;
+}
+
+// 组件键类型
+export type ComponentKey = "select" | "profile_card" | "proxy_card" | "textfield" | "analytics_chart" | "analytics_header" | "dialog";
+
 // 自定义主题集合
 export interface CustomThemes {
   light: ThemePreset[];

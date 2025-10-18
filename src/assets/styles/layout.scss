@@ -128,7 +128,6 @@
         position: absolute;
         inset: 0;
         overflow: auto;
-        scrollbar-gutter: stable;
         /* 优化滚动性能 */
         will-change: scroll-position;
       }

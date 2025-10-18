@@ -224,28 +224,71 @@ impl NotificationSystem {
         }
     }
 
+    /// 优雅关闭通知系统
+    /// 
+    /// # 改进点：
+    /// - 添加超时机制，避免无限等待
+    /// - 更完善的错误处理和清理
+    /// - 防止重复关闭
     fn shutdown(&mut self) {
+        use std::time::Duration;
+        
+        if !self.is_running {
+            log::debug!("NotificationSystem already shut down, skipping");
+            return;
+        }
+
         log::info!("NotificationSystem shutdown initiated");
         self.is_running = false;
 
         // 先关闭发送端，让接收端知道不会再有新消息
         if let Some(sender) = self.sender.take() {
             drop(sender);
+            log::debug!("NotificationSystem sender dropped");
         }
 
-        // 设置超时避免无限等待
+        // 等待工作线程完成，设置5秒超时避免无限等待
         if let Some(handle) = self.worker_handle.take() {
-            match handle.join() {
-                Ok(_) => {
-                    log::info!("NotificationSystem worker thread joined successfully");
+            // 创建一个超时机制
+            let join_result = std::thread::spawn(move || {
+                handle.join()
+            });
+
+            // 等待最多5秒
+            let timeout_duration = Duration::from_secs(5);
+            let start = std::time::Instant::now();
+            
+            while !join_result.is_finished() {
+                if start.elapsed() > timeout_duration {
+                    log::warn!("NotificationSystem worker thread join timeout after 5 seconds");
+                    // 线程可能卡住了，我们不再等待
+                    // 注意：这可能导致资源泄漏，但比卡死整个程序好
+                    break;
                 }
-                Err(e) => {
-                    log::error!("NotificationSystem worker thread join failed: {e:?}");
+                thread::sleep(Duration::from_millis(100));
+            }
+
+            if join_result.is_finished() {
+                match join_result.join() {
+                    Ok(Ok(_)) => {
+                        log::info!("NotificationSystem worker thread joined successfully");
+                    }
+                    Ok(Err(e)) => {
+                        log::error!("NotificationSystem worker thread join failed: {e:?}");
+                    }
+                    Err(e) => {
+                        log::error!("NotificationSystem worker thread join panicked: {e:?}");
+                    }
                 }
             }
         }
 
-        log::info!("NotificationSystem shutdown completed");
+        // 清理统计信息
+        log::info!(
+            "NotificationSystem shutdown completed. Stats: sent={}, errors={}",
+            self.stats.total_sent.load(Ordering::SeqCst),
+            self.stats.total_errors.load(Ordering::SeqCst)
+        );
     }
 }
 

@@ -568,14 +568,12 @@ pub fn run() {
                 });
             }
             tauri::RunEvent::ExitRequested { api, code, .. } => {
-                tauri::async_runtime::block_on(async {
-                    let _ = handle::Handle::mihomo()
-                        .await
-                        .clear_all_ws_connections()
-                        .await;
-                });
-                // 如果已经在退出流程中，不要阻止退出
-                if core::handle::Handle::global().is_exiting() {
+                use std::time::Duration;
+                
+                let handle = core::handle::Handle::global();
+                
+                // 如果已经在退出流程中，直接允许退出
+                if handle.is_exiting() {
                     logging!(
                         info,
                         Type::System,
@@ -589,9 +587,42 @@ pub fn run() {
                 if code.is_none() {
                     logging!(debug, Type::System, "阻止外部退出请求");
                     api.prevent_exit();
+                    return;
                 }
+
+                // 有退出码的请求，执行清理操作
+                logging!(info, Type::System, "收到退出请求，开始清理资源");
+                
+                // 使用超时保护清理WebSocket连接
+                let ws_cleanup = tauri::async_runtime::spawn(async move {
+                    match tokio::time::timeout(Duration::from_secs(3), async {
+                        handle::Handle::mihomo()
+                            .await
+                            .clear_all_ws_connections()
+                            .await
+                    })
+                    .await
+                    {
+                        Ok(Ok(_)) => {
+                            logging!(info, Type::System, "WebSocket连接清理成功");
+                        }
+                        Ok(Err(e)) => {
+                            logging!(warn, Type::System, "WebSocket连接清理失败: {}", e);
+                        }
+                        Err(_) => {
+                            logging!(warn, Type::System, "WebSocket连接清理超时");
+                        }
+                    }
+                });
+
+                // 等待清理完成，但不超过3秒
+                let _ = tauri::async_runtime::block_on(async {
+                    tokio::time::timeout(Duration::from_secs(3), ws_cleanup).await
+                });
             }
             tauri::RunEvent::Exit => {
+                use std::time::Duration;
+                
                 let handle = core::handle::Handle::global();
 
                 if handle.is_exiting() {
@@ -601,10 +632,35 @@ pub fn run() {
                         "Exit事件触发，但退出流程已执行，跳过重复清理"
                     );
                 } else {
-                    logging!(debug, Type::System, "Exit事件触发，执行清理流程");
+                    logging!(info, Type::System, "Exit事件触发，开始执行清理流程");
+                    
+                    // 标记为正在退出
                     handle.set_is_exiting();
+                    
+                    // 通知代理管理器应用即将停止
                     EventDrivenProxyManager::global().notify_app_stopping();
+                    
+                    // 执行特性清理，使用超时保护
+                    let cleanup_start = std::time::Instant::now();
                     feat::clean();
+                    let cleanup_duration = cleanup_start.elapsed();
+                    
+                    logging!(
+                        info,
+                        Type::System,
+                        "清理流程完成，耗时: {:?}",
+                        cleanup_duration
+                    );
+                    
+                    // 如果清理时间过长，记录警告
+                    if cleanup_duration > Duration::from_secs(5) {
+                        logging!(
+                            warn,
+                            Type::System,
+                            "清理流程耗时过长: {:?}",
+                            cleanup_duration
+                        );
+                    }
                 }
             }
             tauri::RunEvent::WindowEvent { label, event, .. } => {

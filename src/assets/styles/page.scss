@@ -9,13 +9,14 @@
   flex-direction: column;
   /* 防止页面初始化时抖动 */
   min-height: 100%;
+  box-sizing: border-box;
   
   /* 页面头部 */
   > header {
     flex: 0 0 var(--cv-header-height);
     width: 100%;
     margin: 0;
-    padding: 0 0 0 calc(var(--cv-spacing-unit) * 2);
+    padding: 0 calc(var(--cv-spacing-unit) * 2);
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -30,7 +31,7 @@
     max-height: var(--cv-header-height);
     
     @media (min-width: 600px) {
-      padding: 0 0 0 calc(var(--cv-spacing-unit) * 3);
+      padding: 0 calc(var(--cv-spacing-unit) * 3);
     }
   }
   
@@ -44,11 +45,13 @@
   /* 页面容器 */
   .base-container {
     flex: 1;
+    width: 100%;
     height: 100%;
     overflow: hidden;
     position: relative;
     /* 确保容器高度正确计算 */
     min-height: 0;
+    box-sizing: border-box;
 
     > section {
       position: relative;
@@ -57,8 +60,6 @@
       height: 100%;
       overflow: auto;
       padding: calc(var(--cv-spacing-unit) * 2.5) 0;
-      box-sizing: border-box;
-      scrollbar-gutter: stable;
       /* 防止内容抖动 */
       min-height: 0;
       
@@ -82,7 +83,7 @@
     &.no-padding {
       > section {
         padding: 0;
-        overflow: visible;
+        overflow: hidden;
         
         .base-content {
           width: 100%;

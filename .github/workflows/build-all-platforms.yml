@@ -92,6 +92,10 @@ jobs:
           target: ${{ matrix.target }}
           override: true
 
+      - name: 安装系统依赖
+        run: |
+          brew install openssl@3
+
       - name: 安装依赖
         run: pnpm install
 
@@ -102,6 +106,8 @@ jobs:
         run: pnpm tauri build --target ${{ matrix.target }}
         env:
           NODE_OPTIONS: --max-old-space-size=4096
+          OPENSSL_STATIC: 1
+          OPENSSL_VENDORED: 1
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
