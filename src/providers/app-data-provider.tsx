@@ -126,10 +126,20 @@ export const AppDataProvider = ({
       lastProfileId = newProfileId;
       lastUpdateTime = now;
 
+      // 刷新所有相关数据
+      scheduleTimeout(async () => {
+        try {
+          logger.debug("Profile切换 - 刷新代理数据");
+          await refreshProxy();
+          logger.debug("Profile切换 - 刷新代理提供者");
+          await refreshProxyProviders();
+        } catch (error) {
+          logger.error("Profile切换时刷新失败:", error);
+        }
+      }, 100);
+
       // 刷新规则数据
-      refreshRules().catch((error) =>
-        logger.warn("规则刷新失败:", error),
-      );
+      refreshRules().catch((error) => logger.warn("规则刷新失败:", error));
       refreshRuleProviders().catch((error) =>
         logger.warn("规则提供者刷新失败:", error),
       );
@@ -149,8 +159,12 @@ export const AppDataProvider = ({
         try {
           logger.debug("Clash刷新 - 刷新代理数据");
           await refreshProxy();
+          logger.debug("Clash刷新 - 刷新代理提供者");
+          await refreshProxyProviders();
+          logger.debug("Clash刷新 - 刷新配置");
+          await refreshClashConfig();
         } catch (error) {
-          logger.error("Clash刷新时刷新代理数据失败:", error);
+          logger.error("Clash刷新时失败:", error);
         }
       }, 0);
     };
@@ -165,10 +179,13 @@ export const AppDataProvider = ({
 
       lastUpdateTime = now;
 
-      scheduleTimeout(() => {
-        refreshProxy().catch((error) =>
-          logger.warn("代理刷新失败:", error),
-        );
+      scheduleTimeout(async () => {
+        try {
+          await refreshProxy();
+          await refreshProxyProviders();
+        } catch (error) {
+          logger.warn("代理刷新失败:", error);
+        }
       }, 100);
     };
 
