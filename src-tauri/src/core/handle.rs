@@ -9,7 +9,7 @@ use std::{
 };
 use tauri::{AppHandle, Emitter, Manager, WebviewWindow};
 use tauri_plugin_mihomo::{Mihomo, MihomoExt};
-use tokio::sync::{mpsc, RwLockReadGuard, RwLockWriteGuard};
+use tokio::sync::{RwLockReadGuard, RwLockWriteGuard, mpsc};
 
 use crate::{logging, utils::logging::Type};
 
@@ -90,7 +90,7 @@ impl NotificationSystem {
                             let Some(system) = system_guard.as_ref() else {
                                 continue;
                             };
-                            *system.emergency_mode.read() 
+                            *system.emergency_mode.read()
                                 && matches!(&event, FrontendEvent::NoticeMessage { status, .. } if status == "info")
                         };
 
@@ -117,7 +117,9 @@ impl NotificationSystem {
                                     match serde_json::to_value((status, message)) {
                                         Ok(p) => ("verge://notice-message", Ok(p)),
                                         Err(e) => {
-                                            log::error!("Failed to serialize NoticeMessage payload: {e}");
+                                            log::error!(
+                                                "Failed to serialize NoticeMessage payload: {e}"
+                                            );
                                             ("verge://notice-message", Err(e))
                                         }
                                     }
@@ -125,15 +127,18 @@ impl NotificationSystem {
                                 FrontendEvent::ProfileChanged { current_profile_id } => {
                                     ("profile-changed", Ok(serde_json::json!(current_profile_id)))
                                 }
-                                FrontendEvent::TimerUpdated { profile_index } => {
-                                    ("verge://timer-updated", Ok(serde_json::json!(profile_index)))
-                                }
-                                FrontendEvent::ProfileUpdateStarted { uid } => {
-                                    ("profile-update-started", Ok(serde_json::json!({ "uid": uid })))
-                                }
-                                FrontendEvent::ProfileUpdateCompleted { uid } => {
-                                    ("profile-update-completed", Ok(serde_json::json!({ "uid": uid })))
-                                }
+                                FrontendEvent::TimerUpdated { profile_index } => (
+                                    "verge://timer-updated",
+                                    Ok(serde_json::json!(profile_index)),
+                                ),
+                                FrontendEvent::ProfileUpdateStarted { uid } => (
+                                    "profile-update-started",
+                                    Ok(serde_json::json!({ "uid": uid })),
+                                ),
+                                FrontendEvent::ProfileUpdateCompleted { uid } => (
+                                    "profile-update-completed",
+                                    Ok(serde_json::json!({ "uid": uid })),
+                                ),
                             };
 
                             if let Ok(payload) = payload_result {
@@ -149,10 +154,16 @@ impl NotificationSystem {
                                         log::warn!("Failed to emit {event_name_str}: {e}");
                                         let system_guard = handle.notification_system.read();
                                         if let Some(system) = system_guard.as_ref() {
-                                            system.stats.total_errors.fetch_add(1, Ordering::Relaxed);
-                                            *system.stats.last_error_time.write() = Some(Instant::now());
+                                            system
+                                                .stats
+                                                .total_errors
+                                                .fetch_add(1, Ordering::Relaxed);
+                                            *system.stats.last_error_time.write() =
+                                                Some(Instant::now());
 
-                                            if system.stats.total_errors.load(Ordering::Relaxed) > 10 {
+                                            if system.stats.total_errors.load(Ordering::Relaxed)
+                                                > 10
+                                            {
                                                 *system.emergency_mode.write() = true;
                                             }
                                         }
@@ -442,7 +453,7 @@ impl Handle {
             tokio::time::sleep(Duration::from_secs(2)).await;
 
             let handle = Handle::global();
-            
+
             for error in errors {
                 if handle.is_exiting() {
                     break;

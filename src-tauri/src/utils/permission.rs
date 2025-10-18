@@ -20,24 +20,22 @@ pub fn check_admin_privileges() -> Result<bool> {
 /// 检查是否在服务模式或管理员模式下运行
 pub fn check_elevated_privileges() -> Result<()> {
     use crate::core::{CoreManager, RunningMode};
-    
+
     let running_mode = CoreManager::global().get_running_mode();
-    
+
     if running_mode == RunningMode::Service {
         return Ok(());
     }
-    
+
     let is_admin = check_admin_privileges()?;
-    
+
     if !is_admin {
         #[cfg(target_os = "windows")]
         bail!("This operation requires Service Mode or Administrator privileges");
-        
+
         #[cfg(not(target_os = "windows"))]
         bail!("This operation requires Service Mode or root privileges");
     }
-    
+
     Ok(())
 }
-
-

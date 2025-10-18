@@ -152,9 +152,11 @@ export const ProxyItem = (props: Props) => {
               onClick={toggleFavorite}
               sx={{
                 position: "absolute",
-                left: 4,
+                left: 6,
+                top: "50%",
+                transform: "translateY(-50%)",
                 opacity: isFavorite ? 1 : 0,
-                transition: "opacity 0.2s",
+                transition: "all 0.2s",
                 color: isFavorite ? "warning.main" : "text.secondary",
                 "&:hover": {
                   color: "warning.main",
@@ -163,9 +165,9 @@ export const ProxyItem = (props: Props) => {
               }}
             >
               {isFavorite ? (
-                <StarRounded sx={{ fontSize: 18 }} />
+                <StarRounded sx={{ fontSize: 16 }} />
               ) : (
-                <StarBorderRounded sx={{ fontSize: 18 }} />
+                <StarBorderRounded sx={{ fontSize: 16 }} />
               )}
             </IconButton>
           </Tooltip>

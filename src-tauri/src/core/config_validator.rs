@@ -1,5 +1,10 @@
+use crate::{
+    config::Config,
+    core::handle,
+    logging,
+    utils::{dirs, logging::Type},
+};
 use anyhow::Result;
-use crate::{config::Config, core::handle, logging, utils::{dirs, logging::Type}};
 use tauri_plugin_shell::ShellExt;
 
 /// 配置验证器
@@ -20,7 +25,13 @@ impl ConfigValidator {
 
         // 读取文件内容
         let content = std::fs::read_to_string(path).map_err(|err| {
-            logging!(warn, Type::Config, "无法读取文件以检测类型: {}, 错误: {}", path, err);
+            logging!(
+                warn,
+                Type::Config,
+                "无法读取文件以检测类型: {}, 错误: {}",
+                path,
+                err
+            );
             anyhow::anyhow!("Failed to read file to detect type: {}", err)
         })?;
 
@@ -60,7 +71,12 @@ impl ConfigValidator {
 
             Ok(false)
         } else {
-            logging!(debug, Type::Config, "无法确定文件类型，默认当作YAML处理: {}", path);
+            logging!(
+                debug,
+                Type::Config,
+                "无法确定文件类型，默认当作YAML处理: {}",
+                path
+            );
             Ok(false)
         }
     }
@@ -158,8 +174,8 @@ impl ConfigValidator {
         let stdout = String::from_utf8_lossy(&output.stdout);
 
         let error_keywords = ["FATA", "fatal", "Parse config error", "level=fatal"];
-        let has_error = !output.status.success() 
-            || error_keywords.iter().any(|&kw| stderr.contains(kw));
+        let has_error =
+            !output.status.success() || error_keywords.iter().any(|&kw| stderr.contains(kw));
 
         logging!(info, Type::Config, "-------- 验证结果 --------");
 
@@ -188,5 +204,3 @@ impl ConfigValidator {
         }
     }
 }
-
-

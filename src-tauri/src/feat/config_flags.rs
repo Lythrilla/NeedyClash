@@ -137,5 +137,3 @@ pub fn analyze_patch(patch: &IVerge) -> UpdateFlags {
 
     flags
 }
-
-

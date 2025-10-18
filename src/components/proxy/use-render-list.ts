@@ -184,6 +184,8 @@ export const useRenderList = (
   const renderList: IRenderItem[] = useMemo(() => {
     if (!proxiesData) return [];
 
+    const favoriteProxies = verge?.favorite_proxies || [];
+
     // 链式代理模式下，显示代理组和其节点
     if (isChainMode && runtimeConfig && mode === "rule") {
       // 使用正常的规则模式代理组
@@ -197,7 +199,13 @@ export const useRenderList = (
           (g: any) => g.name === selectedGroup,
         );
         if (targetGroup) {
-          const proxies = filterSort(targetGroup.all, targetGroup.name, "", 0);
+          const proxies = filterSort(
+            targetGroup.all,
+            targetGroup.name,
+            "",
+            0,
+            favoriteProxies,
+          );
 
           if (col > 1) {
             return groupProxies(proxies, col).map((proxyCol, colIndex) => ({
@@ -226,7 +234,13 @@ export const useRenderList = (
       // 如果没有选择特定组，显示第一个组的节点（如果有组的话）
       if (allGroups.length > 0) {
         const firstGroup = allGroups[0];
-        const proxies = filterSort(firstGroup.all, firstGroup.name, "", 0);
+        const proxies = filterSort(
+          firstGroup.all,
+          firstGroup.name,
+          "",
+          0,
+          favoriteProxies,
+        );
 
         if (col > 1) {
           return groupProxies(proxies, col).map((proxyCol, colIndex) => ({
@@ -391,6 +405,7 @@ export const useRenderList = (
           group.name,
           headState.filterText,
           headState.sortType,
+          favoriteProxies,
         );
 
         ret.push({
@@ -445,6 +460,7 @@ export const useRenderList = (
     isChainMode,
     runtimeConfig,
     selectedGroup,
+    verge?.favorite_proxies,
   ]);
 
   return {

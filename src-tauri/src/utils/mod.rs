@@ -1,6 +1,5 @@
 pub mod autostart;
 pub mod dirs;
-pub mod permission;
 pub mod draft;
 pub mod format;
 pub mod help;
@@ -11,6 +10,7 @@ pub mod linux;
 pub mod logging;
 pub mod network;
 pub mod notification;
+pub mod permission;
 pub mod resolve;
 pub mod server;
 pub mod singleton;

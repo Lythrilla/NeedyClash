@@ -1,7 +1,19 @@
-import { CheckCircleOutlineRounded } from "@mui/icons-material";
-import { alpha, Box, ListItemButton, styled, Typography } from "@mui/material";
+import {
+  CheckCircleOutlineRounded,
+  StarRounded,
+  StarBorderRounded,
+} from "@mui/icons-material";
+import {
+  alpha,
+  Box,
+  IconButton,
+  ListItemButton,
+  styled,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useLockFn } from "ahooks";
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useEffect, useMemo, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 
 import { BaseLoading } from "@/components/base";
@@ -27,8 +39,30 @@ export const ProxyItemMini = (props: Props) => {
   // -1/<=0 为 不显示
   // -2 为 loading
   const [delay, setDelay] = useReducer((_: number, value: number) => value, -1);
-  const { verge } = useVerge();
+  const { verge, patchVerge } = useVerge();
   const timeout = verge?.default_latency_timeout || 10000;
+
+  // 收藏状态
+  const isFavorite = useMemo(() => {
+    return verge?.favorite_proxies?.includes(proxy.name) || false;
+  }, [verge?.favorite_proxies, proxy.name]);
+
+  // 切换收藏状态
+  const toggleFavorite = useLockFn(async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const currentFavorites = verge?.favorite_proxies || [];
+    let newFavorites: string[];
+
+    if (isFavorite) {
+      newFavorites = currentFavorites.filter((name) => name !== proxy.name);
+    } else {
+      newFavorites = [...currentFavorites, proxy.name];
+    }
+
+    await patchVerge({ favorite_proxies: newFavorites });
+  });
 
   useEffect(() => {
     if (isPreset) return;
@@ -67,6 +101,7 @@ export const ProxyItemMini = (props: Props) => {
           borderColor: "divider",
           justifyContent: "space-between",
           alignItems: "center",
+          position: "relative",
         },
         ({ palette: { mode, primary } }) => {
           const showDelay = delay > 0;
@@ -76,6 +111,7 @@ export const ProxyItemMini = (props: Props) => {
             "&:hover .the-check": { display: !showDelay ? "block" : "none" },
             "&:hover .the-delay": { display: showDelay ? "block" : "none" },
             "&:hover .the-icon": { display: "none" },
+            "&:hover .favorite-btn": { opacity: 1 },
             "&:hover": {
               bgcolor: "action.hover",
             },
@@ -97,9 +133,38 @@ export const ProxyItemMini = (props: Props) => {
         },
       ]}
     >
+      {/* 收藏按钮 */}
+      {!isPreset && (
+        <Tooltip title={isFavorite ? "取消收藏" : "收藏"} arrow>
+          <IconButton
+            size="small"
+            className="favorite-btn"
+            onClick={toggleFavorite}
+            sx={{
+              position: "absolute",
+              left: 4,
+              top: 4,
+              opacity: isFavorite ? 1 : 0,
+              transition: "all 0.2s",
+              color: isFavorite ? "warning.main" : "text.secondary",
+              zIndex: 1,
+              "&:hover": {
+                color: "warning.main",
+                bgcolor: alpha("#FFA500", 0.08),
+              },
+            }}
+          >
+            {isFavorite ? (
+              <StarRounded sx={{ fontSize: 14 }} />
+            ) : (
+              <StarBorderRounded sx={{ fontSize: 14 }} />
+            )}
+          </IconButton>
+        </Tooltip>
+      )}
       <Box
         title={`${proxy.name}\n${proxy.now ?? ""}`}
-        sx={{ overflow: "hidden" }}
+        sx={{ overflow: "hidden", pl: !isPreset ? 3 : 0 }}
       >
         <Typography
           variant="body2"

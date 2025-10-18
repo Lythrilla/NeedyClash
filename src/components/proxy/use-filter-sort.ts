@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useReducer } from "react";
 
+import { useVerge } from "@/hooks/use-verge";
 import delayManager from "@/services/delay";
 
 // default | delay | alphabet
@@ -11,6 +12,8 @@ export default function useFilterSort(
   filterText: string,
   sortType: ProxySortType,
 ) {
+  const { verge } = useVerge();
+  const favoriteProxies = verge?.favorite_proxies || [];
   const [_, bumpRefresh] = useReducer((count: number) => count + 1, 0);
 
   useEffect(() => {
@@ -32,9 +35,9 @@ export default function useFilterSort(
 
   return useMemo(() => {
     const fp = filterProxies(proxies, groupName, filterText);
-    const sp = sortProxies(fp, groupName, sortType);
+    const sp = sortProxies(fp, groupName, sortType, favoriteProxies);
     return sp;
-  }, [proxies, groupName, filterText, sortType]);
+  }, [proxies, groupName, filterText, sortType, favoriteProxies]);
 }
 
 export function filterSort(
@@ -42,9 +45,10 @@ export function filterSort(
   groupName: string,
   filterText: string,
   sortType: ProxySortType,
+  favoriteProxies: string[] = [],
 ) {
   const fp = filterProxies(proxies, groupName, filterText);
-  const sp = sortProxies(fp, groupName, sortType);
+  const sp = sortProxies(fp, groupName, sortType, favoriteProxies);
   return sp;
 }
 
@@ -102,25 +106,45 @@ function sortProxies(
   proxies: IProxyItem[],
   groupName: string,
   sortType: ProxySortType,
+  favoriteProxies: string[] = [],
 ) {
   if (!proxies) return [];
-  if (sortType === 0) return proxies;
 
   const list = proxies.slice();
 
-  if (sortType === 1) {
-    list.sort((a, b) => {
-      const ad = delayManager.getDelayFix(a, groupName);
-      const bd = delayManager.getDelayFix(b, groupName);
+  // 先按收藏状态分组
+  const favorites: IProxyItem[] = [];
+  const regular: IProxyItem[] = [];
 
-      if (ad === -1 || ad === -2) return 1;
-      if (bd === -1 || bd === -2) return -1;
+  list.forEach((proxy) => {
+    if (favoriteProxies.includes(proxy.name)) {
+      favorites.push(proxy);
+    } else {
+      regular.push(proxy);
+    }
+  });
 
-      return ad - bd;
-    });
-  } else {
-    list.sort((a, b) => a.name.localeCompare(b.name));
-  }
+  // 对收藏和非收藏分别排序
+  const sortFn = (arr: IProxyItem[]) => {
+    if (sortType === 0) return arr;
 
-  return list;
+    if (sortType === 1) {
+      arr.sort((a, b) => {
+        const ad = delayManager.getDelayFix(a, groupName);
+        const bd = delayManager.getDelayFix(b, groupName);
+
+        if (ad === -1 || ad === -2) return 1;
+        if (bd === -1 || bd === -2) return -1;
+
+        return ad - bd;
+      });
+    } else {
+      arr.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return arr;
+  };
+
+  // 收藏节点始终在前面
+  return [...sortFn(favorites), ...sortFn(regular)];
 }

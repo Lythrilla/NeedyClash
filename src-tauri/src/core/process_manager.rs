@@ -1,5 +1,5 @@
+use crate::{AsyncHandler, logging, utils::logging::Type};
 use anyhow::Result;
-use crate::{logging, utils::logging::Type, AsyncHandler};
 
 /// 进程管理器 - 负责清理和管理mihomo进程
 /// TODO: 集成到核心启动/停止流程中，自动清理孤立进程
@@ -21,14 +21,14 @@ impl ProcessManager {
 
             let target_processes = ["verge-mihomo", "verge-mihomo-alpha"];
             let mut process_futures = Vec::new();
-            
+
             for &target in &target_processes {
                 let process_name = if cfg!(windows) {
                     format!("{target}.exe")
                 } else {
                     target.into()
                 };
-                
+
                 process_futures.push(async move {
                     timeout(
                         Duration::from_secs(5),
@@ -52,7 +52,13 @@ impl ProcessManager {
                         for pid in pids {
                             if let Some(current) = current_pid {
                                 if pid == current {
-                                    logging!(debug, Type::Core, "跳过当前管理的进程: {} (PID: {})", process_name, pid);
+                                    logging!(
+                                        debug,
+                                        Type::Core,
+                                        "跳过当前管理的进程: {} (PID: {})",
+                                        process_name,
+                                        pid
+                                    );
                                     continue;
                                 }
                             }
@@ -70,7 +76,12 @@ impl ProcessManager {
                 return Ok(());
             }
 
-            logging!(info, Type::Core, "发现 {} 个需要清理的进程", pids_to_kill.len());
+            logging!(
+                info,
+                Type::Core,
+                "发现 {} 个需要清理的进程",
+                pids_to_kill.len()
+            );
 
             // 并行终止所有目标进程
             let mut kill_futures = Vec::new();
@@ -84,7 +95,13 @@ impl ProcessManager {
                     )
                     .await
                     .unwrap_or_else(|_| {
-                        logging!(warn, Type::Core, "终止进程 {} (PID: {}) 超时", process_name, pid);
+                        logging!(
+                            warn,
+                            Type::Core,
+                            "终止进程 {} (PID: {}) 超时",
+                            process_name,
+                            pid
+                        );
                         false
                     })
                 });
@@ -94,7 +111,12 @@ impl ProcessManager {
             let killed_count = kill_results.into_iter().filter(|&success| success).count();
 
             if killed_count > 0 {
-                logging!(info, Type::Core, "清理完成，共终止了 {} 个多余的 mihomo 进程", killed_count);
+                logging!(
+                    info,
+                    Type::Core,
+                    "清理完成，共终止了 {} 个多余的 mihomo 进程",
+                    killed_count
+                );
             } else {
                 logging!(warn, Type::Core, "清理过程完成，但没有成功终止任何进程");
             }
@@ -203,7 +225,13 @@ impl ProcessManager {
     /// 终止进程并验证结果
     #[allow(dead_code)]
     async fn kill_process_with_verification(pid: u32, process_name: String) -> bool {
-        logging!(info, Type::Core, "尝试终止进程: {} (PID: {})", process_name, pid);
+        logging!(
+            info,
+            Type::Core,
+            "尝试终止进程: {} (PID: {})",
+            process_name,
+            pid
+        );
 
         #[cfg(windows)]
         let success = {
@@ -241,14 +269,32 @@ impl ProcessManager {
 
             let still_running = Self::is_process_running(pid).await.unwrap_or(false);
             if still_running {
-                logging!(warn, Type::Core, "进程 {} (PID: {}) 终止命令成功但进程仍在运行", process_name, pid);
+                logging!(
+                    warn,
+                    Type::Core,
+                    "进程 {} (PID: {}) 终止命令成功但进程仍在运行",
+                    process_name,
+                    pid
+                );
                 false
             } else {
-                logging!(info, Type::Core, "成功终止进程: {} (PID: {})", process_name, pid);
+                logging!(
+                    info,
+                    Type::Core,
+                    "成功终止进程: {} (PID: {})",
+                    process_name,
+                    pid
+                );
                 true
             }
         } else {
-            logging!(warn, Type::Core, "无法终止进程: {} (PID: {})", process_name, pid);
+            logging!(
+                warn,
+                Type::Core,
+                "无法终止进程: {} (PID: {})",
+                process_name,
+                pid
+            );
             false
         }
     }
@@ -294,5 +340,3 @@ impl ProcessManager {
         }
     }
 }
-
-

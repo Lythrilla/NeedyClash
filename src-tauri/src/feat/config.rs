@@ -1,7 +1,7 @@
 use crate::{
     config::{Config, IVerge},
     core::{CoreManager, handle, hotkey, sysopt, tray},
-    feat::config_flags::{analyze_patch, UpdateFlags},
+    feat::config_flags::{UpdateFlags, analyze_patch},
     logging, logging_error,
     module::lightweight,
     utils::logging::Type,
@@ -58,9 +58,8 @@ pub async fn patch_verge(patch: IVerge, not_save_file: bool) -> Result<()> {
 
     // 分析配置补丁，获取需要更新的标志
     let update_flags = analyze_patch(&patch);
-    
-    let res: std::result::Result<(), anyhow::Error> = {
 
+    let res: std::result::Result<(), anyhow::Error> = {
         // Process updates based on flags
         if update_flags.contains(UpdateFlags::RESTART_CORE) {
             Config::generate().await?;
