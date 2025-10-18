@@ -152,14 +152,43 @@ jobs:
             librsvg2-dev \
             patchelf
 
-      - name: 安装交叉编译工具 (ARM)
-        if: matrix.target != 'x86_64-unknown-linux-gnu'
+      - name: 配置交叉编译 (ARM64)
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: |
-          if [ "${{ matrix.target }}" = "aarch64-unknown-linux-gnu" ]; then
-            sudo apt-get install -y gcc-aarch64-linux-gnu
-          elif [ "${{ matrix.target }}" = "armv7-unknown-linux-gnueabihf" ]; then
-            sudo apt-get install -y gcc-arm-linux-gnueabihf
-          fi
+          sudo dpkg --add-architecture arm64
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-aarch64-linux-gnu \
+            g++-aarch64-linux-gnu \
+            libgtk-3-dev:arm64 \
+            libwebkit2gtk-4.1-dev:arm64 \
+            libappindicator3-dev:arm64 \
+            librsvg2-dev:arm64 \
+            libssl-dev:arm64
+          echo "PKG_CONFIG_ALLOW_CROSS=1" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+          echo "PKG_CONFIG_SYSROOT_DIR=/" >> $GITHUB_ENV
+          echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+          echo "CXX=aarch64-linux-gnu-g++" >> $GITHUB_ENV
+
+      - name: 配置交叉编译 (ARMv7)
+        if: matrix.target == 'armv7-unknown-linux-gnueabihf'
+        run: |
+          sudo dpkg --add-architecture armhf
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-arm-linux-gnueabihf \
+            g++-arm-linux-gnueabihf \
+            libgtk-3-dev:armhf \
+            libwebkit2gtk-4.1-dev:armhf \
+            libappindicator3-dev:armhf \
+            librsvg2-dev:armhf \
+            libssl-dev:armhf
+          echo "PKG_CONFIG_ALLOW_CROSS=1" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig" >> $GITHUB_ENV
+          echo "PKG_CONFIG_SYSROOT_DIR=/" >> $GITHUB_ENV
+          echo "CC=arm-linux-gnueabihf-gcc" >> $GITHUB_ENV
+          echo "CXX=arm-linux-gnueabihf-g++" >> $GITHUB_ENV
 
       - name: 安装依赖
         run: pnpm install
