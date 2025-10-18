@@ -33,7 +33,6 @@ pub fn resolve_setup_sync() {
 }
 
 pub fn resolve_setup_async() {
-    let start_time = std::time::Instant::now();
     logging!(
         info,
         Type::Setup,
@@ -42,6 +41,8 @@ pub fn resolve_setup_async() {
     );
 
     AsyncHandler::spawn(|| async {
+        let start_time = std::time::Instant::now();
+        
         #[cfg(not(feature = "tauri-dev"))]
         resolve_setup_logger().await;
         logging!(
@@ -51,28 +52,14 @@ pub fn resolve_setup_async() {
             env!("CARGO_PKG_VERSION")
         );
 
-        // 并行执行服务管理器和基础配置初始化
-        futures::join!(
-            init_service_manager(),
-            init_work_config(),
-            init_resources(),
-        );
+        futures::join!(init_service_manager(), init_work_config(), init_resources(),);
+        futures::join!(init_startup_script(), init_hotkey(), init_verge_config(),);
 
-        // 快速初始化项，并行执行
-        futures::join!(
-            init_startup_script(),
-            init_hotkey(),
-            init_verge_config(),
-        );
-
-        // 提前创建窗口，让用户看到界面，减少"未响应"感知
         logging!(info, Type::Setup, "提前创建窗口以改善响应体验");
         init_window().await;
 
-        // 窗口创建后，在后台继续初始化其他组件
         logging!(info, Type::Setup, "窗口已创建，继续后台初始化");
 
-        // 并行执行轻量级任务
         futures::join!(
             init_timer(),
             init_once_auto_lightweight(),
@@ -96,15 +83,19 @@ pub fn resolve_setup_async() {
         refresh_tray_menu().await;
 
         let elapsed = start_time.elapsed();
-        logging!(info, Type::Setup, "所有异步设置任务完成，总耗时: {:?}", elapsed);
+        logging!(
+            info,
+            Type::Setup,
+            "所有异步设置任务完成，总耗时: {:?}",
+            elapsed
+        );
+        
+        if elapsed.as_secs() > 10 {
+            logging!(warn, Type::Setup, "异步设置任务耗时较长({:?})", elapsed);
+        }
     });
 
-    let elapsed = start_time.elapsed();
-    logging!(info, Type::Setup, "异步设置任务启动完成，耗时: {:?}", elapsed);
-
-    if elapsed.as_secs() > 10 {
-        logging!(warn, Type::Setup, "异步设置任务耗时较长({:?})", elapsed);
-    }
+    logging!(info, Type::Setup, "异步设置任务已启动");
 }
 
 // 其它辅助函数不变
@@ -211,60 +202,38 @@ pub(super) async fn init_service_manager() {
     logging!(info, Type::Setup, "Initializing service manager...");
     clash_verge_service_ipc::set_config(ServiceManager::config()).await;
 
-    // 减少重试次数和等待时间，避免阻塞窗口响应
-    let max_retries = 2; // 从3减少到2
-    let mut retry_count = 0;
-
-    while retry_count < max_retries {
-        if !is_service_ipc_path_exists() {
-            logging!(
-                warn,
-                Type::Setup,
-                "Service IPC path does not exist (attempt {}/{}), waiting for service to start...",
-                retry_count + 1,
-                max_retries
-            );
-            retry_count += 1;
-            if retry_count < max_retries {
-                tokio::time::sleep(tokio::time::Duration::from_millis(300)).await; // 从1000ms减少到300ms
-                continue;
-            }
-            return;
-        }
-
-        match SERVICE_MANAGER.lock().await.init().await {
-            Ok(_) => {
-                logging!(
-                    info,
-                    Type::Setup,
-                    "Service manager initialized successfully"
-                );
-                logging_error!(Type::Setup, SERVICE_MANAGER.lock().await.refresh().await);
-                return;
-            }
-            Err(e) => {
-                logging!(
-                    warn,
-                    Type::Setup,
-                    "Service manager init failed (attempt {}/{}): {}",
-                    retry_count + 1,
-                    max_retries,
-                    e
-                );
-                retry_count += 1;
-                if retry_count < max_retries {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(300)).await; // 从1000ms减少到300ms
-                }
-            }
-        }
+    if !is_service_ipc_path_exists() {
+        logging!(
+            debug,
+            Type::Setup,
+            "Service IPC path does not exist, will use Sidecar mode"
+        );
+        return;
     }
 
-    logging!(
-        info,
-        Type::Setup,
-        "Service not available after {} attempts, will use Sidecar mode",
-        max_retries
-    );
+    match SERVICE_MANAGER.lock().await.init().await {
+        Ok(_) => {
+            logging!(
+                info,
+                Type::Setup,
+                "Service manager initialized successfully"
+            );
+            // 异步刷新服务状态，不阻塞启动流程
+            AsyncHandler::spawn(|| async {
+                if let Err(e) = SERVICE_MANAGER.lock().await.refresh().await {
+                    logging!(warn, Type::Setup, "Service refresh failed: {}", e);
+                }
+            });
+        }
+        Err(e) => {
+            logging!(
+                debug,
+                Type::Setup,
+                "Service manager init failed: {}, will use Sidecar mode",
+                e
+            );
+        }
+    }
 }
 
 pub(super) async fn init_core_manager() {
