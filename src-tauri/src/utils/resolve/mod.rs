@@ -195,8 +195,8 @@ pub(super) async fn init_service_manager() {
     logging!(info, Type::Setup, "Initializing service manager...");
     clash_verge_service_ipc::set_config(ServiceManager::config()).await;
 
-    // 重试检测服务状态，因为系统重启后服务可能需要时间启动
-    let max_retries = 3;
+    // 减少重试次数和等待时间，避免阻塞窗口响应
+    let max_retries = 2;  // 从3减少到2
     let mut retry_count = 0;
 
     while retry_count < max_retries {
@@ -210,7 +210,7 @@ pub(super) async fn init_service_manager() {
             );
             retry_count += 1;
             if retry_count < max_retries {
-                tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
+                tokio::time::sleep(tokio::time::Duration::from_millis(300)).await;  // 从1000ms减少到300ms
                 continue;
             }
             return;
@@ -237,7 +237,7 @@ pub(super) async fn init_service_manager() {
                 );
                 retry_count += 1;
                 if retry_count < max_retries {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
+                    tokio::time::sleep(tokio::time::Duration::from_millis(300)).await;  // 从1000ms减少到300ms
                 }
             }
         }

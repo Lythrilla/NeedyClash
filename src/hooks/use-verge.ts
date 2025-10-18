@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
@@ -9,6 +9,10 @@ import { showNotice } from "@/services/noticeService";
 export const useVerge = () => {
   const { t } = useTranslation();
   const { isTunModeAvailable, isLoading } = useSystemState();
+
+  const isProcessingRef = useRef(false);
+  const hasNotifiedRef = useRef(false);
+  const initTimeRef = useRef(Date.now());
 
   const { data: verge, mutate: mutateVerge } = useSWR(
     "getVergeConfig",
@@ -27,20 +31,42 @@ export const useVerge = () => {
 
   // 当服务不可用且TUN模式开启时自动关闭TUN
   useEffect(() => {
+    const timeSinceInit = Date.now() - initTimeRef.current;
+    if (timeSinceInit < 5000) {
+      return;
+    }
+
+    // 如果正在处理或已经通知过，跳过
+    if (isProcessingRef.current || hasNotifiedRef.current) {
+      return;
+    }
+
     if (enable_tun_mode && !isTunModeAvailable && !isLoading) {
       console.log("[useVerge] 检测到服务不可用，自动关闭TUN模式");
+      
+      isProcessingRef.current = true;
 
       patchVergeConfig({ enable_tun_mode: false })
         .then(() => {
           mutateVerge();
-          showNotice(
-            "info",
-            t("TUN Mode automatically disabled due to service unavailable"),
-          );
+          // 只显示一次通知
+          if (!hasNotifiedRef.current) {
+            showNotice(
+              "info",
+              t("TUN Mode automatically disabled due to service unavailable"),
+            );
+            hasNotifiedRef.current = true;
+          }
         })
         .catch((err) => {
           console.error("[useVerge] 自动关闭TUN模式失败:", err);
-          showNotice("error", t("Failed to disable TUN Mode automatically"));
+          if (!hasNotifiedRef.current) {
+            showNotice("error", t("Failed to disable TUN Mode automatically"));
+            hasNotifiedRef.current = true;
+          }
+        })
+        .finally(() => {
+          isProcessingRef.current = false;
         });
     }
   }, [isTunModeAvailable, isLoading, enable_tun_mode, mutateVerge, t]);

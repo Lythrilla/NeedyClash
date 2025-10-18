@@ -35,6 +35,7 @@ export const AppDataProvider = ({
       revalidateOnFocus: true,
       suspense: false,
       errorRetryCount: 3,
+      dedupingInterval: 2000, // 添加去重间隔，避免重复请求
     },
   );
 
@@ -46,6 +47,7 @@ export const AppDataProvider = ({
       revalidateOnFocus: false,
       suspense: false,
       errorRetryCount: 3,
+      dedupingInterval: 5000, // 添加去重间隔
     },
   );
 
@@ -243,10 +245,11 @@ export const AppDataProvider = ({
     "getSystemProxy",
     getSystemProxy,
     {
-      revalidateOnFocus: true,
+      revalidateOnFocus: false, // 减少启动时的请求
       revalidateOnReconnect: true,
       suspense: false,
       errorRetryCount: 3,
+      dedupingInterval: 3000, // 添加去重间隔
     },
   );
 

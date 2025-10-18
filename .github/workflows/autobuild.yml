@@ -234,10 +234,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-24.04
+          - os: ubuntu-22.04
             target: aarch64-unknown-linux-gnu
             arch: arm64
-          - os: ubuntu-24.04
+          - os: ubuntu-22.04
             target: armv7-unknown-linux-gnueabihf
             arch: armhf
     runs-on: ${{ matrix.os }}
@@ -283,15 +283,15 @@ jobs:
           sudo ls -lR /etc/apt/
 
           cat > /tmp/sources.list << EOF
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-security main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-updates main multiverse universe restricted
-          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu noble-backports main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-security main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-updates main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-backports main multiverse universe restricted
 
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-security main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-backports main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main multiverse universe restricted
           EOF
 
           # Backup original sources
@@ -315,7 +315,7 @@ jobs:
 
           sudo apt-get install -y \
             libxslt1.1:${{ matrix.arch }} \
-            libwebkit2gtk-4.1-dev:${{ matrix.arch }} \
+            libwebkit2gtk-4.0-dev:${{ matrix.arch }} \
             libayatana-appindicator3-dev:${{ matrix.arch }} \
             libssl-dev:${{ matrix.arch }} \
             patchelf:${{ matrix.arch }} \
