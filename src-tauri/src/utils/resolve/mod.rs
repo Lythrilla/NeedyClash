@@ -50,41 +50,57 @@ pub fn resolve_setup_async() {
             "Version: {}",
             env!("CARGO_PKG_VERSION")
         );
-        futures::join!(init_service_manager());
 
+        // 并行执行服务管理器和基础配置初始化
         futures::join!(
+            init_service_manager(),
             init_work_config(),
             init_resources(),
-            init_startup_script(),
-            init_hotkey(),
         );
 
-        init_timer().await;
-        init_once_auto_lightweight().await;
-        init_auto_lightweight_mode().await;
+        // 快速初始化项，并行执行
+        futures::join!(
+            init_startup_script(),
+            init_hotkey(),
+            init_verge_config(),
+        );
 
-        // 确保配置完全初始化后再启动核心管理器
-        init_verge_config().await;
+        // 提前创建窗口，让用户看到界面，减少"未响应"感知
+        logging!(info, Type::Setup, "提前创建窗口以改善响应体验");
+        init_window().await;
 
-        // 添加配置验证，确保运行时配置已正确生成
+        // 窗口创建后，在后台继续初始化其他组件
+        logging!(info, Type::Setup, "窗口已创建，继续后台初始化");
+
+        // 并行执行轻量级任务
+        futures::join!(
+            init_timer(),
+            init_once_auto_lightweight(),
+            init_auto_lightweight_mode(),
+        );
+
+        // 配置验证
         Config::verify_config_initialization().await;
 
+        // 核心管理器初始化（可能较慢，但窗口已经显示）
         init_core_manager().await;
 
+        // 系统代理设置
         init_system_proxy().await;
         AsyncHandler::spawn_blocking(|| {
             init_system_proxy_guard();
         });
 
-        let tray_and_refresh = async {
-            init_tray().await;
-            refresh_tray_menu().await;
-        };
-        futures::join!(init_window(), tray_and_refresh,);
+        // 托盘初始化和刷新（放在最后，不阻塞主要功能）
+        init_tray().await;
+        refresh_tray_menu().await;
+
+        let elapsed = start_time.elapsed();
+        logging!(info, Type::Setup, "所有异步设置任务完成，总耗时: {:?}", elapsed);
     });
 
     let elapsed = start_time.elapsed();
-    logging!(info, Type::Setup, "异步设置任务完成，耗时: {:?}", elapsed);
+    logging!(info, Type::Setup, "异步设置任务启动完成，耗时: {:?}", elapsed);
 
     if elapsed.as_secs() > 10 {
         logging!(warn, Type::Setup, "异步设置任务耗时较长({:?})", elapsed);

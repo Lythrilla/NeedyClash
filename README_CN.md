@@ -125,7 +125,7 @@
 
 **方式 1：下载预编译版本**（推荐）
 
-- 访问 [Releases](https://github.com/clash-verge-rev/clash-verge-rev/releases) 页面
+- 访问 [Releases](https://github.com/Lythrilla/NeedyClash/releases) 页面
 - 下载适合您平台的安装包：
   - **Windows**: `.exe` (安装版) 或 `.zip` (便携版)
   - **macOS**: `.dmg` (安装版)

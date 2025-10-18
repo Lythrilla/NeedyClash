@@ -125,7 +125,7 @@ A Rule-Based Tunnel GUI Client Based on <a href="https://github.com/clash-verge-
 
 **Option 1: Download Pre-built Releases** (Recommended)
 
-- Visit the [Releases](https://github.com/clash-verge-rev/clash-verge-rev/releases) page
+- Visit the [Releases](https://github.com/Lythrilla/NeedyClash/releases) page
 - Download the appropriate installer for your platform:
   - **Windows**: `.exe` (installer) or `.zip` (portable)
   - **macOS**: `.dmg` (installer)

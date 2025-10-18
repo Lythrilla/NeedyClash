@@ -4,6 +4,14 @@
   "description": "NeedyClash - A secondary development version based on NeedyClash Rev",
   "author": "Lythrilla",
   "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lythrilla/NeedyClash"
+  },
+  "homepage": "https://github.com/Lythrilla/NeedyClash",
+  "bugs": {
+    "url": "https://github.com/Lythrilla/NeedyClash/issues"
+  },
   "scripts": {
     "prepare": "husky || true",
     "dev": "cross-env RUST_BACKTRACE=full tauri dev -f verge-dev",

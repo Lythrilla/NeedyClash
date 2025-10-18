@@ -10,7 +10,6 @@ import {
   Box,
   Typography,
   Stack,
-  Divider,
   Chip,
   IconButton,
   Tooltip,
@@ -20,11 +19,9 @@ import { useLockFn } from "ahooks";
 import { useCallback, useEffect, useMemo, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import useSWR from "swr";
 
 import { useSystemState } from "@/hooks/use-system-state";
 import { useVerge } from "@/hooks/use-verge";
-
 import { getSystemInfo } from "@/services/cmds";
 import { showNotice } from "@/services/noticeService";
 import { version as appVersion } from "@root/package.json";
@@ -94,7 +91,8 @@ export const SystemInfoCard = () => {
         console.error("[SystemInfo] Failed to get system info:", error);
       });
 
-    // 获取最后检查更新时间
+    // 自动更新检查功能已禁用
+    // 获取最后检查更新时间（仅用于显示）
     const lastCheck = localStorage.getItem("last_check_update");
     if (lastCheck) {
       try {
@@ -108,48 +106,16 @@ export const SystemInfoCard = () => {
       } catch (e) {
         console.error("Error parsing last check update time", e);
       }
-    } else if (verge?.auto_check_update) {
-      // 如果启用了自动检查更新但没有记录，设置当前时间并延迟检查
-      const now = Date.now();
-      localStorage.setItem("last_check_update", now.toString());
-      dispatchSystemState({
-        type: "set-last-check-update",
-        payload: new Date(now).toLocaleString(),
-      });
-
-      timeoutId = window.setTimeout(() => {
-        if (verge?.auto_check_update) {
-          checkUpdate().catch((error) => {
-            console.error("[SystemInfo] Auto update check failed:", error);
-          });
-        }
-      }, 5000);
     }
     return () => {
       if (timeoutId !== undefined) {
         window.clearTimeout(timeoutId);
       }
     };
-  }, [verge?.auto_check_update, dispatchSystemState]);
+  }, [dispatchSystemState]);
 
-  // 自动检查更新逻辑
-  useSWR(
-    verge?.auto_check_update ? "checkUpdate" : null,
-    async () => {
-      const now = Date.now();
-      localStorage.setItem("last_check_update", now.toString());
-      dispatchSystemState({
-        type: "set-last-check-update",
-        payload: new Date(now).toLocaleString(),
-      });
-      return await checkUpdate();
-    },
-    {
-      revalidateOnFocus: false,
-      refreshInterval: 24 * 60 * 60 * 1000, // 每天检查一次
-      dedupingInterval: 60 * 60 * 1000, // 1小时内不重复检查
-    },
-  );
+  // 自动检查更新逻辑已禁用
+  // useSWR(...);
 
   // 导航到设置页面
   const goToSettings = useCallback(() => {
