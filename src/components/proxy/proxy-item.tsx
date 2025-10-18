@@ -1,4 +1,8 @@
-import { CheckCircleOutlineRounded, StarRounded, StarBorderRounded } from "@mui/icons-material";
+import {
+  CheckCircleOutlineRounded,
+  StarRounded,
+  StarBorderRounded,
+} from "@mui/icons-material";
 import {
   alpha,
   Box,
@@ -33,6 +37,7 @@ const Widget = styled(Box)(() => ({
   fontSize: 12,
   fontWeight: 600,
   fontFamily: "monospace",
+  borderRadius: "var(--cv-border-radius-xs)",
 }));
 
 const TypeBox = styled("span")(({ theme }) => ({
@@ -68,16 +73,16 @@ export const ProxyItem = (props: Props) => {
   const toggleFavorite = useLockFn(async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const currentFavorites = verge?.favorite_proxies || [];
     let newFavorites: string[];
-    
+
     if (isFavorite) {
-      newFavorites = currentFavorites.filter(name => name !== proxy.name);
+      newFavorites = currentFavorites.filter((name) => name !== proxy.name);
     } else {
       newFavorites = [...currentFavorites, proxy.name];
     }
-    
+
     await patchVerge({ favorite_proxies: newFavorites });
   });
   useEffect(() => {
@@ -182,10 +187,15 @@ export const ProxyItem = (props: Props) => {
           }
           secondary={
             showType && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mt: 0.25 }}>
-                {!!proxy.provider && (
-                  <TypeBox>{proxy.provider}</TypeBox>
-                )}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 0.5,
+                  mt: 0.25,
+                }}
+              >
+                {!!proxy.provider && <TypeBox>{proxy.provider}</TypeBox>}
                 <TypeBox>{proxy.type}</TypeBox>
                 {proxy.now && (
                   <Box

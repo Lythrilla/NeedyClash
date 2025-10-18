@@ -155,7 +155,15 @@ export function ClashCoreViewer({ ref }: { ref?: Ref<DialogRef> }) {
           >
             <ListItemText primary={each.name} secondary={`/${each.core}`} />
             {changingCore === each.core ? (
-              <CircularProgress size={20} sx={{ mr: 1 }} />
+              <CircularProgress
+                size={20}
+                sx={{
+                  mr: 1,
+                  "& svg circle": {
+                    strokeLinecap: "round",
+                  },
+                }}
+              />
             ) : (
               <Chip label={t(`${each.chip}`)} size="small" />
             )}

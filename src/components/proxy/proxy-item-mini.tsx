@@ -255,6 +255,7 @@ const Widget = styled(Box)(({ theme: { typography } }) => ({
   fontSize: 12,
   fontWeight: 600,
   fontFamily: "monospace",
+  borderRadius: "var(--cv-border-radius-xs)",
 }));
 
 const TypeBox = styled(Box, {

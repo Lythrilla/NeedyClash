@@ -158,7 +158,14 @@ export const ClashPortViewer = forwardRef<ClashPortViewerRef>((_, ref) => {
       okBtn={
         loading ? (
           <Stack direction="row" alignItems="center" spacing={1}>
-            <CircularProgress size={20} />
+            <CircularProgress
+              size={20}
+              sx={{
+                "& svg circle": {
+                  strokeLinecap: "round",
+                },
+              }}
+            />
             {t("Saving...")}
           </Stack>
         ) : (

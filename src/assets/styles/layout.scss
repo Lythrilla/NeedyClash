@@ -15,7 +15,7 @@
   /* ========================================
      左侧边栏
      ======================================== */
-  
+
   .layout-content__left {
     flex: 0 0 var(--cv-sidebar-width);
     width: var(--cv-sidebar-width);
@@ -68,9 +68,18 @@
     /* 导航菜单 */
     .the-menu {
       flex: 1 1 auto;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       margin: 0;
       padding: 0;
+      /* 隐藏滚动条但保留滚动功能 */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+
+      /* Chrome/Safari/Edge */
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
 
     /* 流量统计 */
@@ -86,12 +95,12 @@
       }
     }
   }
-  
+
   /* 暗色模式下的柔和分割线 */
   @media (prefers-color-scheme: dark) {
     .layout-content__left {
       border-right-color: rgba(255, 255, 255, 0.04);
-      
+
       .the-traffic {
         border-top-color: rgba(255, 255, 255, 0.04);
       }
@@ -158,7 +167,7 @@
       top: 0;
     }
   }
-  
+
   /* 暗色模式下的标题栏分割线 */
   @media (prefers-color-scheme: dark) {
     &.layout .the_titlebar {
@@ -177,4 +186,3 @@
 .macos.layout .the_titlebar {
   justify-content: flex-start;
 }
-

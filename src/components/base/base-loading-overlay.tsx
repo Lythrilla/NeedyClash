@@ -25,7 +25,13 @@ export const BaseLoadingOverlay: React.FC<BaseLoadingOverlayProps> = ({
         zIndex: 1000,
       }}
     >
-      <CircularProgress />
+      <CircularProgress
+        sx={{
+          "& svg circle": {
+            strokeLinecap: "round",
+          },
+        }}
+      />
     </Box>
   );
 };

@@ -106,7 +106,15 @@ export function ControllerViewer({ ref }: { ref?: Ref<DialogRef> }) {
       okBtn={
         isSaving ? (
           <Box display="flex" alignItems="center" gap={1}>
-            <CircularProgress size={16} color="inherit" />
+            <CircularProgress
+              size={16}
+              color="inherit"
+              sx={{
+                "& svg circle": {
+                  strokeLinecap: "round",
+                },
+              }}
+            />
             {t("Saving...")}
           </Box>
         ) : (

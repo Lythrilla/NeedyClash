@@ -110,7 +110,13 @@ export const SettingItem: React.FC<ItemProps> = ({
           <CircularProgress
             color="inherit"
             size={16}
-            sx={{ ml: 1, opacity: 0.6 }}
+            sx={{
+              ml: 1,
+              opacity: 0.6,
+              "& svg circle": {
+                strokeLinecap: "round",
+              },
+            }}
           />
         ) : (
           <ChevronRightRounded

@@ -34,6 +34,7 @@ const Loading = styled("div")`
 
 const LoadingItem = styled("div")(({ theme }) => ({
   background: theme.palette.text.secondary,
+  borderRadius: "50%",
 }));
 
 export const BaseLoading = () => {

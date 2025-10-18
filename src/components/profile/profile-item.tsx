@@ -503,10 +503,10 @@ export const ProfileItem = (props: Props) => {
           if (batchMode) {
             // 检查是否点击了内部的交互元素（拖拽手柄、刷新按钮等）
             const target = e.target as HTMLElement;
-            const isInteractiveElement = 
+            const isInteractiveElement =
               target.closest('[data-draggable="true"]') ||
-              target.closest('.MuiIconButton-root');
-            
+              target.closest(".MuiIconButton-root");
+
             if (!isInteractiveElement && onSelectionChange) {
               onSelectionChange(e);
             }
@@ -528,14 +528,15 @@ export const ProfileItem = (props: Props) => {
           event.preventDefault();
         }}
         sx={{
-          ...(batchMode && isSelected && {
-            backgroundColor: (theme) => 
-              theme.palette.mode === "light" 
-                ? "rgba(25, 118, 210, 0.08)" 
-                : "rgba(144, 202, 249, 0.12)",
-            borderColor: "primary.main",
-            borderWidth: "2px",
-          }),
+          ...(batchMode &&
+            isSelected && {
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? "rgba(25, 118, 210, 0.08)"
+                  : "rgba(144, 202, 249, 0.12)",
+              borderColor: "primary.main",
+              borderWidth: "2px",
+            }),
         }}
       >
         {activating && (
@@ -559,6 +560,9 @@ export const ProfileItem = (props: Props) => {
               size={20}
               sx={{
                 animation: "pulse 1.5s ease-in-out infinite",
+                "& svg circle": {
+                  strokeLinecap: "round",
+                },
               }}
             />
           </Box>
@@ -569,7 +573,7 @@ export const ProfileItem = (props: Props) => {
             {batchMode && (
               <IconButton
                 size="small"
-                sx={{ 
+                sx={{
                   p: "2px",
                   mr: "4px",
                   ml: "-8px",
@@ -636,26 +640,30 @@ export const ProfileItem = (props: Props) => {
 
           {/* 第三行：流量信息或更新时间 */}
           {hasExtra ? (
-            <Box sx={{ 
-              height: 26, 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: "space-between",
-              fontSize: 14,
-            }}>
+            <Box
+              sx={{
+                height: 26,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                fontSize: 14,
+              }}
+            >
               <span title={t("Used / Total")}>
                 {parseTraffic(upload + download)} / {parseTraffic(total)}
               </span>
               <span title={t("Expire Time")}>{expire}</span>
             </Box>
           ) : (
-            <Box sx={{ 
-              height: 26, 
-              display: "flex", 
-              alignItems: "center", 
-              justifyContent: hasUrl ? "space-between" : "flex-end",
-              fontSize: 14,
-            }}>
+            <Box
+              sx={{
+                height: 26,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: hasUrl ? "space-between" : "flex-end",
+                fontSize: 14,
+              }}
+            >
               {hasUrl && (
                 <Typography
                   noWrap
@@ -733,9 +741,11 @@ export const ProfileItem = (props: Props) => {
         MenuListProps={{ sx: { py: 0.5 } }}
         PaperProps={{
           sx: {
-            position: 'fixed',
+            position: "fixed",
             backgroundColor: (theme) =>
-              theme.palette.mode === "light" ? "rgba(255, 255, 255, 0.95)" : "rgba(50, 50, 50, 0.95)",
+              theme.palette.mode === "light"
+                ? "rgba(255, 255, 255, 0.95)"
+                : "rgba(50, 50, 50, 0.95)",
             backdropFilter: "blur(20px) saturate(180%)",
             WebkitBackdropFilter: "blur(20px) saturate(180%)",
             border: (theme) =>

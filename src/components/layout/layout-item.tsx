@@ -1,5 +1,4 @@
 import {
-  alpha,
   ListItem,
   ListItemButton,
   ListItemText,
@@ -22,7 +21,14 @@ export const LayoutItem = (props: Props) => {
   const navigate = useNavigate();
 
   return (
-    <ListItem sx={{ py: 0, px: 0, margin: "3px 0" }}>
+    <ListItem
+      sx={{
+        py: 0,
+        px: 0,
+        margin: "3px 0",
+        borderRadius: "var(--cv-border-radius-md)",
+      }}
+    >
       <ListItemButton
         selected={!!match}
         sx={[
@@ -33,7 +39,7 @@ export const LayoutItem = (props: Props) => {
             transition: "all 0.2s ease",
             display: "flex",
             justifyContent: "center",
-            
+
             "& .MuiListItemText-primary": {
               color: "text.primary",
               fontWeight: "400",
@@ -54,22 +60,20 @@ export const LayoutItem = (props: Props) => {
                 height: "18px",
               },
             },
-            
+
             /* Hover效果 */
             "&:hover": {
               background: "action.hover",
             },
           },
           ({ palette: { mode, primary } }) => {
-            const selectedBg = mode === "light" 
-              ? primary.main
-              : primary.main;
-            
+            const selectedBg = mode === "light" ? primary.main : primary.main;
+
             return {
               /* 选中状态 */
               "&.Mui-selected": {
                 background: selectedBg,
-                
+
                 "& .MuiListItemText-primary": {
                   color: "#FFFFFF",
                   fontWeight: "500",
@@ -78,7 +82,7 @@ export const LayoutItem = (props: Props) => {
                   color: "#FFFFFF",
                   opacity: 1,
                 },
-                
+
                 "&:hover": {
                   background: selectedBg,
                 },
@@ -89,17 +93,13 @@ export const LayoutItem = (props: Props) => {
         onClick={() => navigate(to)}
       >
         {(menu_icon === "monochrome" || !menu_icon) && (
-          <ListItemIcon sx={{ mr: 0.75 }}>
-            {icon[0]}
-          </ListItemIcon>
+          <ListItemIcon sx={{ mr: 0.75 }}>{icon[0]}</ListItemIcon>
         )}
         {menu_icon === "colorful" && (
-          <ListItemIcon sx={{ mr: 0.75 }}>
-            {icon[1]}
-          </ListItemIcon>
+          <ListItemIcon sx={{ mr: 0.75 }}>{icon[1]}</ListItemIcon>
         )}
         <ListItemText
-          sx={{ 
+          sx={{
             margin: 0,
             textAlign: menu_icon === "disable" ? "center" : "left",
           }}
