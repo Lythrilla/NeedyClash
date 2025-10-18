@@ -194,11 +194,11 @@ pub(super) async fn init_verge_config() {
 pub(super) async fn init_service_manager() {
     logging!(info, Type::Setup, "Initializing service manager...");
     clash_verge_service_ipc::set_config(ServiceManager::config()).await;
-    
+
     // 重试检测服务状态，因为系统重启后服务可能需要时间启动
     let max_retries = 3;
     let mut retry_count = 0;
-    
+
     while retry_count < max_retries {
         if !is_service_ipc_path_exists() {
             logging!(
@@ -215,10 +215,14 @@ pub(super) async fn init_service_manager() {
             }
             return;
         }
-        
+
         match SERVICE_MANAGER.lock().await.init().await {
             Ok(_) => {
-                logging!(info, Type::Setup, "Service manager initialized successfully");
+                logging!(
+                    info,
+                    Type::Setup,
+                    "Service manager initialized successfully"
+                );
                 logging_error!(Type::Setup, SERVICE_MANAGER.lock().await.refresh().await);
                 return;
             }
@@ -238,7 +242,7 @@ pub(super) async fn init_service_manager() {
             }
         }
     }
-    
+
     logging!(
         info,
         Type::Setup,
