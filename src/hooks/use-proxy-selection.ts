@@ -81,15 +81,15 @@ export const useProxySelection = (options: ProxySelectionOptions = {}) => {
 
         // 第二步：应用到 Clash 核心
         await selectNodeForGroup(groupName, proxyName);
-        
+
         // 第三步：同步到系统托盘
         await syncTrayProxySelection();
-        
+
         logger.info(`代理和状态同步完成: ${groupName} -> ${proxyName}`);
 
         onSuccess?.();
 
-        // 第四步：清理旧连接（异步，不阻塞）
+        // 第四步：清理旧连接
         if (
           config.enableConnectionCleanup &&
           config.autoCloseConnection &&
@@ -99,10 +99,10 @@ export const useProxySelection = (options: ProxySelectionOptions = {}) => {
         }
       } catch (error) {
         logger.error(`代理切换失败: ${groupName} -> ${proxyName}`, error);
-        
+
         // 配置保存失败或核心应用失败，通知用户
         onError?.(error);
-        
+
         // 不进行重试，因为参数没有变化，重试会得到相同结果
         throw error;
       }

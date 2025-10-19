@@ -138,7 +138,7 @@ export const ProxiesEditorViewer = (props: Props) => {
       }
     }
   };
-  // 异步分片解析，避免主线程阻塞，解析完成后批量setState
+  // 异步分片解析
   const handleParseAsync = (cb: (proxies: IProxyConfig[]) => void) => {
     const proxies: IProxyConfig[] = [];
     const names: string[] = [];
@@ -169,7 +169,6 @@ export const ProxiesEditorViewer = (props: Props) => {
             uri,
             err?.message || err,
           );
-          // 不阻塞主流程
         }
       }
       if (idx < lines.length) {

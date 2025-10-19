@@ -77,7 +77,6 @@ async fn clean_async() -> bool {
             }
             Ok(Err(e)) => {
                 log::warn!(target: "app", "禁用TUN模式失败: {e}");
-                // 超时不阻塞退出
                 true
             }
             Err(_) => {

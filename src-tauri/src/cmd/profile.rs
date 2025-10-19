@@ -520,7 +520,7 @@ pub async fn patch_profiles_config(profiles: IProfiles) -> CmdResult<bool> {
         }
         Err(_) => {
             // 超时处理
-            let timeout_msg = "配置更新超时(30秒)，可能是配置验证或核心通信阻塞";
+            let timeout_msg = "配置更新超时(30秒)，可能是配置验证或核心通信";
             logging!(
                 error,
                 Type::Cmd,

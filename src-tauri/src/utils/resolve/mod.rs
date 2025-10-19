@@ -55,10 +55,7 @@ pub fn resolve_setup_async() {
         futures::join!(init_service_manager(), init_work_config(), init_resources(),);
         futures::join!(init_startup_script(), init_hotkey(), init_verge_config(),);
 
-        logging!(info, Type::Setup, "提前创建窗口以改善响应体验");
         init_window().await;
-
-        logging!(info, Type::Setup, "窗口已创建，继续后台初始化");
 
         futures::join!(
             init_timer(),
@@ -69,7 +66,7 @@ pub fn resolve_setup_async() {
         // 配置验证
         Config::verify_config_initialization().await;
 
-        // 核心管理器初始化（可能较慢，但窗口已经显示）
+        // 核心管理器初始化
         init_core_manager().await;
 
         // 系统代理设置
@@ -78,7 +75,7 @@ pub fn resolve_setup_async() {
             init_system_proxy_guard();
         });
 
-        // 托盘初始化和刷新（放在最后，不阻塞主要功能）
+        // 托盘初始化和刷新
         init_tray().await;
         refresh_tray_menu().await;
 
