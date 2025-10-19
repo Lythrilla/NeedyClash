@@ -1,9 +1,7 @@
 name: Release Build
 
 on:
-  # ! 为了避免重复发布版本，应当通过独特 git tag 触发。
-  # ! 不再使用 workflow_dispatch 触发。
-  # workflow_dispatch:
+  workflow_dispatch:
   push:
     tags:
       - "v*.*.*"
