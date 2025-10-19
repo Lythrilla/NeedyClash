@@ -216,33 +216,25 @@ jobs:
           cat > release.txt << EOF
           $UPDATE_LOGS
 
-          ## 我应该下载哪个版本？
+          ## 📦 下载说明
 
-          ### MacOS
-          - MacOS intel芯片: x64.dmg
-          - MacOS apple M芯片: aarch64.dmg
+          > ⚠️ 这是 Alpha 测试版本，可能存在不稳定因素
+
+          ### Windows
+          - **标准版本**: \`x64-setup.exe\` (64位) / \`arm64-setup.exe\` (ARM64)
+          - **内置 WebView2**: \`x64_fixed_webview2-setup.exe\` / \`arm64_fixed_webview2-setup.exe\`
+          - ⚠️ 不再支持 Windows 7
+
+          ### macOS
+          - **Apple Silicon (M系列)**: \`aarch64.dmg\`
+          - **Intel 芯片**: \`x64.dmg\`
 
           ### Linux
-          - Linux 64位: amd64.deb/amd64.rpm
-          - Linux arm64 architecture: arm64.deb/aarch64.rpm
-          - Linux armv7架构: armhf.deb/armhfp.rpm
+          - **Debian 系**: \`amd64.deb\` (x64) / \`arm64.deb\` (ARM64) / \`armhf.deb\` (ARMv7)
+          - **RedHat 系**: \`x86_64.rpm\` (x64) / \`aarch64.rpm\` (ARM64) / \`armhfp.rpm\` (ARMv7)
 
-          ### Windows (不再支持Win7)
-          #### 正常版本(推荐)
-          - 64位: x64-setup.exe
-          - arm64架构: arm64-setup.exe
-          #### 便携版问题很多不再提供
-          #### 内置Webview2版(体积较大，仅在企业版系统或无法安装webview2时使用)
-          - 64位: x64_fixed_webview2-setup.exe
-          - arm64架构: arm64_fixed_webview2-setup.exe
-
-          ### FAQ
-          - [常见问题](https://clash-verge-rev.github.io/faq/windows.html)
-
-          ### 稳定机场VPN推荐
-          - [狗狗加速](https://verge.dginv.click/#/register?code=oaxsAGo6)
-
-          Created at ${{ env.BUILDTIME }}.
+          ---
+          构建时间: ${{ env.BUILDTIME }}
           EOF
 
       - name: Upload Release

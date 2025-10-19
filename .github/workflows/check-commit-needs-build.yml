@@ -132,7 +132,7 @@ jobs:
             else
               # Download and parse latest.json to check version and commit hash
               echo "📥 Downloading latest.json to check version..."
-              LATEST_JSON_URL="https://github.com/clash-verge-rev/clash-verge-rev/releases/download/autobuild/latest.json"
+              LATEST_JSON_URL="https://github.com/Lythrilla/NeedyClash/releases/download/autobuild/latest.json"
               
               LATEST_JSON_CONTENT=$(curl -sL "$LATEST_JSON_URL" 2>/dev/null || echo "")
               
