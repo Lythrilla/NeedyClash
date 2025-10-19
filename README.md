@@ -8,12 +8,20 @@
   <b>深度重构的现代化 Clash 代理客户端</b>
 </p>
 
-
 <p align="center">
   基于 <a href="https://github.com/clash-verge-rev/clash-verge-rev">Clash Verge Rev</a> 深度重构，前后端全面优化，提供更稳定高效的使用体验
 </p>
 
 <br>
+
+## 多少可能？
+
+<div align="center">
+  <img src="1.png" alt="预览图 1" width="800"/>
+  <img src="2.png" alt="预览图 2" width="800"/>
+  <img src="3.png" alt="预览图 3" width="800"/>
+  <img src="4.png" alt="预览图 3" width="800"/>
+</div>
 
 ## 项目概述
 
@@ -24,8 +32,6 @@ NeedyClash 源自 [Clash Verge Rev](https://github.com/clash-verge-rev/clash-ver
 - **独立维护**：不与 Clash Verge Rev 同步代码，独立演进
 - **问题反馈**：请在本仓库提交 Issue，勿向原项目反馈
 - **长期规划**：计划逐步完全分离为独立项目
-
-
 
 ## 核心特性
 
