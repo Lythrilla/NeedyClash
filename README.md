@@ -8,6 +8,8 @@
   <b>深度重构的现代化 Clash 代理客户端</b>
 </p>
 
+<p align="center"><a href=“https://t.me/NeedyClash”>telegram 群组</a></p>
+
 <p align="center">
   基于 <a href="https://github.com/clash-verge-rev/clash-verge-rev">Clash Verge Rev</a> 深度重构，前后端全面优化，提供更稳定高效的使用体验
 </p>
