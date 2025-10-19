@@ -14,13 +14,19 @@
 
 <br>
 
-## 多少可能？
+## 界面预览
 
 <div align="center">
-  <img src="1.png" alt="预览图 1" width="800"/>
-  <img src="2.png" alt="预览图 2" width="800"/>
-  <img src="3.png" alt="预览图 3" width="800"/>
-  <img src="4.png" alt="预览图 3" width="800"/>
+  <table>
+    <tr>
+      <td><img src="1.png" alt="主界面" width="400"/></td>
+      <td><img src="2.png" alt="节点管理" width="400"/></td>
+    </tr>
+    <tr>
+      <td><img src="3.png" alt="主题定制" width="400"/></td>
+      <td><img src="4.png" alt="流量分析" width="400"/></td>
+    </tr>
+  </table>
 </div>
 
 ## 项目概述
