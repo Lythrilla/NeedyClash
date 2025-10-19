@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to NeedyClash! This document provides guidelines and instructions to help you set up your development environment and start contributing.
 
-**Note**: NeedyClash is a secondary development version based on [NeedyClash Rev](https://github.com/clash-verge-rev/clash-verge-rev).
+**Note**: NeedyClash is a secondary development version based on [NeedyClash](https://github.com/clash-verge-rev/clash-verge-rev).
 
 ## Development Setup
 
@@ -62,7 +62,7 @@ You have two options for downloading the clash binary:
   ```shell
   pnpm run prebuild
   # Use '--force' or '-f' to update both the Mihomo core version
-  # and the NeedyClash Rev service version to the latest available.
+  # and the NeedyClash service version to the latest available.
   pnpm run prebuild --force
   ```
 

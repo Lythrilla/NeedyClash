@@ -1,8 +1,8 @@
 [package]
 name = "needyclash"
 version = "1.0.0"
-description = "NeedyClash - A secondary development version based on NeedyClash Rev"
-authors = ["Lythrilla", "Based on: NeedyClash Rev by zzzgydi, Tunglies, wonfen, MystiPanda"]
+description = "NeedyClash - A secondary development version based on NeedyClash"
+authors = ["Lythrilla", "Based on: NeedyClash by zzzgydi, Tunglies, wonfen, MystiPanda"]
 license = "GPL-3.0-only"
 repository = "https://github.com/Lythrilla/NeedyClash"
 homepage = "https://github.com/Lythrilla/NeedyClash"

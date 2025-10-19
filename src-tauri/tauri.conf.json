@@ -3,7 +3,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "bundle": {
     "active": true,
-    "longDescription": "NeedyClash - A secondary development version based on NeedyClash Rev",
+    "longDescription": "NeedyClash - A secondary development version based on NeedyClash",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -14,9 +14,9 @@
     "resources": ["resources", "resources/locales/*"],
     "publisher": "Lythrilla",
     "externalBin": ["sidecar/verge-mihomo", "sidecar/verge-mihomo-alpha"],
-    "copyright": "NeedyClash by Lythrilla - Based on NeedyClash Rev (GPL-3.0)",
+    "copyright": "NeedyClash by Lythrilla - Based on NeedyClash (GPL-3.0)",
     "category": "DeveloperTool",
-    "shortDescription": "NeedyClash - Secondary development of NeedyClash Rev",
+    "shortDescription": "NeedyClash - Secondary development of NeedyClash",
     "createUpdaterArtifacts": false
   },
   "build": {

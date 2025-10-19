@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 echo ========================================
-echo NeedyClash Rev - Lythrilla Edition
+echo NeedyClash - Lythrilla Edition
 echo 构建脚本
 echo ========================================
 echo.

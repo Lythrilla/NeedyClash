@@ -10,7 +10,7 @@ body:
       value: |
         ## 在提交问题之前，请确认以下事项：
 
-        1. 请 **确保** 您已经查阅了 [NeedyClash Rev 官方文档](https://clash-verge-rev.github.io/guide/term.html)  以及 [常见问题](https://clash-verge-rev.github.io/faq/windows.html)
+        1. 请 **确保** 您已经查阅了 [NeedyClash 官方文档](https://clash-verge-rev.github.io/guide/term.html)  以及 [常见问题](https://clash-verge-rev.github.io/faq/windows.html)
         2. 请 **确保** [已有的问题](https://github.com/clash-verge-rev/clash-verge-rev/issues?q=is%3Aissue) 中没有人提交过相似issue，否则请在已有的issue下进行讨论
         3. 请 **务必** 给issue填写一个简洁明了的标题，以便他人快速检索
         4. 请 **务必** 查看 [AutoBuild](https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/autobuild) 版本更新日志
@@ -19,7 +19,7 @@ body:
 
         ## Before submitting the issue, please make sure of the following checklist:
 
-        1. Please make sure you have read the [NeedyClash Rev official documentation](https://clash-verge-rev.github.io/guide/term.html) and [FAQ](https://clash-verge-rev.github.io/faq/windows.html)
+        1. Please make sure you have read the [NeedyClash official documentation](https://clash-verge-rev.github.io/guide/term.html) and [FAQ](https://clash-verge-rev.github.io/faq/windows.html)
         2. Please make sure there is no similar issue in the [existing issues](https://github.com/clash-verge-rev/clash-verge-rev/issues?q=is%3Aissue), otherwise please discuss under the existing issue
         3. Please be sure to fill in a concise and clear title for the issue so that others can quickly search
         4. Please be sure to check out [AutoBuild](https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/autobuild) version update log
@@ -66,8 +66,8 @@ body:
       label: 日志(勿上传日志文件，请粘贴日志内容) / Log (Do not upload the log file, paste the log content directly)
       description: 请提供完整或相关部分的Debug日志（请在“软件左侧菜单”->“设置”->“日志等级”调整到debug，Verge错误请把“杂项设置”->“app日志等级”调整到debug，并重启Verge生效。日志文件在“软件左侧菜单”->“设置”->“日志目录”下） / Please provide a complete or relevant part of the Debug log (please adjust the "Log level" to debug in "Software left menu" -> "Settings" -> "Log level". If there is a Verge error, please adjust "Miscellaneous settings" -> "app log level" to debug, and restart Verge to take effect. The log file is under "Software left menu" -> "Settings" -> "Log directory")
       placeholder: |
-        日志目录一般位于 NeedyClash Rev 安装目录的 "logs/" 子目录中，请将日志内容粘贴到此处。
-        Log directory is usually located in the "logs/" subdirectory of the NeedyClash Rev installation directory, please paste the log content here.
+        日志目录一般位于 NeedyClash 安装目录的 "logs/" 子目录中，请将日志内容粘贴到此处。
+        Log directory is usually located in the "logs/" subdirectory of the NeedyClash installation directory, please paste the log content here.
       render: log
     validations:
       required: true

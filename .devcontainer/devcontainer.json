@@ -1,5 +1,5 @@
 {
-  "name": "NeedyClash Rev Development Environment",
+  "name": "NeedyClash Development Environment",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
 
   "features": {

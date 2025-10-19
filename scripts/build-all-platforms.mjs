@@ -154,7 +154,7 @@ async function buildMultipleTargets(targets, fast = false) {
 // 显示帮助信息
 function showHelp() {
   console.log(`
-NeedyClash Rev - 多平台构建工具
+NeedyClash - 多平台构建工具
 作者: Lythrilla
 
 用法:
@@ -300,7 +300,7 @@ async function main() {
   }
 
   console.log("\n" + "=".repeat(60));
-  log_info("NeedyClash Rev - 多平台构建");
+  log_info("NeedyClash - 多平台构建");
   log_info(`作者: Lythrilla`);
   console.log("=".repeat(60));
   log_info(`构建目标数量: ${targets.length}`);
