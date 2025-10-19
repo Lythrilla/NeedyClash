@@ -69,10 +69,12 @@ export default defineConfig({
         pure_funcs: ["console.debug", "console.trace"],
         dead_code: true,
         unused: true,
+        passes: 1,
       },
       mangle: {
         safari10: true,
       },
+      maxWorkers: 2,
     },
     rollupOptions: {
       treeshake: {
@@ -82,7 +84,7 @@ export default defineConfig({
       },
       output: {
         compact: true,
-        experimentalMinChunkSize: 100000,
+        experimentalMinChunkSize: 200000,
         dynamicImportInCjs: true,
         manualChunks(id) {
           if (id.includes("node_modules")) {

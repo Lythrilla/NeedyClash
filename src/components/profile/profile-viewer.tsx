@@ -416,6 +416,19 @@ export function ProfileViewer({ onChange, ref }: ProfileViewerProps) {
               )}
             />
           </EnhancedFormItem>
+
+          <EnhancedFormItem
+            label={t("Allow Auto Update")}
+            description={t("Allow this profile to be automatically updated")}
+          >
+            <Controller
+              name="option.allow_auto_update"
+              control={control}
+              render={({ field }) => (
+                <Switch edge="end" checked={field.value} {...field} />
+              )}
+            />
+          </EnhancedFormItem>
         </EnhancedFormGroup>
       )}
 

@@ -14,6 +14,7 @@ jobs:
   # Windows 构建
   build-windows:
     runs-on: windows-latest
+    timeout-minutes: 120
     strategy:
       matrix:
         target:
@@ -51,7 +52,7 @@ jobs:
       - name: 构建应用
         run: pnpm tauri build --target ${{ matrix.target }}
         env:
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
@@ -65,6 +66,7 @@ jobs:
   # macOS 构建
   build-macos:
     runs-on: macos-latest
+    timeout-minutes: 120
     strategy:
       matrix:
         target:
@@ -92,6 +94,9 @@ jobs:
           target: ${{ matrix.target }}
           override: true
 
+      - name: 安装 macOS 打包工具
+        run: brew install create-dmg
+          
       - name: 安装依赖
         run: pnpm install
 
@@ -101,7 +106,7 @@ jobs:
       - name: 构建应用
         run: pnpm tauri build --target ${{ matrix.target }}
         env:
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=8192
           OPENSSL_STATIC: 1
           OPENSSL_VENDORED: 1
 
@@ -116,6 +121,7 @@ jobs:
   # Linux 构建
   build-linux:
     runs-on: ubuntu-22.04
+    timeout-minutes: 120
     strategy:
       matrix:
         target:
@@ -144,6 +150,15 @@ jobs:
           target: ${{ matrix.target }}
           override: true
 
+      - name: 配置构建环境
+        run: |
+          sudo sysctl -w vm.swappiness=10
+          sudo fallocate -l 8G /swapfile || true
+          sudo chmod 600 /swapfile || true
+          sudo mkswap /swapfile || true
+          sudo swapon /swapfile || true
+          free -h
+          
       - name: 安装系统依赖
         run: |
           sudo apt-get update
@@ -157,38 +172,76 @@ jobs:
       - name: 配置交叉编译 (ARM64)
         if: matrix.target == 'aarch64-unknown-linux-gnu'
         run: |
+          cat > /tmp/sources.list << EOF
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-security main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-updates main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-backports main multiverse universe restricted
+          
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main multiverse universe restricted
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main multiverse universe restricted
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main multiverse universe restricted
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main multiverse universe restricted
+          EOF
+          
+          if [ -f /etc/apt/sources.list ]; then
+            sudo mv /etc/apt/sources.list /etc/apt/sources.list.backup
+          fi
+          sudo mv /tmp/sources.list /etc/apt/sources.list
+          
           sudo dpkg --add-architecture arm64
           sudo apt-get update
           sudo apt-get install -y \
             gcc-aarch64-linux-gnu \
             g++-aarch64-linux-gnu \
-            libgtk-3-dev:arm64 \
+            libxslt1.1:arm64 \
             libwebkit2gtk-4.1-dev:arm64 \
-            libappindicator3-dev:arm64 \
-            librsvg2-dev:arm64 \
-            libssl-dev:arm64
+            libjavascriptcoregtk-4.1-dev:arm64 \
+            libayatana-appindicator3-dev:arm64 \
+            libssl-dev:arm64 \
+            patchelf:arm64 \
+            librsvg2-dev:arm64
           echo "PKG_CONFIG_ALLOW_CROSS=1" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig" >> $GITHUB_ENV
-          echo "PKG_CONFIG_SYSROOT_DIR=/" >> $GITHUB_ENV
+          echo "PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/" >> $GITHUB_ENV
           echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
           echo "CXX=aarch64-linux-gnu-g++" >> $GITHUB_ENV
 
       - name: 配置交叉编译 (ARMv7)
         if: matrix.target == 'armv7-unknown-linux-gnueabihf'
         run: |
+          cat > /tmp/sources.list << EOF
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-security main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-updates main multiverse universe restricted
+          deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu jammy-backports main multiverse universe restricted
+          
+          deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports jammy main multiverse universe restricted
+          deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports jammy-security main multiverse universe restricted
+          deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports jammy-updates main multiverse universe restricted
+          deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports jammy-backports main multiverse universe restricted
+          EOF
+          
+          if [ -f /etc/apt/sources.list ]; then
+            sudo mv /etc/apt/sources.list /etc/apt/sources.list.backup
+          fi
+          sudo mv /tmp/sources.list /etc/apt/sources.list
+          
           sudo dpkg --add-architecture armhf
           sudo apt-get update
           sudo apt-get install -y \
             gcc-arm-linux-gnueabihf \
             g++-arm-linux-gnueabihf \
-            libgtk-3-dev:armhf \
+            libxslt1.1:armhf \
             libwebkit2gtk-4.1-dev:armhf \
-            libappindicator3-dev:armhf \
-            librsvg2-dev:armhf \
-            libssl-dev:armhf
+            libjavascriptcoregtk-4.1-dev:armhf \
+            libayatana-appindicator3-dev:armhf \
+            libssl-dev:armhf \
+            patchelf:armhf \
+            librsvg2-dev:armhf
           echo "PKG_CONFIG_ALLOW_CROSS=1" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/usr/lib/arm-linux-gnueabihf/pkgconfig" >> $GITHUB_ENV
-          echo "PKG_CONFIG_SYSROOT_DIR=/" >> $GITHUB_ENV
+          echo "PKG_CONFIG_SYSROOT_DIR=/usr/arm-linux-gnueabihf/" >> $GITHUB_ENV
           echo "CC=arm-linux-gnueabihf-gcc" >> $GITHUB_ENV
           echo "CXX=arm-linux-gnueabihf-g++" >> $GITHUB_ENV
 
@@ -201,7 +254,7 @@ jobs:
       - name: 构建应用
         run: pnpm tauri build --target ${{ matrix.target }}
         env:
-          NODE_OPTIONS: --max-old-space-size=4096
+          NODE_OPTIONS: --max-old-space-size=8192
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4

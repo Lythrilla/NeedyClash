@@ -305,6 +305,9 @@
   "TUN Mode Disabled": "TUN mode is disabled, suitable for special applications",
   "TUN Mode Service Required": "TUN mode requires service mode, please install the service first",
   "TUN Mode Intercept Info": "TUN mode can take over all application traffic, suitable for special applications that do not follow the system proxy settings",
+  "Reapplying TUN configuration...": "Reapplying TUN configuration...",
+  "TUN configuration reapplied successfully": "TUN configuration reapplied successfully",
+  "TUN settings saved successfully": "TUN settings saved successfully",
   "Core communication error": "Core communication error",
   "Rule Mode Description": "Routes traffic according to preset rules, provides flexible proxy strategies",
   "Global Mode Description": "All traffic goes through proxy servers, suitable for scenarios requiring global internet access",
@@ -1010,5 +1013,7 @@
   "Selected profiles deleted successfully": "Selected profiles deleted successfully",
   "Prefer System Titlebar": "Prefer System Titlebar",
   "Custom": "Custom",
-  "Invalid color format. Please use #RRGGBB format": "Invalid color format. Please use #RRGGBB format"
+  "Invalid color format. Please use #RRGGBB format": "Invalid color format. Please use #RRGGBB format",
+  "Allow Auto Update": "Allow Auto Update",
+  "Allow this profile to be automatically updated": "Allow this profile to be automatically updated"
 }

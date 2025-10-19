@@ -2,6 +2,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getVergeConfig, patchVergeConfig } from "@/services/cmds";
+import debounce from "@/utils/debounce";
 
 import { WindowContext } from "./WindowContext";
 
@@ -15,23 +16,26 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
   const close = useCallback(() => currentWindow.close(), [currentWindow]);
   const minimize = useCallback(() => currentWindow.minimize(), [currentWindow]);
 
+  // 缓存 debounce 函数，避免每次 effect 重新创建
+  const checkMaximized = useMemo(
+    () =>
+      debounce(async () => {
+        const value = await currentWindow.isMaximized();
+        setMaximized(value);
+      }, 300),
+    [currentWindow],
+  );
+
   useEffect(() => {
-    let active = true;
+    // 初始化时立即检查一次最大化状态
+    checkMaximized();
 
-    const updateMaximized = async () => {
-      const value = await currentWindow.isMaximized();
-      if (!active) return;
-      setMaximized((prev) => (prev === value ? prev : value));
-    };
-
-    updateMaximized();
-    const unlistenPromise = currentWindow.onResized(updateMaximized);
+    const unlistenPromise = currentWindow.onResized(checkMaximized);
 
     return () => {
-      active = false;
       unlistenPromise.then((unlisten) => unlisten());
     };
-  }, [currentWindow]);
+  }, [currentWindow, checkMaximized]);
 
   const toggleMaximize = useCallback(async () => {
     if (await currentWindow.isMaximized()) {
@@ -49,13 +53,13 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const refreshDecorated = useCallback(async () => {
     const val = await currentWindow.isDecorated();
-    setDecorated((prev) => (prev === val ? prev : val));
+    setDecorated(val);
     return val;
   }, [currentWindow]);
 
   const toggleDecorations = useCallback(async () => {
-    const currentVal = await currentWindow.isDecorated();
-    const newVal = !currentVal;
+    // 直接使用 state 而不是重新查询，减少异步调用
+    const newVal = !decorated;
     await currentWindow.setDecorations(newVal);
     setDecorated(newVal);
 
@@ -65,10 +69,10 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (err) {
       console.error("Failed to save window decoration setting:", err);
     }
-  }, [currentWindow]);
+  }, [currentWindow, decorated]);
 
   useEffect(() => {
-    let active = true;
+    let mounted = true;
 
     const initDecorations = async () => {
       try {
@@ -76,25 +80,28 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
         const config = await getVergeConfig();
         const useSysTitlebar = config.window_use_system_titlebar ?? false;
 
-        if (!active) return;
+        if (!mounted) return;
 
-        // 应用配置
-        await currentWindow.setDecorations(useSysTitlebar);
+        // 并行执行设置操作，提升初始化速度
+        await Promise.all([
+          currentWindow.setDecorations(useSysTitlebar),
+          currentWindow.setMinimizable?.(true),
+        ]);
+
         setDecorated(useSysTitlebar);
       } catch (err) {
         console.error("Failed to initialize window decorations:", err);
         // 失败时使用当前状态
-        if (active) {
+        if (mounted) {
           refreshDecorated();
         }
       }
     };
 
     initDecorations();
-    currentWindow.setMinimizable?.(true);
 
     return () => {
-      active = false;
+      mounted = false;
     };
   }, [currentWindow, refreshDecorated]);
 

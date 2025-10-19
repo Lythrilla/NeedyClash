@@ -305,6 +305,9 @@
   "TUN Mode Disabled": "TUN 模式已关闭，适用于特殊应用",
   "TUN Mode Service Required": "TUN模式需要服务模式，请先安装服务",
   "TUN Mode Intercept Info": "TUN模式可以接管所有应用流量，适用于特殊不遵循系统代理设置的应用",
+  "Reapplying TUN configuration...": "正在重新应用 TUN 配置...",
+  "TUN configuration reapplied successfully": "TUN 配置重新应用成功",
+  "TUN settings saved successfully": "TUN 设置保存成功",
   "Core communication error": "内核通信错误",
   "Rule Mode Description": "基于预设规则智能判断流量走向，提供灵活的代理策略",
   "Global Mode Description": "所有流量均通过代理服务器，适用于需要全局科学上网的场景",
@@ -994,5 +997,7 @@
   "Selected profiles deleted successfully": "选中的订阅已成功删除",
   "Prefer System Titlebar": "优先使用系统标题栏",
   "Custom": "自定义",
-  "Invalid color format. Please use #RRGGBB format": "颜色格式无效，请使用 #RRGGBB 格式"
+  "Invalid color format. Please use #RRGGBB format": "颜色格式无效，请使用 #RRGGBB 格式",
+  "Allow Auto Update": "允许自动更新",
+  "Allow this profile to be automatically updated": "允许此订阅自动更新"
 }
