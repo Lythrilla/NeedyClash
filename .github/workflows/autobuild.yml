@@ -26,7 +26,7 @@ jobs:
 
   update_tag:
     name: Update tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: check_commit
     if: ${{ needs.check_commit.outputs.should_run == 'true' }}
     steps:
@@ -475,7 +475,7 @@ jobs:
 
   notify-telegram:
     name: Notify Telegram
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs:
       [
         update_tag,

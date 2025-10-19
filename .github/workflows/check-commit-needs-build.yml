@@ -46,7 +46,7 @@ env:
 jobs:
   check_commit:
     name: Check Commit Needs Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       should_run: ${{ steps.check.outputs.should_run }}
       last_tauri_commit: ${{ steps.check.outputs.last_tauri_commit }}

@@ -19,6 +19,7 @@ import { useSystemProxyState } from "@/hooks/use-system-proxy-state";
 import { useSystemState } from "@/hooks/use-system-state";
 import { useVerge } from "@/hooks/use-verge";
 import { showNotice } from "@/services/noticeService";
+
 import {
   SWITCH_ROW_CONTAINER,
   LABEL_STYLE,
@@ -106,7 +107,8 @@ const ProxyControlSwitches = ({
   } = useServiceManager();
   const { actualState: systemProxyActualState, toggleSystemProxy } =
     useSystemProxyState();
-  const { isAdminMode, isServiceMode, isTunModeAvailable } = useSystemState();
+  const { isAdminMode, isServiceMode, isServiceOk, isTunModeAvailable } =
+    useSystemState();
 
   const sysproxyRef = useRef<DialogRef>(null);
   const tunRef = useRef<DialogRef>(null);
@@ -192,8 +194,9 @@ const ProxyControlSwitches = ({
           )}
 
           {/* 服务管理按钮 - 极简设计 */}
+          {/* 使用 isServiceOk 而不是 isServiceMode 来判断服务是否已安装 */}
           <Box sx={{ mt: 1 }}>
-            {!isServiceMode ? (
+            {!isServiceOk ? (
               <Stack spacing={0.75}>
                 {/* 提示文本 */}
                 {!isAdminMode && (

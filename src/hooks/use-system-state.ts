@@ -32,13 +32,15 @@ export function useSystemState() {
     systemStateSWRConfig,
   );
 
+  // 始终检查服务是否可用（不管当前运行模式是什么）
+  // 这样即使当前是 Sidecar 模式，也能知道服务是否已安装
   const {
     data: isServiceOk = false,
     mutate: mutateServiceOk,
     isLoading: isServiceLoading,
-  } = useSWR(isServiceMode ? "isServiceAvailable" : null, isServiceAvailable, {
+  } = useSWR("isServiceAvailable", isServiceAvailable, {
     ...serviceSWRConfig,
-    refreshInterval: isServiceMode ? SWR_CONFIG.SERVICE_REFRESH_INTERVAL : 0,
+    refreshInterval: SWR_CONFIG.SERVICE_REFRESH_INTERVAL,
     onSuccess: (data) => {
       logger.debug("服务状态更新:", data);
     },
@@ -47,8 +49,7 @@ export function useSystemState() {
     },
   });
 
-  const isLoading =
-    runningModeLoading || isAdminLoading || (isServiceMode && isServiceLoading);
+  const isLoading = runningModeLoading || isAdminLoading || isServiceLoading;
 
   const isTunModeAvailable = isAdminMode || isServiceOk;
 
@@ -62,7 +63,8 @@ export function useSystemState() {
       logger.debug("应用启动，初始化状态");
       await mutateRunningMode();
 
-      if (mounted && isServiceMode) {
+      // 始终检查服务状态，不管当前运行模式
+      if (mounted) {
         await mutateServiceOk();
       }
     };
@@ -80,7 +82,7 @@ export function useSystemState() {
         cancelIdleCallback(idleCallback);
       }
     };
-  }, [isServiceMode, mutateRunningMode, mutateServiceOk]);
+  }, [mutateRunningMode, mutateServiceOk]);
 
   return {
     runningMode,

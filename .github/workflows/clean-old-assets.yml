@@ -35,7 +35,7 @@ env:
 jobs:
   check_current_version:
     name: Check Current Version and Commit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       current_version: ${{ steps.check.outputs.current_version }}
       last_tauri_commit: ${{ steps.check.outputs.last_tauri_commit }}
@@ -101,7 +101,7 @@ jobs:
 
   clean_old_assets:
     name: Clean Old Release Assets
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: check_current_version
     steps:
       - name: Checkout repository

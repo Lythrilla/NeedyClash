@@ -32,7 +32,7 @@ concurrency:
 jobs:
   check_alpha_tag:
     name: Check Alpha Tag package.json Version Consistency
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
   delete_old_assets:
     name: Delete Old Alpha Release Assets and Tags
     needs: check_alpha_tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Delete Old Alpha Tags Except Latest
         uses: actions/github-script@v7
@@ -176,7 +176,7 @@ jobs:
 
   update_tag:
     name: Update tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: delete_old_assets
     steps:
       - name: Checkout repository
@@ -395,15 +395,15 @@ jobs:
           sudo ls -lR /etc/apt/
 
           cat > /tmp/sources.list << EOF
-          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble main multiverse universe restricted
-          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble-security main multiverse universe restricted
-          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble-updates main multiverse universe restricted
-          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu noble-backports main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu jammy main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu jammy-security main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu jammy-updates main multiverse universe restricted
+          deb [arch=amd64,i386] http://azure.archive.ubuntu.com/ubuntu jammy-backports main multiverse universe restricted
 
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-security main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-updates main multiverse universe restricted
-          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports noble-backports main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main multiverse universe restricted
+          deb [arch=armhf,arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main multiverse universe restricted
           EOF
 
           # Backup and remove ALL existing sources to prevent conflicts

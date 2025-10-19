@@ -20,7 +20,7 @@ concurrency:
 jobs:
   check_tag_version:
     name: Check Release Tag and package.json Version Consistency
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
 
   update_tag:
     name: Update tag
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [release, release-for-linux-arm, release-for-fixed-webview2]
     steps:
       - name: Checkout repository
@@ -462,7 +462,7 @@ jobs:
 
   release-update:
     name: Release Update
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [update_tag]
     steps:
       - name: Checkout repository
@@ -487,7 +487,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release-update-for-fixed-webview2:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [update_tag]
     steps:
       - name: Checkout repository
@@ -513,7 +513,7 @@ jobs:
 
   submit-to-winget:
     name: Submit to Winget
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [update_tag, release-update]
     steps:
       - name: Checkout repository
@@ -536,7 +536,7 @@ jobs:
 
   notify-telegram:
     name: Notify Telegram
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs:
       [
         update_tag,

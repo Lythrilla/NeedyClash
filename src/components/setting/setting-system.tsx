@@ -55,7 +55,8 @@ const SettingSystem = ({ onError }: Props) => {
   } = useServiceManager();
   const { actualState: systemProxyActualState, toggleSystemProxy } =
     useSystemProxyState();
-  const { isAdminMode, isServiceMode, isTunModeAvailable } = useSystemState();
+  const { isAdminMode, isServiceMode, isServiceOk, isTunModeAvailable } =
+    useSystemState();
   const {
     enableTunMode,
     isToggling: isTunToggling,
@@ -169,7 +170,9 @@ const SettingSystem = ({ onError }: Props) => {
 
       {/* 服务管理按钮区域 */}
       <Box sx={serviceContainerStyles}>
-        {!isServiceMode ? (
+        {/* 使用 isServiceOk 而不是 isServiceMode 来判断服务是否已安装 */}
+        {/* 这样即使当前运行在 Sidecar 模式，也能正确显示服务状态 */}
+        {!isServiceOk ? (
           <Stack spacing={1}>
             {/* 提示文本 */}
             {!isAdminMode && (
