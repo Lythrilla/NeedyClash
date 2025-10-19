@@ -10,7 +10,7 @@ import { ReactNode } from "react";
 import { getGlassMenuStyles } from "./theme-tokens";
 
 /**
- * 统一的毛玻璃菜单组件
+ * 毛玻璃菜单组件
  */
 export const GlassMenu = ({ children, ...props }: MenuProps) => {
   return (
@@ -37,7 +37,7 @@ interface GlassSelectProps extends Omit<SelectProps, "MenuProps"> {
 }
 
 /**
- * 统一的毛玻璃下拉选择框
+ * 毛玻璃下拉选择框
  */
 export const GlassSelect = ({ children, ...props }: GlassSelectProps) => {
   return (
@@ -81,7 +81,7 @@ export const GlassSelect = ({ children, ...props }: GlassSelectProps) => {
 };
 
 /**
- * 获取统一的右键菜单配置
+ * 获取右键菜单配置
  */
 export const getContextMenuProps = (
   anchorEl: HTMLElement | null,

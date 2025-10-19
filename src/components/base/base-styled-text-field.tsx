@@ -18,5 +18,4 @@ export const BaseStyledTextField = styled((props: TextFieldProps) => {
     />
   );
 })(({ theme }) => ({
-  // 使用MUI主题的全局配置
 }));

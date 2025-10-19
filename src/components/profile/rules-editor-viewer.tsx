@@ -61,7 +61,7 @@ interface Props {
   onSave?: (prev?: string, curr?: string) => void;
 }
 
-// 导入统一的端口验证工具
+// 导入端口验证工具
 import { validatePortFormat } from "@/utils/port-validator";
 
 const portValidator = validatePortFormat;

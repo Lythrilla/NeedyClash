@@ -83,7 +83,7 @@ const CompactStatCard = memo(
         }}
         onClick={onClick}
       >
-        {/* 图标 - 极简 */}
+        {/* 图标 */}
         <Box
           sx={{
             mr: 1,
@@ -167,17 +167,21 @@ export const EnhancedTrafficStats = () => {
 
   // Canvas组件现在直接从全局Hook获取数据，无需手动添加数据点
 
-  // 使用useMemo计算解析后的流量数据
+  // 使用useMemo计算解析后的流量数据，添加更精细的依赖
   const parsedData = useMemo(() => {
-    const [up, upUnit] = parseTraffic(traffic?.up || 0);
-    const [down, downUnit] = parseTraffic(traffic?.down || 0);
-    const [inuse, inuseUnit] = parseTraffic(memory?.inuse || 0);
-    const [uploadTotal, uploadTotalUnit] = parseTraffic(
-      connections?.uploadTotal,
-    );
-    const [downloadTotal, downloadTotalUnit] = parseTraffic(
-      connections?.downloadTotal,
-    );
+    // 使用浅比较避免不必要的重新计算
+    const upValue = traffic?.up || 0;
+    const downValue = traffic?.down || 0;
+    const inuseValue = memory?.inuse || 0;
+    const uploadTotalValue = connections?.uploadTotal || 0;
+    const downloadTotalValue = connections?.downloadTotal || 0;
+    const connectionsCount = connections?.connections?.length || 0;
+    
+    const [up, upUnit] = parseTraffic(upValue);
+    const [down, downUnit] = parseTraffic(downValue);
+    const [inuse, inuseUnit] = parseTraffic(inuseValue);
+    const [uploadTotal, uploadTotalUnit] = parseTraffic(uploadTotalValue);
+    const [downloadTotal, downloadTotalUnit] = parseTraffic(downloadTotalValue);
 
     return {
       up,
@@ -190,11 +194,18 @@ export const EnhancedTrafficStats = () => {
       uploadTotalUnit,
       downloadTotal,
       downloadTotalUnit,
-      connectionsCount: connections?.connections.length,
+      connectionsCount,
     };
-  }, [traffic, memory, connections]);
+  }, [
+    traffic?.up,
+    traffic?.down,
+    memory?.inuse,
+    connections?.uploadTotal,
+    connections?.downloadTotal,
+    connections?.connections?.length,
+  ]);
 
-  // 渲染流量图表 - 极简轻量设计
+  // 渲染流量图表
   const trafficGraphComponent = useMemo(() => {
     if (!trafficGraph || !pageVisible) return null;
 
@@ -205,6 +216,7 @@ export const EnhancedTrafficStats = () => {
           cursor: "pointer",
           border: "1px solid",
           borderColor: "divider",
+          borderRadius: "var(--cv-border-radius-sm)",
           overflow: "hidden",
           backgroundColor: "transparent",
           transition: "border-color 0.15s",

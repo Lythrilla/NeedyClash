@@ -6,17 +6,17 @@ import {
   serviceSWRConfig,
   SWR_CONFIG,
 } from "@/config/swr-config";
-import { getRunningMode, isAdmin, isServiceAvailable } from "@/services/cmds";
+import {
+  getRunningMode,
+  isAdmin,
+  isServiceInstalled,
+  isServiceAvailable,
+} from "@/services/cmds";
 import { getLogger } from "@/utils/logger";
 
 const logger = getLogger("useSystemState");
 
-/**
- * 自定义 hook 用于获取系统运行状态
- * 包括运行模式、管理员状态、系统服务是否可用
- */
 export function useSystemState() {
-  // 获取运行模式
   const {
     data: runningMode = "Sidecar",
     mutate: mutateRunningMode,
@@ -25,63 +25,66 @@ export function useSystemState() {
   const isSidecarMode = runningMode === "Sidecar";
   const isServiceMode = runningMode === "Service";
 
-  // 获取管理员状态
   const { data: isAdminMode = false, isLoading: isAdminLoading } = useSWR(
     "isAdmin",
     isAdmin,
     systemStateSWRConfig,
   );
 
-  // 始终检查服务是否可用（不管当前运行模式是什么）
-  // 这样即使当前是 Sidecar 模式，也能知道服务是否已安装
   const {
     data: isServiceOk = false,
     mutate: mutateServiceOk,
     isLoading: isServiceLoading,
-  } = useSWR("isServiceAvailable", isServiceAvailable, {
+  } = useSWR("isServiceInstalled", isServiceInstalled, {
     ...serviceSWRConfig,
     refreshInterval: SWR_CONFIG.SERVICE_REFRESH_INTERVAL,
-    onSuccess: (data) => {
-      logger.debug("服务状态更新:", data);
-    },
-    onError: (error) => {
-      logger.error("服务状态检查失败:", error);
-    },
+    dedupingInterval: 1000,
   });
 
   const isLoading = runningModeLoading || isAdminLoading || isServiceLoading;
 
   const isTunModeAvailable = isAdminMode || isServiceOk;
 
-  // 组件挂载时立即初始化状态，而不是延迟 2 秒
   useEffect(() => {
     let mounted = true;
+    let timeoutId: number | undefined;
 
-    const initServiceState = async () => {
+    const initServiceState = () => {
       if (!mounted) return;
 
-      logger.debug("应用启动，初始化状态");
-      await mutateRunningMode();
+      mutateRunningMode().catch(err => {
+        logger.error("运行模式初始化失败", err);
+      });
 
-      // 始终检查服务状态，不管当前运行模式
-      if (mounted) {
-        await mutateServiceOk();
-      }
+      timeoutId = window.setTimeout(() => {
+        if (mounted) {
+          mutateServiceOk().catch(err => {
+            logger.error("服务状态初始化失败", err);
+          });
+        }
+      }, 50);
     };
 
-    // 使用 requestIdleCallback 或短暂延迟，避免阻塞初始渲染
-    const idleCallback = requestIdleCallback
-      ? requestIdleCallback(() => initServiceState())
-      : setTimeout(() => initServiceState(), 100);
-
-    return () => {
-      mounted = false;
-      if (typeof idleCallback === "number") {
-        clearTimeout(idleCallback);
-      } else {
-        cancelIdleCallback(idleCallback);
-      }
-    };
+    if (typeof requestIdleCallback !== 'undefined') {
+      const idleId = requestIdleCallback(() => {
+        initServiceState();
+      }, { timeout: 200 });
+      
+      return () => {
+        mounted = false;
+        cancelIdleCallback(idleId);
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+    } else {
+      timeoutId = window.setTimeout(() => {
+        initServiceState();
+      }, 50);
+      
+      return () => {
+        mounted = false;
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+    }
   }, [mutateRunningMode, mutateServiceOk]);
 
   return {

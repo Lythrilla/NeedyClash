@@ -16,7 +16,7 @@ interface BaseIconButtonProps extends Omit<IconButtonProps, "size"> {
 }
 
 /**
- * 统一的图标按钮组件
+ * 图标按钮组件
  */
 export const BaseIconButton = ({
   icon,

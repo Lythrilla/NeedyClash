@@ -69,7 +69,7 @@ export const useClashInfo = () => {
 
     if (!hasInfo) return;
 
-    // 使用统一的端口验证
+    // 使用端口验证
     validatePorts(patch);
 
     await patchClashConfig(patch);

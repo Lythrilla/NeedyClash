@@ -10,7 +10,6 @@ import { getLogger } from "@/utils/logger";
 
 const logger = getLogger("useSystemProxyState");
 
-// 系统代理状态检测统一逻辑
 export const useSystemProxyState = () => {
   const { verge, mutateVerge, patchVerge } = useVerge();
   const { sysproxy } = useAppData();

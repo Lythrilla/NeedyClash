@@ -21,10 +21,8 @@ export const ClashInfoCard = () => {
   const { version: clashVersion } = useClash();
   const { clashConfig, rules, uptime, systemProxyAddress } = useAppData();
 
-  // 使用useMemo缓存格式化后的uptime，避免频繁计算
   const formattedUptime = useMemo(() => formatUptime(uptime), [uptime]);
 
-  // 使用备忘录组件内容，减少重新渲染
   const cardContent = useMemo(() => {
     if (!clashConfig) return null;
 

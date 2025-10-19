@@ -114,7 +114,6 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
     setTheme(newTheme);
   };
 
-  // useCallback 性能优化
   const handleBackgroundChange = useCallback(
     (field: keyof ThemeSetting, value: any) => {
       const newTheme = { ...theme, [field]: value };
@@ -590,7 +589,7 @@ export function ThemeViewerEnhanced(props: { ref?: React.Ref<DialogRef> }) {
         <Box sx={{ p: 2.5 }}>
           {tabValue === 0 && (
             <Stack spacing={2.5}>
-              {/* 顶部控制栏 - 更简洁 */}
+              {/* 顶部控制栏  */}
               <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                 <ToggleButtonGroup
                   value={presetFilter}

@@ -20,7 +20,6 @@ pub async fn toggle_system_proxy() {
         verge.latest_ref().auto_close_connection.unwrap_or(false)
     };
 
-    // 如果当前系统代理即将关闭，且自动关闭连接设置为true，则关闭所有连接
     if enable
         && auto_close_connection
         && let Err(err) = handle::Handle::mihomo().await.close_all_connections().await

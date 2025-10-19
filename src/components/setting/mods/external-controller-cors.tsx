@@ -31,7 +31,7 @@ const filterBaseOriginsForUI = (origins: string[]) => {
   return origins.filter((origin: string) => !DEV_URLS.includes(origin.trim()));
 };
 
-// 统一使用的按钮样式
+// 使用的按钮样式
 const buttonStyle = {
   textTransform: "none",
   boxShadow: "0 2px 4px rgba(0,0,0,0.1)",

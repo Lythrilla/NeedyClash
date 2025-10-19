@@ -2,7 +2,7 @@ import { Box, Typography, Divider } from "@mui/material";
 import React, { ReactNode } from "react";
 
 /**
- * 简洁统一的对话框标题
+ * 对话框标题
  */
 interface EnhancedDialogTitleProps {
   title: string;
@@ -40,7 +40,7 @@ export const EnhancedDialogTitle: React.FC<EnhancedDialogTitleProps> = ({
 };
 
 /**
- * 简洁统一的表单项
+ * 表单项
  */
 interface EnhancedFormItemProps {
   label: string | ReactNode;
@@ -104,7 +104,7 @@ export const EnhancedFormItem: React.FC<EnhancedFormItemProps> = ({
 };
 
 /**
- * 简洁统一的信息区域
+ * 信息区域
  */
 interface EnhancedInfoCardProps {
   title: string;
@@ -133,7 +133,7 @@ export const EnhancedInfoCard: React.FC<EnhancedInfoCardProps> = ({
 };
 
 /**
- * 简洁统一的信息行
+ * 信息行
  */
 interface EnhancedInfoRowProps {
   label: string;
@@ -181,7 +181,7 @@ export const EnhancedInfoRow: React.FC<EnhancedInfoRowProps> = ({
 };
 
 /**
- * 简洁统一的表单分组
+ * 表单分组
  */
 interface EnhancedFormGroupProps {
   title?: string;

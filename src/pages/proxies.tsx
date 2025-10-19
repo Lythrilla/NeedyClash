@@ -160,7 +160,7 @@ const ProxyPage = () => {
         <Box display="flex" alignItems="center" gap={1.5}>
           <ProviderButton />
 
-          {/* 使用统一的模式选择器 */}
+          {/* 使用模式选择器 */}
           <BaseModeSelector
             value={curMode}
             options={modeOptions}

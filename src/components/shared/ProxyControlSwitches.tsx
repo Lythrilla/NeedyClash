@@ -186,15 +186,14 @@ const ProxyControlSwitches = ({
             highlight={!!enable_tun_mode}
           />
 
-          {/* 状态提示 - 极简设计 */}
+          {/* 状态提示 */}
           {!isTunModeAvailable && (
             <Typography variant="caption" sx={HINT_TEXT_STYLES.caption}>
               {t("TUN requires Service Mode or Admin Mode")}
             </Typography>
           )}
 
-          {/* 服务管理按钮 - 极简设计 */}
-          {/* 使用 isServiceOk 而不是 isServiceMode 来判断服务是否已安装 */}
+          {/* 服务管理按钮 */}
           <Box sx={{ mt: 1 }}>
             {!isServiceOk ? (
               <Stack spacing={0.75}>

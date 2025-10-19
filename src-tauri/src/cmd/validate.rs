@@ -9,7 +9,6 @@ pub async fn script_validate_notice(status: String, msg: String) -> CmdResult {
 }
 
 /// 处理脚本验证相关的所有消息通知
-/// 统一通知接口，保持消息类型一致性
 pub fn handle_script_validation_notice(result: &(bool, String), file_type: &str) {
     if !result.0 {
         let error_msg = &result.1;
@@ -61,7 +60,6 @@ pub async fn validate_script_file(file_path: String) -> CmdResult<bool> {
 }
 
 /// 处理YAML验证相关的所有消息通知
-/// 统一通知接口，保持消息类型一致性
 pub fn handle_yaml_validation_notice(result: &(bool, String), file_type: &str) {
     if !result.0 {
         let error_msg = &result.1;

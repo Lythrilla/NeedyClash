@@ -20,7 +20,7 @@ interface BaseModeSelectorProps<T = string> {
 }
 
 /**
- * 统一的模式选择器组件
+ * 模式选择器组件
  * 用于各种模式切换场景（代理模式、主题模式等）
  */
 export const BaseModeSelector = <T extends string = string>({

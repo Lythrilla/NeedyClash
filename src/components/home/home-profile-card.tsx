@@ -71,7 +71,6 @@ interface HomeProfileCardProps {
   onProfileUpdated?: () => void;
 }
 
-// 提取独立组件减少主组件复杂度
 const ProfileDetails = ({
   current,
   onUpdateProfile,
@@ -100,7 +99,6 @@ const ProfileDetails = ({
         gap: 2,
       }}
     >
-      {/* 第一行：订阅来源（加强版） */}
       <Box>
         {current.url && (
           <Box
@@ -223,7 +221,6 @@ const ProfileDetails = ({
         )}
       </Box>
 
-      {/* 第二行：流量统计（分组展示） */}
       {current.extra && (
         <Box
           sx={{

@@ -158,6 +158,7 @@ mod app_init {
             cmd::reinstall_service,
             cmd::repair_service,
             cmd::is_service_available,
+            cmd::is_service_installed,
             // TUN mode management
             cmd::check_tun_available,
             cmd::get_tun_status,

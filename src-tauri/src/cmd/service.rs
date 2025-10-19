@@ -44,3 +44,8 @@ pub async fn is_service_available() -> CmdResult<bool> {
         .map(|_| true)
         .map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+pub fn is_service_installed() -> CmdResult<bool> {
+    Ok(service::is_service_installed())
+}

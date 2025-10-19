@@ -47,7 +47,6 @@ export const LayoutTraffic = () => {
   // 显示内存使用情况的设置
   const displayMemory = verge?.enable_memory_usage ?? true;
 
-  // 使用parseTraffic统一处理转换，保持与首页一致的显示格式
   const [up, upUnit] = parseTraffic(traffic?.up || 0);
   const [down, downUnit] = parseTraffic(traffic?.down || 0);
   const [inuse, inuseUnit] = parseTraffic(memory?.inuse || 0);

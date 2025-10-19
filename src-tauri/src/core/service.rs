@@ -30,7 +30,6 @@ pub enum ServiceStatus {
 #[derive(Clone)]
 pub struct ServiceManager(ServiceStatus);
 
-#[allow(clippy::unused_async)]
 #[cfg(target_os = "windows")]
 async fn uninstall_service() -> Result<()> {
     logging!(info, Type::Service, "uninstall service");
@@ -46,26 +45,29 @@ async fn uninstall_service() -> Result<()> {
         bail!(format!("uninstaller not found: {uninstall_path:?}"));
     }
 
-    let token = Token::with_current_process()?;
-    let level = token.privilege_level()?;
-    let status = match level {
-        PrivilegeLevel::NotPrivileged => RunasCommand::new(uninstall_path).show(false).status()?,
-        _ => StdCommand::new(uninstall_path)
-            .creation_flags(0x08000000)
-            .status()?,
-    };
+    // 将阻塞操作移到 spawn_blocking 中
+    tokio::task::spawn_blocking(move || -> Result<()> {
+        let token = Token::with_current_process()?;
+        let level = token.privilege_level()?;
+        let status = match level {
+            PrivilegeLevel::NotPrivileged => RunasCommand::new(uninstall_path).show(false).status()?,
+            _ => StdCommand::new(uninstall_path)
+                .creation_flags(0x08000000)
+                .status()?,
+        };
 
-    if !status.success() {
-        bail!(
-            "failed to uninstall service with status {}",
-            status.code().unwrap_or(-1)
-        );
-    }
+        if !status.success() {
+            bail!(
+                "failed to uninstall service with status {}",
+                status.code().unwrap_or(-1)
+            );
+        }
 
-    Ok(())
+        Ok(())
+    })
+    .await?
 }
 
-#[allow(clippy::unused_async)]
 #[cfg(target_os = "windows")]
 async fn install_service() -> Result<()> {
     logging!(info, Type::Service, "install service");
@@ -81,23 +83,27 @@ async fn install_service() -> Result<()> {
         bail!(format!("installer not found: {install_path:?}"));
     }
 
-    let token = Token::with_current_process()?;
-    let level = token.privilege_level()?;
-    let status = match level {
-        PrivilegeLevel::NotPrivileged => RunasCommand::new(install_path).show(false).status()?,
-        _ => StdCommand::new(install_path)
-            .creation_flags(0x08000000)
-            .status()?,
-    };
+    // 将阻塞操作移到 spawn_blocking 中
+    tokio::task::spawn_blocking(move || -> Result<()> {
+        let token = Token::with_current_process()?;
+        let level = token.privilege_level()?;
+        let status = match level {
+            PrivilegeLevel::NotPrivileged => RunasCommand::new(install_path).show(false).status()?,
+            _ => StdCommand::new(install_path)
+                .creation_flags(0x08000000)
+                .status()?,
+        };
 
-    if !status.success() {
-        bail!(
-            "failed to install service with status {}",
-            status.code().unwrap_or(-1)
-        );
-    }
+        if !status.success() {
+            bail!(
+                "failed to install service with status {}",
+                status.code().unwrap_or(-1)
+            );
+        }
 
-    Ok(())
+        Ok(())
+    })
+    .await?
 }
 
 #[cfg(target_os = "windows")]
@@ -118,7 +124,6 @@ async fn reinstall_service() -> Result<()> {
     }
 }
 
-#[allow(clippy::unused_async)]
 #[cfg(target_os = "linux")]
 async fn uninstall_service() -> Result<()> {
     logging!(info, Type::Service, "uninstall service");
@@ -134,14 +139,20 @@ async fn uninstall_service() -> Result<()> {
     let uninstall_shell: String = uninstall_path.to_string_lossy().replace(" ", "\\ ");
 
     let elevator = crate::utils::help::linux_elevator();
-    let status = match get_effective_uid() {
-        0 => StdCommand::new(uninstall_shell).status()?,
-        _ => StdCommand::new(elevator.clone())
-            .arg("sh")
-            .arg("-c")
-            .arg(uninstall_shell)
-            .status()?,
-    };
+    
+    // 将阻塞操作移到 spawn_blocking 中
+    let status = tokio::task::spawn_blocking(move || {
+        match get_effective_uid() {
+            0 => StdCommand::new(uninstall_shell).status(),
+            _ => StdCommand::new(elevator.clone())
+                .arg("sh")
+                .arg("-c")
+                .arg(uninstall_shell)
+                .status(),
+        }
+    })
+    .await??;
+    
     logging!(
         info,
         Type::Service,
@@ -160,7 +171,6 @@ async fn uninstall_service() -> Result<()> {
 }
 
 #[cfg(target_os = "linux")]
-#[allow(clippy::unused_async)]
 async fn install_service() -> Result<()> {
     logging!(info, Type::Service, "install service");
     use users::get_effective_uid;
@@ -175,14 +185,20 @@ async fn install_service() -> Result<()> {
     let install_shell: String = install_path.to_string_lossy().replace(" ", "\\ ");
 
     let elevator = crate::utils::help::linux_elevator();
-    let status = match get_effective_uid() {
-        0 => StdCommand::new(install_shell).status()?,
-        _ => StdCommand::new(elevator.clone())
-            .arg("sh")
-            .arg("-c")
-            .arg(install_shell)
-            .status()?,
-    };
+    
+    // 将阻塞操作移到 spawn_blocking 中
+    let status = tokio::task::spawn_blocking(move || {
+        match get_effective_uid() {
+            0 => StdCommand::new(install_shell).status(),
+            _ => StdCommand::new(elevator.clone())
+                .arg("sh")
+                .arg("-c")
+                .arg(install_shell)
+                .status(),
+        }
+    })
+    .await??;
+    
     logging!(
         info,
         Type::Service,
@@ -240,9 +256,13 @@ async fn uninstall_service() -> Result<()> {
 
     // logging!(debug, Type::Service, "uninstall command: {}", command);
 
-    let status = StdCommand::new("osascript")
-        .args(vec!["-e", &command])
-        .status()?;
+    // 将阻塞操作移到 spawn_blocking 中
+    let status = tokio::task::spawn_blocking(move || {
+        StdCommand::new("osascript")
+            .args(vec!["-e", &command])
+            .status()
+    })
+    .await??;
 
     if !status.success() {
         bail!(
@@ -276,9 +296,13 @@ async fn install_service() -> Result<()> {
 
     // logging!(debug, Type::Service, "install command: {}", command);
 
-    let status = StdCommand::new("osascript")
-        .args(vec!["-e", &command])
-        .status()?;
+    // 将阻塞操作移到 spawn_blocking 中
+    let status = tokio::task::spawn_blocking(move || {
+        StdCommand::new("osascript")
+            .args(vec!["-e", &command])
+            .status()
+    })
+    .await??;
 
     if !status.success() {
         bail!(
@@ -434,7 +458,6 @@ pub(super) async fn stop_core_by_service() -> Result<()> {
     Ok(())
 }
 
-/// 检查服务是否正在运行
 pub async fn is_service_available() -> Result<()> {
     clash_verge_service_ipc::connect().await?;
     Ok(())
@@ -442,6 +465,42 @@ pub async fn is_service_available() -> Result<()> {
 
 pub fn is_service_ipc_path_exists() -> bool {
     Path::new(clash_verge_service_ipc::IPC_PATH).exists()
+}
+
+#[cfg(target_os = "windows")]
+pub fn is_service_installed() -> bool {
+    use std::process::Command;
+        if let Ok(output) = Command::new("sc")
+        .args(&["query", "clash_verge_service"])
+        .output()
+    {
+        output.status.success()
+    } else {
+        false
+    }
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn is_service_installed() -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        Path::new("/etc/systemd/system/clash-verge-service.service").exists()
+    }
+    
+    #[cfg(target_os = "macos")]
+    {
+        if let Ok(home) = std::env::var("HOME") {
+            let plist_path = format!("{}/Library/LaunchAgents/io.github.clash-verge-rev.plist", home);
+            Path::new(&plist_path).exists()
+        } else {
+            false
+        }
+    }
+    
+    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
+    {
+        false
+    }
 }
 
 impl ServiceManager {

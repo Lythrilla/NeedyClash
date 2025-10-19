@@ -21,7 +21,7 @@ interface ItemProps {
   onClick?: () => void | Promise<any>;
 }
 
-// 精致的设置项组件 - 极简现代设计
+// 设置项组件
 export const SettingItem: React.FC<ItemProps> = ({
   label,
   extra,
@@ -185,7 +185,6 @@ export const SettingItem: React.FC<ItemProps> = ({
   );
 };
 
-// 精致的设置列表组件 - 优雅的分组设计
 interface SettingListProps {
   title: string;
   icon?: ReactNode;
@@ -204,7 +203,7 @@ export const SettingList: React.FC<SettingListProps> = ({
 
   return (
     <Box sx={{ mb: 0 }}>
-      {/* 设置分组标题 - 精致简洁 */}
+      {/* 设置分组标题 */}
       <Box
         sx={{
           mb: 2,

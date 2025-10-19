@@ -1,6 +1,5 @@
 /**
- * 统一的主题 tokens 和样式变量
- * 用于保持整个应用的设计一致性
+ * 主题 tokens 和样式变量
  */
 
 import { alpha, type Theme } from "@mui/material";

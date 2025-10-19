@@ -105,12 +105,10 @@ export class TrafficErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // 如果提供了自定义降级组件，使用它
       if (this.props.fallbackComponent) {
         return this.props.fallbackComponent;
       }
 
-      // 默认错误UI
       return (
         <TrafficErrorFallback
           error={this.state.error}

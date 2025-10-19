@@ -86,7 +86,7 @@ fn finish_window_operation() {
     WINDOW_OPERATION_IN_PROGRESS.store(false, Ordering::Release);
 }
 
-/// 统一的窗口管理器
+/// 窗口管理器
 pub struct WindowManager;
 
 impl WindowManager {

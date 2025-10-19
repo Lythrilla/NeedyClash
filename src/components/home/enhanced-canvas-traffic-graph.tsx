@@ -141,7 +141,6 @@ export const EnhancedCanvasTrafficGraph = memo(
       [theme],
     );
 
-    // 更新显示数据（防抖处理）
     const updateDisplayData = useCallback((newData: ITrafficDataPoint[]) => {
       if (debounceTimeoutRef.current !== null) {
         window.clearTimeout(debounceTimeoutRef.current);
@@ -151,7 +150,6 @@ export const EnhancedCanvasTrafficGraph = memo(
       }, 50); // 50ms防抖
     }, []);
 
-    // 监听数据变化
     useEffect(() => {
       const timeRangeData = getDataForTimeRange(timeRange);
       updateDisplayData(timeRangeData);
@@ -173,7 +171,6 @@ export const EnhancedCanvasTrafficGraph = memo(
 
         if (data.length === 0) return bottomY;
 
-        // 获取当前的刻度范围
         const allValues = [
           ...data.map((d) => d.up),
           ...data.map((d) => d.down),
@@ -208,7 +205,6 @@ export const EnhancedCanvasTrafficGraph = memo(
       [],
     );
 
-    // 鼠标悬浮处理 - 计算最近的数据点
     const handleMouseMove = useCallback(
       (event: React.MouseEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
@@ -221,7 +217,6 @@ export const EnhancedCanvasTrafficGraph = memo(
         const padding = GRAPH_CONFIG.padding;
         const effectiveWidth = rect.width - padding.left - padding.right;
 
-        // 计算最接近的数据点索引
         const relativeMouseX = mouseX - padding.left;
         const ratio = Math.max(0, Math.min(1, relativeMouseX / effectiveWidth));
         const dataIndex = Math.round(ratio * (displayData.length - 1));
@@ -229,11 +224,9 @@ export const EnhancedCanvasTrafficGraph = memo(
         if (dataIndex >= 0 && dataIndex < displayData.length) {
           const dataPoint = displayData[dataIndex];
 
-          // 格式化流量数据
           const [upValue, upUnit] = parseTraffic(dataPoint.up);
           const [downValue, downUnit] = parseTraffic(dataPoint.down);
 
-          // 格式化时间戳
           const timeStr = dataPoint.timestamp
             ? new Date(dataPoint.timestamp).toLocaleTimeString("zh-CN", {
                 hour: "2-digit",
@@ -242,7 +235,6 @@ export const EnhancedCanvasTrafficGraph = memo(
               })
             : "未知时间";
 
-          // 计算数据点对应的Y坐标位置（用于高亮）
           const upY = calculateY(dataPoint.up, rect.height, displayData);
           const downY = calculateY(dataPoint.down, rect.height, displayData);
           const highlightY =
@@ -265,17 +257,14 @@ export const EnhancedCanvasTrafficGraph = memo(
       [displayData, calculateY],
     );
 
-    // 鼠标离开处理
     const handleMouseLeave = useCallback(() => {
       setTooltipData((prev) => ({ ...prev, visible: false }));
     }, []);
 
-    // 获取智能Y轴刻度（三刻度系统：最小值、中间值、最大值）
     const getYAxisTicks = useCallback(
       (data: ITrafficDataPoint[], height: number) => {
         if (data.length === 0) return [];
 
-        // 找到数据的最大值和最小值
         const allValues = [
           ...data.map((d) => d.up),
           ...data.map((d) => d.down),
@@ -283,7 +272,6 @@ export const EnhancedCanvasTrafficGraph = memo(
         const maxValue = Math.max(...allValues);
         const minValue = Math.min(...allValues);
 
-        // 格式化流量数值
         const formatTrafficValue = (bytes: number): string => {
           if (bytes === 0) return "0";
           if (bytes < 1024) return `${Math.round(bytes)}B`;
@@ -293,16 +281,13 @@ export const EnhancedCanvasTrafficGraph = memo(
 
         const padding = GRAPH_CONFIG.padding;
 
-        // 强制显示三个刻度：底部、中间、顶部
         const topY = padding.top + 10; // 避免与顶部时间范围按钮重叠
         const bottomY = height - padding.bottom - 5; // 避免与底部时间轴重叠
         const middleY = (topY + bottomY) / 2;
 
-        // 计算对应的值
         let topValue, middleValue, bottomValue;
 
         if (maxValue === 0) {
-          // 如果没有流量，显示0到一个小值的范围
           topValue = 1024; // 1KB
           middleValue = 512; // 512B
           bottomValue = 0;
@@ -411,25 +396,25 @@ export const EnhancedCanvasTrafficGraph = memo(
       [colors.grid, colors.text, colors.background, getYAxisTicks],
     );
 
-    // 获取时间范围对应的最佳时间显示策略
+
     const getTimeDisplayStrategy = useCallback(
       (timeRangeMinutes: TimeRange) => {
         switch (timeRangeMinutes) {
-          case 1: // 1分钟：更密集的时间标签，显示 MM:SS
+          case 1:
             return {
-              maxLabels: 6, // 减少到6个，更适合短时间
+              maxLabels: 6,
               formatTime: (timestamp: number) => {
                 const date = new Date(timestamp);
                 const minutes = date.getMinutes().toString().padStart(2, "0");
                 const seconds = date.getSeconds().toString().padStart(2, "0");
-                return `${minutes}:${seconds}`; // 显示 MM:SS
+                return `${minutes}:${seconds}`;
               },
-              intervalSeconds: 10, // 每10秒一个标签，更合理
-              minPixelDistance: 35, // 减少间距，允许更多标签
+              intervalSeconds: 10,
+              minPixelDistance: 35,
             };
-          case 5: // 5分钟：中等密度，显示 HH:MM
+          case 5:
             return {
-              maxLabels: 6, // 6个标签比较合适
+              maxLabels: 6,
               formatTime: (timestamp: number) => {
                 const date = new Date(timestamp);
                 return date.toLocaleTimeString("en-US", {
@@ -438,23 +423,23 @@ export const EnhancedCanvasTrafficGraph = memo(
                   minute: "2-digit",
                 }); // 显示 HH:MM
               },
-              intervalSeconds: 30, // 约30秒间隔
-              minPixelDistance: 38, // 减少间距，允许更多标签
+              intervalSeconds: 30,
+              minPixelDistance: 38,
             };
-          case 10: // 10分钟：标准密度，显示 HH:MM
+          case 10:
           default:
             return {
-              maxLabels: 8, // 保持8个
+              maxLabels: 8,
               formatTime: (timestamp: number) => {
                 const date = new Date(timestamp);
                 return date.toLocaleTimeString("en-US", {
                   hour12: false,
                   hour: "2-digit",
                   minute: "2-digit",
-                }); // 显示 HH:MM
+                });
               },
-              intervalSeconds: 60, // 1分钟间隔
-              minPixelDistance: 40, // 减少间距，允许更多标签
+              intervalSeconds: 60,
+              minPixelDistance: 40,
             };
         }
       },
@@ -791,10 +776,8 @@ export const EnhancedCanvasTrafficGraph = memo(
       tooltipData,
     ]);
 
-    // 受控的动画循环
     useEffect(() => {
       const animate = (currentTime: number) => {
-        // 控制帧率，减少不必要的重绘
         if (
           currentTime - lastRenderTimeRef.current >=
           1000 / GRAPH_CONFIG.targetFPS
@@ -805,7 +788,6 @@ export const EnhancedCanvasTrafficGraph = memo(
         animationFrameRef.current = requestAnimationFrame(animate);
       };
 
-      // 只有在有数据时才开始动画
       if (displayData.length > 0) {
         animationFrameRef.current = requestAnimationFrame(animate);
       }
@@ -817,7 +799,6 @@ export const EnhancedCanvasTrafficGraph = memo(
       };
     }, [drawGraph, displayData.length]);
 
-    // 切换时间范围
     const handleTimeRangeClick = useCallback((event: React.MouseEvent) => {
       event.stopPropagation();
       setTimeRange((prev) => {
@@ -825,12 +806,10 @@ export const EnhancedCanvasTrafficGraph = memo(
       });
     }, []);
 
-    // 切换图表样式
     const toggleStyle = useCallback(() => {
       setChartStyle((prev) => (prev === "bezier" ? "line" : "bezier"));
     }, []);
 
-    // 兼容性方法
     const appendData = useCallback((data: ITrafficItem) => {
       console.log(
         "[EnhancedCanvasTrafficGraphV2] appendData called (using global data):",
@@ -838,7 +817,6 @@ export const EnhancedCanvasTrafficGraph = memo(
       );
     }, []);
 
-    // 暴露方法给父组件
     useImperativeHandle(
       ref,
       () => ({
@@ -848,7 +826,6 @@ export const EnhancedCanvasTrafficGraph = memo(
       [appendData, toggleStyle],
     );
 
-    // 获取时间范围文本
     const getTimeRangeText = useCallback(() => {
       return t("{{time}} Minutes", { time: timeRange });
     }, [timeRange, t]);
@@ -888,7 +865,7 @@ export const EnhancedCanvasTrafficGraph = memo(
             pointerEvents: "none",
           }}
         >
-          {/* 时间范围按钮 - 极简 */}
+          {/* 时间范围按钮 */}
           <Box
             component="div"
             onClick={handleTimeRangeClick}
@@ -914,7 +891,7 @@ export const EnhancedCanvasTrafficGraph = memo(
             {getTimeRangeText()}
           </Box>
 
-          {/* 图例 - 极简 */}
+          {/* 图例 */}
           <Box
             sx={{
               position: "absolute",

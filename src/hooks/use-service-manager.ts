@@ -16,9 +16,11 @@ const logger = getLogger("useServiceManager");
 import {
   executeServiceSequence,
   waitForStateStabilization,
+  executeWithRetry,
   type ServiceOperationStep,
 } from "./use-service-operations";
 import { useSystemState } from "./use-system-state";
+import { isServiceInstalled } from "@/services/cmds";
 
 interface ServiceManagerState {
   isInstalling: boolean;
@@ -33,10 +35,6 @@ const TIMING = {
   STATE_UPDATE: 500, // 状态更新等待时间
 } as const;
 
-/**
- * 统一的服务管理 Hook
- * 整合了服务安装、重装、卸载的所有逻辑，减少代码重复
- */
 export const useServiceManager = () => {
   const { mutateRunningMode, mutateServiceOk, isAdminMode } = useSystemState();
 
@@ -68,7 +66,7 @@ export const useServiceManager = () => {
       setState((prev) => ({ ...prev, [operationType]: true }));
 
       try {
-        // 检查管理员权限（仅提示）
+        // 检查管理员权限
         if (!isAdminMode) {
           const msgKey =
             operationType === "isUninstalling"
@@ -84,9 +82,68 @@ export const useServiceManager = () => {
           throw new Error(result.error || `${operationType} failed`);
         }
 
-        // 等待状态稳定后更新
-        await waitForStateStabilization(TIMING.STATE_UPDATE);
-        await Promise.all([mutateRunningMode(), mutateServiceOk()]);
+        if (operationType === "isInstalling" || operationType === "isUninstalling" || operationType === "isReinstalling") {
+          console.log(`[ServiceManager] ${operationType}: 开始验证服务状态变化`);
+
+          await waitForStateStabilization(TIMING.SERVICE_STABILIZATION);
+
+          const expectedServiceState =
+            operationType === "isInstalling" || operationType === "isReinstalling";
+          let finalState: boolean = false;
+
+          try {
+            finalState = await executeWithRetry(
+              async () => {
+                const currentState = await isServiceInstalled();
+                console.log(`[ServiceManager] 服务状态检查: 期望=${expectedServiceState}, 实际=${currentState}`);
+
+                if (currentState !== expectedServiceState) {
+                  throw new Error(
+                    `服务状态未更新: 期望${expectedServiceState}, 实际${currentState}`
+                  );
+                }
+                return currentState;
+              },
+              5,
+              1000,
+            );
+            console.log(`[ServiceManager] ${operationType}: 服务状态验证成功，最终状态=${finalState}`);
+          } catch (err) {
+            console.error(`[ServiceManager] ${operationType}: 服务状态验证失败`, err);
+            try {
+              finalState = await isServiceInstalled();
+              console.warn(`[ServiceManager] 使用当前检查到的状态: ${finalState}`);
+            } catch (e) {
+              console.error("[ServiceManager] 无法获取服务状态", e);
+            }
+          }
+
+          console.log(`[ServiceManager] [${operationType}] 准备更新 SWR 缓存: isServiceOk=${finalState}`);
+
+          await mutateServiceOk(finalState, { revalidate: false });
+
+          console.log(`[ServiceManager] [${operationType}] SWR 缓存已更新，新值=${finalState}`);
+
+          try {
+            const verifyState = await isServiceInstalled();
+            if (verifyState !== finalState) {
+              console.warn(`[ServiceManager] [${operationType}] 状态验证不一致: 更新值=${finalState}, 实际值=${verifyState}`);
+            } else {
+              console.log(`[ServiceManager] [${operationType}] 状态验证一致: ${verifyState}`);
+            }
+          } catch (e) {
+            console.error(`[ServiceManager] [${operationType}] 状态验证失败`, e);
+          }
+        }
+
+        try {
+          await mutateRunningMode(undefined, { revalidate: true });
+          logger.debug("运行模式状态更新成功");
+        } catch (err) {
+          logger.warn("运行模式状态更新失败", err);
+        }
+
+        await waitForStateStabilization(200);
 
         showNotice("success", t(completionMsg));
       } catch (err) {
@@ -109,8 +166,8 @@ export const useServiceManager = () => {
       {
         fn: () => installService(),
         name: "InstallService",
-        startMsg: "Installing Service...",
-        successMsg: "Service Installed Successfully",
+        startMsg: t("Installing Service..."),
+        successMsg: t("Service Installed Successfully"),
       },
       {
         fn: () => waitForStateStabilization(TIMING.SERVICE_STABILIZATION),
@@ -119,7 +176,7 @@ export const useServiceManager = () => {
       {
         fn: () => restartCore(),
         name: "RestartCore",
-        startMsg: "Restarting Core...",
+        startMsg: t("Restarting Core..."),
         isOptional: true,
       },
     ];
@@ -127,7 +184,7 @@ export const useServiceManager = () => {
     await executeServiceOperation(
       "isInstalling",
       steps,
-      "Service installation completed",
+      t("Service Installed Successfully"),
     );
   }, [executeServiceOperation]);
 
@@ -139,8 +196,8 @@ export const useServiceManager = () => {
       {
         fn: () => reinstallService(),
         name: "ReinstallService",
-        startMsg: "Reinstalling Service...",
-        successMsg: "Service Reinstalled Successfully",
+        startMsg: t("Reinstalling Service..."),
+        successMsg: t("Service Reinstalled Successfully"),
       },
       {
         fn: () => waitForStateStabilization(TIMING.SERVICE_STABILIZATION),
@@ -149,7 +206,7 @@ export const useServiceManager = () => {
       {
         fn: () => restartCore(),
         name: "RestartCore",
-        startMsg: "Restarting Core...",
+        startMsg: t("Restarting Core..."),
         isOptional: true,
       },
     ];
@@ -157,7 +214,7 @@ export const useServiceManager = () => {
     await executeServiceOperation(
       "isReinstalling",
       steps,
-      "Service reinstallation completed",
+      t("Service Reinstalled Successfully"),
     );
   }, [executeServiceOperation]);
 
@@ -169,7 +226,7 @@ export const useServiceManager = () => {
       {
         fn: () => stopCore(),
         name: "StopCore",
-        startMsg: "Stopping Core...",
+        startMsg: t("Stopping Core..."),
         isOptional: true,
       },
       {
@@ -179,8 +236,8 @@ export const useServiceManager = () => {
       {
         fn: () => uninstallService(),
         name: "UninstallService",
-        startMsg: "Uninstalling Service...",
-        successMsg: "Service Uninstalled Successfully",
+        startMsg: t("Uninstalling Service..."),
+        successMsg: t("Service Uninstalled Successfully"),
       },
       {
         fn: () => waitForStateStabilization(TIMING.SERVICE_STABILIZATION),
@@ -189,7 +246,7 @@ export const useServiceManager = () => {
       {
         fn: () => restartCore(),
         name: "RestartCore",
-        startMsg: "Restarting Core...",
+        startMsg: t("Restarting Core..."),
         isOptional: true,
       },
     ];
@@ -197,7 +254,7 @@ export const useServiceManager = () => {
     await executeServiceOperation(
       "isUninstalling",
       steps,
-      "Service uninstallation completed",
+      t("Service Uninstalled Successfully"),
     );
   }, [executeServiceOperation]);
 

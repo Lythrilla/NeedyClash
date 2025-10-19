@@ -46,6 +46,7 @@ const InfoRow = memo(
         {label}
       </Typography>
       <Typography
+        component="div"
         variant="body2"
         sx={{
           fontSize: "11px",
@@ -224,7 +225,7 @@ export const IpInfoCard = () => {
     );
   }
 
-  // 渲染正常数据 - 极简设计
+  // 渲染正常数据
   return (
     <EnhancedCard
       title={t("IP Information")}

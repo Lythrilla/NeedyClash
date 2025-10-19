@@ -22,7 +22,7 @@ interface BaseCardProps {
 }
 
 /**
- * 统一的卡片组件
+ * 卡片组件
  * 用于保持整个应用卡片样式的一致性
  */
 export const BaseCard = ({
@@ -108,7 +108,7 @@ interface BaseSectionProps {
 }
 
 /**
- * 统一的分区组件
+ * 分区组件
  * 用于页面内的内容分区
  */
 export const BaseSection = ({

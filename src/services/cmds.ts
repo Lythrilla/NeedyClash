@@ -128,70 +128,67 @@ export async function calcuProxies(): Promise<{
   const proxyRecord = proxyResponse.proxies;
   const providerRecord = providerResponse;
 
-  // provider name map
-  const providerMap = Object.fromEntries(
-    Object.entries(providerRecord).flatMap(([provider, item]) =>
-      item!.proxies.map((p) => [p.name, { ...p, provider }]),
-    ),
-  );
+  const providerMap = new Map<string, any>();
+  for (const [provider, item] of Object.entries(providerRecord)) {
+    if (item?.proxies) {
+      for (const p of item.proxies) {
+        providerMap.set(p.name, { ...p, provider });
+      }
+    }
+  }
+  const defaultItem = {
+    type: "unknown",
+    udp: false,
+    xudp: false,
+    tfo: false,
+    mptcp: false,
+    smux: false,
+    history: [],
+  };
 
   // compatible with proxy-providers
   const generateItem = (name: string) => {
     if (proxyRecord[name]) return proxyRecord[name];
-    if (providerMap[name]) return providerMap[name];
-    return {
-      name,
-      type: "unknown",
-      udp: false,
-      xudp: false,
-      tfo: false,
-      mptcp: false,
-      smux: false,
-      history: [],
-    };
+    if (providerMap.has(name)) return providerMap.get(name);
+    return { ...defaultItem, name };
   };
 
   const { GLOBAL: global, DIRECT: direct, REJECT: reject } = proxyRecord;
 
-  let groups: IProxyGroupItem[] = Object.values(proxyRecord).reduce<
-    IProxyGroupItem[]
-  >((acc, each) => {
+  const proxyValues = Object.values(proxyRecord);
+  let groups: IProxyGroupItem[] = [];
+  
+  for (const each of proxyValues) {
     if (each?.name !== "GLOBAL" && each?.all) {
-      acc.push({
+      groups.push({
         ...each,
-        all: each.all!.map((item) => generateItem(item)),
+        all: each.all.map((item) => generateItem(item)),
       });
     }
-
-    return acc;
-  }, []);
+  }
 
   if (global?.all) {
-    const globalGroups: IProxyGroupItem[] = global.all.reduce<
-      IProxyGroupItem[]
-    >((acc, name) => {
+    const globalGroups: IProxyGroupItem[] = [];
+    
+    for (const name of global.all) {
       if (proxyRecord[name]?.all) {
-        acc.push({
+        globalGroups.push({
           ...proxyRecord[name],
           all: proxyRecord[name].all!.map((item) => generateItem(item)),
         });
       }
-      return acc;
-    }, []);
+    }
 
     const globalNames = new Set(globalGroups.map((each) => each.name));
-    groups = groups
-      .filter((group) => {
-        return !globalNames.has(group.name);
-      })
-      .concat(globalGroups);
+    groups = groups.filter((group) => !globalNames.has(group.name)).concat(globalGroups);
   }
 
-  const proxies = [direct, reject].concat(
-    Object.values(proxyRecord).filter(
-      (p) => !p?.all?.length && p?.name !== "DIRECT" && p?.name !== "REJECT",
-    ),
-  );
+  const proxies = [direct, reject];
+  for (const p of proxyValues) {
+    if (!p?.all?.length && p?.name !== "DIRECT" && p?.name !== "REJECT") {
+      proxies.push(p);
+    }
+  }
 
   const _global = {
     ...global,
@@ -348,7 +345,6 @@ export async function cmdGetProxyDelay(
   const testUrl = url || "https://cp.cloudflare.com/generate_204";
 
   try {
-    // 不再在前端编码代理名称，由后端统一处理编码
     const result = await invoke<{ delay: number }>(
       "clash_api_get_proxy_delay",
       {
@@ -526,13 +522,23 @@ export const repairService = async () => {
   return invoke<void>("repair_service");
 };
 
-// 系统服务是否可用
+// 系统服务是否可用（正在运行）
 export const isServiceAvailable = async () => {
   try {
     return await invoke<boolean>("is_service_available");
   } catch (error) {
     console.error("Service check failed:", error);
     return false;
+  }
+};
+
+// 系统服务是否已安装（在系统中注册，无论是否运行）
+export const isServiceInstalled = () => {
+  try {
+    return invoke<boolean>("is_service_installed");
+  } catch (error) {
+    console.error("Service installation check failed:", error);
+    return Promise.resolve(false);
   }
 };
 export const entry_lightweight_mode = async () => {

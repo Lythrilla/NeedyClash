@@ -565,7 +565,7 @@ impl Tray {
         Ok(())
     }
 
-    // 托盘统一的状态更新函数
+    // 托盘状态更新函数
     pub async fn update_all_states(&self) -> Result<()> {
         if handle::Handle::global().is_exiting() {
             log::debug!(target: "app", "应用正在退出，跳过托盘状态更新");

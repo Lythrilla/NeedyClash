@@ -58,7 +58,6 @@ export const WindowProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [currentWindow]);
 
   const toggleDecorations = useCallback(async () => {
-    // 直接使用 state 而不是重新查询，减少异步调用
     const newVal = !decorated;
     await currentWindow.setDecorations(newVal);
     setDecorated(newVal);

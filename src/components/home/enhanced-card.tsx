@@ -31,7 +31,7 @@ export const EnhancedCard = ({
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  // 统一的标题截断样式
+  // 标题截断样式
   const titleTruncateStyle = {
     minWidth: 0,
     maxWidth: "100%",
@@ -49,7 +49,7 @@ export const EnhancedCard = ({
         flexDirection: "column",
       }}
     >
-      {/* 极简标题栏 */}
+      {/* 标题栏 */}
       {(title || action) && (
         <Box
           sx={{

@@ -100,7 +100,7 @@ export const CurrentProxyCard = () => {
   const { verge } = useVerge();
   const autoDelayEnabled = verge?.enable_auto_delay_detection ?? false;
 
-  // 统一代理选择器
+  // 代理选择器
   const { handleSelectChange } = useProxySelection({
     onSuccess: () => {
       refreshProxy();
@@ -853,7 +853,7 @@ export const CurrentProxyCard = () => {
                   </Typography>
                 )}
 
-                {/* 节点特性 - 更简洁 */}
+                {/* 节点特性 */}
                 {currentProxy.udp && (
                   <Typography
                     variant="caption"
@@ -925,7 +925,7 @@ export const CurrentProxyCard = () => {
             )}
           </Box>
 
-          {/* 选择器 - 更简洁 */}
+          {/* 选择器 */}
           <Box
             sx={{
               display: "flex",

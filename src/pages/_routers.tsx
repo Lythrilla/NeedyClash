@@ -1,4 +1,4 @@
-// 使用统一的 Sharp 风格图标，极客硬朗风格
+// 使用 Sharp 风格图标，极客硬朗风格
 import ArticleSharpIcon from "@mui/icons-material/ArticleSharp";
 import BarChartSharpIcon from "@mui/icons-material/BarChartSharp";
 import CableSharpIcon from "@mui/icons-material/CableSharp";

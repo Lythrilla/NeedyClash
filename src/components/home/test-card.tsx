@@ -26,7 +26,7 @@ import { useVerge } from "@/hooks/use-verge";
 
 import { EnhancedCard } from "./enhanced-card";
 
-// 极简滚动框样式
+// 滚动框样式
 const ScrollBox = styled(Box)(({ theme }) => ({
   maxHeight: "160px",
   overflowY: "auto",
@@ -141,7 +141,6 @@ export const TestCard = () => {
     }
   }, [verge, patchVerge]);
 
-  // 使用useMemo减少渲染计算
   const renderTestItems = useMemo(
     () => (
       <Grid container spacing={0.75} columns={12}>

@@ -30,7 +30,6 @@ export const ClashModeCard = () => {
     return t("Core communication error");
   }, [currentMode, t]);
 
-  // 使用统一的模式选项配置
   const modeOptions = useMemo(
     () => [
       {
@@ -79,7 +78,7 @@ export const ClashModeCard = () => {
         flex: 1,
       }}
     >
-      {/* 使用统一的模式选择器 */}
+      {/* 使用模式选择器 */}
       <BaseModeSelector
         value={currentMode}
         options={modeOptions}

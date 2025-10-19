@@ -176,7 +176,7 @@ function shuffleServices(): ServiceConfig[] {
 // 获取当前IP和地理位置信息
 export const getIpInfo = async (signal?: AbortSignal): Promise<IpInfo> => {
   // 配置参数
-  const maxRetries = 2; // 减少重试次数，提高响应速度
+  const maxRetries = 2;
   const serviceTimeout = 10000;
 
   try {
