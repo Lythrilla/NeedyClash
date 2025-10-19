@@ -50,7 +50,9 @@ async fn uninstall_service() -> Result<()> {
         let token = Token::with_current_process()?;
         let level = token.privilege_level()?;
         let status = match level {
-            PrivilegeLevel::NotPrivileged => RunasCommand::new(uninstall_path).show(false).status()?,
+            PrivilegeLevel::NotPrivileged => {
+                RunasCommand::new(uninstall_path).show(false).status()?
+            }
             _ => StdCommand::new(uninstall_path)
                 .creation_flags(0x08000000)
                 .status()?,
@@ -88,7 +90,9 @@ async fn install_service() -> Result<()> {
         let token = Token::with_current_process()?;
         let level = token.privilege_level()?;
         let status = match level {
-            PrivilegeLevel::NotPrivileged => RunasCommand::new(install_path).show(false).status()?,
+            PrivilegeLevel::NotPrivileged => {
+                RunasCommand::new(install_path).show(false).status()?
+            }
             _ => StdCommand::new(install_path)
                 .creation_flags(0x08000000)
                 .status()?,
@@ -139,20 +143,18 @@ async fn uninstall_service() -> Result<()> {
     let uninstall_shell: String = uninstall_path.to_string_lossy().replace(" ", "\\ ");
 
     let elevator = crate::utils::help::linux_elevator();
-    
+
     // 将阻塞操作移到 spawn_blocking 中
-    let status = tokio::task::spawn_blocking(move || {
-        match get_effective_uid() {
-            0 => StdCommand::new(uninstall_shell).status(),
-            _ => StdCommand::new(elevator.clone())
-                .arg("sh")
-                .arg("-c")
-                .arg(uninstall_shell)
-                .status(),
-        }
+    let status = tokio::task::spawn_blocking(move || match get_effective_uid() {
+        0 => StdCommand::new(uninstall_shell).status(),
+        _ => StdCommand::new(elevator.clone())
+            .arg("sh")
+            .arg("-c")
+            .arg(uninstall_shell)
+            .status(),
     })
     .await??;
-    
+
     logging!(
         info,
         Type::Service,
@@ -185,20 +187,18 @@ async fn install_service() -> Result<()> {
     let install_shell: String = install_path.to_string_lossy().replace(" ", "\\ ");
 
     let elevator = crate::utils::help::linux_elevator();
-    
+
     // 将阻塞操作移到 spawn_blocking 中
-    let status = tokio::task::spawn_blocking(move || {
-        match get_effective_uid() {
-            0 => StdCommand::new(install_shell).status(),
-            _ => StdCommand::new(elevator.clone())
-                .arg("sh")
-                .arg("-c")
-                .arg(install_shell)
-                .status(),
-        }
+    let status = tokio::task::spawn_blocking(move || match get_effective_uid() {
+        0 => StdCommand::new(install_shell).status(),
+        _ => StdCommand::new(elevator.clone())
+            .arg("sh")
+            .arg("-c")
+            .arg(install_shell)
+            .status(),
     })
     .await??;
-    
+
     logging!(
         info,
         Type::Service,
@@ -470,7 +470,7 @@ pub fn is_service_ipc_path_exists() -> bool {
 #[cfg(target_os = "windows")]
 pub fn is_service_installed() -> bool {
     use std::process::Command;
-        if let Ok(output) = Command::new("sc")
+    if let Ok(output) = Command::new("sc")
         .args(&["query", "clash_verge_service"])
         .output()
     {
@@ -486,17 +486,20 @@ pub fn is_service_installed() -> bool {
     {
         Path::new("/etc/systemd/system/clash-verge-service.service").exists()
     }
-    
+
     #[cfg(target_os = "macos")]
     {
         if let Ok(home) = std::env::var("HOME") {
-            let plist_path = format!("{}/Library/LaunchAgents/io.github.clash-verge-rev.plist", home);
+            let plist_path = format!(
+                "{}/Library/LaunchAgents/io.github.clash-verge-rev.plist",
+                home
+            );
             Path::new(&plist_path).exists()
         } else {
             false
         }
     }
-    
+
     #[cfg(not(any(target_os = "linux", target_os = "macos")))]
     {
         false
