@@ -1,6 +1,6 @@
-use crate::{logging, utils::logging::Type};
 #[allow(unused_imports)]
 use crate::AsyncHandler;
+use crate::{logging, utils::logging::Type};
 use anyhow::Result;
 
 /// 进程管理器 - 负责清理和管理mihomo进程
