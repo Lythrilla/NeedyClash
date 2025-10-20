@@ -5,7 +5,7 @@
 </h1>
 
 <p align="center">
-  <b>深度重构的现代化 Clash 代理客户端</b>
+  <b>世界上最好看的？ Clash 代理客户端</b>
 </p>
 <p align="center">
 <a href="https://t.me/NeedyClash">telegram 群组</a></p>
