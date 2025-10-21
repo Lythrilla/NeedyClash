@@ -11,7 +11,7 @@
 <a href="https://t.me/NeedyClash">telegram 群组</a></p>
 
 <p align="center">
-  项目已合并至 <a href="https://github.com/clash-verge-rev/clash-verge-rev">Clash Verge Rev</a> 点击跳转
+  项目正在合并至 <a href="https://github.com/clash-verge-rev/clash-verge-rev">Clash Verge Rev</a> 点击跳转，请直接期待原项目持续更新
 </p>
 
 <br>
